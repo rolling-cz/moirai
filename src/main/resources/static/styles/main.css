@@ -1,0 +1,34 @@
+.index-tiles {
+    margin-top: 150px;
+}
+
+.index-tiles .tile {
+    width: 100%;
+    height: 160px;
+    display: inline-block;
+	box-sizing: border-box;
+	background: #fff;
+	padding: 20px;
+	margin-bottom: 10px;
+	color: white;
+}
+
+.index-tiles .tile:hover {
+    text-decoration: none;
+    filter: brightness(120%);
+}
+
+.index-tiles .title {
+    margin-top: 0px;
+}
+
+.index-tiles .purple {
+    background: #6746c8;
+}
+
+.index-tiles .green {
+    background: #00A600;
+}
+.index-tiles .blue {
+    background: #2672EC;
+}
