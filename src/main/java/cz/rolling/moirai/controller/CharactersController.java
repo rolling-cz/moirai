@@ -11,7 +11,6 @@ public class CharactersController {
 
     @GetMapping
     public ModelAndView characters() {
-        ModelAndView mav = new ModelAndView("characters");
-        return mav;
+        return new ModelAndView("characters");
     }
 }
