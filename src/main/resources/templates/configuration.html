@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head">
+</head>
+<body>
+
+<div th:replace="fragments/header :: nav">
+</div>
+
+<div class="container mt-4">
+    <form th:action="@{/configuration/print}" th:object="${assignmentConfiguration}" method="post">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label" th:text="#{assignment-config.approach}"></label>
+            <div class="col-sm-9">
+
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-info btn-rounded"
+                               th:each="type : ${T(cz.rolling.moirai.model.ApproachType).values()}"
+                               th:classappend="${assignmentConfiguration.getApproachType() == type} ? 'active' : ''" >
+                            <input type="radio" autocomplete="off"
+                                   th:field="*{approachType}"
+                                   th:value="${type}"
+                                   th:text="#{${type.getKey()}}">
+                        </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="ratingForGender" class="col-sm-3 col-form-label" th:text="#{assignment-config.rating-gender}"></label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control"
+                       id="ratingForGender"
+                       th:field="*{ratingForGender}"
+                       th:value="${assignmentConfiguration.getRatingForGender()}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="numberOfPreferredCharacters" class="col-sm-3 col-form-label" th:text="#{assignment-config.preferred-characters}"></label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control"
+                       id="numberOfPreferredCharacters"
+                       th:field="*{numberOfPreferredCharacters}"
+                       th:value="${assignmentConfiguration.getNumberOfPreferredCharacters()}">
+            </div>
+
+            <label for="ratingForPreferredCharacters" class="offset-sm-1 col-sm-1 col-form-label" th:text="#{assignment-config.rating}"></label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control"
+                       id="ratingForPreferredCharacters"
+                       th:field="*{ratingForPreferredCharacters}"
+                       th:value="${assignmentConfiguration.getRatingForPreferredCharacters()}"
+                       placeholder="7,5,3"
+                >
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="numberOfHatedCharacters" class="col-sm-3 col-form-label" th:text="#{assignment-config.hated-characters}"></label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control"
+                       id="numberOfHatedCharacters"
+                       th:field="*{numberOfHatedCharacters}"
+                       th:value="${assignmentConfiguration.getNumberOfHatedCharacters()}">
+            </div>
+
+            <label for="ratingForHatedCharacters" class="offset-sm-1 col-sm-1 col-form-label" th:text="#{assignment-config.rating}"></label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control"
+                       id="ratingForHatedCharacters"
+                       th:field="*{ratingForHatedCharacters}"
+                       th:value="${assignmentConfiguration.getRatingForHatedCharacters()}"
+                       placeholder="7,5,3"
+                >
+            </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" th:text="#{assignment-config.generate}"></button>
+        <button class="btn btn-secondary" type="button"
+                th:text="#{assignment-config.load-file}"
+                data-toggle="modal" data-target="#loadFileModal"></button>
+    </form>
+</div>
+
+<div class="modal fade" id="loadFileModal" tabindex="-1" role="dialog" aria-labelledby="loadFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" enctype="multipart/form-data" action="/configuration">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadFileModalLabel" th:text="#{assignment-config.import.title}"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="file" name="file">
+                        <label class="custom-file-label" for="file" th:text="#{assignment-config.import.choose-file}"></label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}"></button>
+                    <button type="submit" class="btn btn-primary" th:text="#{assignment-config.import.load-btn}"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts">
+</div>
+
+</body>
+</html>
