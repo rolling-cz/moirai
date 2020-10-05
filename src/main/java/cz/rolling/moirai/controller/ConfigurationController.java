@@ -2,6 +2,7 @@ package cz.rolling.moirai.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.rolling.moirai.WizardState;
 import cz.rolling.moirai.model.AssignmentConfiguration;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -21,24 +22,36 @@ public class ConfigurationController {
 
     private static final String CONFIGURATION_JSON_FILE_NAME = "assignmentConfiguration.json";
 
+    private final WizardState wizardState;
+
+    public ConfigurationController(WizardState wizardState) {
+        this.wizardState = wizardState;
+    }
+
     @GetMapping
     public ModelAndView configuration() {
         ModelAndView mav = new ModelAndView("configuration");
-        mav.addObject("assignmentConfiguration", new AssignmentConfiguration());
+        mav.addObject("assignmentConfiguration", wizardState.getAssignmentConfiguration());
         return mav;
     }
 
-    @PostMapping
-    public ModelAndView uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping("/next")
+    public String save(@ModelAttribute AssignmentConfiguration config){
+        wizardState.setAssignmentConfiguration(config);
+        return "redirect:/characters";
+    }
+
+    @PostMapping("/import")
+    public String importFile(@RequestParam("file") MultipartFile file) throws IOException {
         AssignmentConfiguration config = new ObjectMapper().readValue(file.getBytes(), AssignmentConfiguration.class);
-        ModelAndView mav = new ModelAndView("configuration");
-        mav.addObject("assignmentConfiguration", config);
-        return mav;
+        wizardState.setAssignmentConfiguration(config);
+        return "redirect:/configuration";
     }
 
     @PostMapping("/print")
-    public ResponseEntity<Resource> generateJson(@ModelAttribute AssignmentConfiguration configuration) throws JsonProcessingException {
-        byte[] buf = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(configuration);
+    public ResponseEntity<Resource> generateJson(@ModelAttribute AssignmentConfiguration config) throws JsonProcessingException {
+        wizardState.setAssignmentConfiguration(config);
+        byte[] buf = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(config);
         return ResponseEntity
                 .ok()
                 .contentLength(buf.length)
