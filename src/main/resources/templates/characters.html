@@ -11,7 +11,17 @@
 <div class="container mt-4">
     <h3 th:text="#{characters-config.title}"></h3>
     <p th:text="#{characters-config.desc}"></p>
-    <form method="post" th:object="${characterConfiguration}">
+    <form enctype="multipart/form-data" method="post" th:object="${characterConfiguration}">
+
+        <div>
+            <span th:text="#{characters-config.loaded-chars}"></span>:
+            <span th:text="*{numberOfCharacters}"></span>
+        </div>
+
+        <div>
+            <span th:text="#{characters-config.required-format}"></span>:
+            <span th:text="*{characterFormat}"></span>
+        </div>
 
         <div class="custom-file">
             <input class="custom-file-input" id="file" name="file" type="file">
@@ -21,6 +31,10 @@
         <button class="btn btn-secondary"
                 th:formaction="@{/characters/previous}"
                 th:text="#{common.previous-btn}"
+                type="submit"></button>
+        <button class="btn btn-info"
+                th:formaction="@{/characters/import}"
+                th:text="#{common.load-file-btn}"
                 type="submit"></button>
         <button class="btn btn-primary"
                 th:formaction="@{/characters/next}"

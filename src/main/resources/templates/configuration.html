@@ -79,17 +79,17 @@
             </div>
         </div>
 
-        <button class="btn btn-primary"
-                th:formaction="@{/configuration/next}"
-                th:text="#{common.next-btn}"
-                type="submit"></button>
         <button class="btn btn-secondary"
                 th:formaction="@{/configuration/print}"
                 th:text="#{assignment-config.generate}"
                 type="submit"></button>
         <button class="btn btn-secondary" type="button"
-                th:text="#{assignment-config.load-file}"
+                th:text="#{common.load-file-btn}"
                 data-toggle="modal" data-target="#loadFileModal"></button>
+        <button class="btn btn-primary"
+                th:formaction="@{/configuration/next}"
+                th:text="#{common.next-btn}"
+                type="submit"></button>
     </form>
 </div>
 
