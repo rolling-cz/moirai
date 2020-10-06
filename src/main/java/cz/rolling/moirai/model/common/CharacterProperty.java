@@ -1,4 +1,4 @@
-package cz.rolling.moirai.model;
+package cz.rolling.moirai.model.common;
 
 public enum CharacterProperty {
     NAME("CharacterName"), GENDER("Gender");

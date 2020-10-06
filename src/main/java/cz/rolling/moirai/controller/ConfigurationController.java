@@ -2,14 +2,18 @@ package cz.rolling.moirai.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.rolling.moirai.WizardState;
-import cz.rolling.moirai.model.AssignmentConfiguration;
+import cz.rolling.moirai.model.form.MainConfiguration;
+import cz.rolling.moirai.model.form.WizardState;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -31,26 +35,26 @@ public class ConfigurationController {
     @GetMapping
     public ModelAndView configuration() {
         ModelAndView mav = new ModelAndView("configuration");
-        mav.addObject("assignmentConfiguration", wizardState.getAssignmentConfiguration());
+        mav.addObject("assignmentConfiguration", wizardState.getMainConfiguration());
         return mav;
     }
 
     @PostMapping("/next")
-    public String save(@ModelAttribute AssignmentConfiguration config){
-        wizardState.setAssignmentConfiguration(config);
+    public String save(@ModelAttribute MainConfiguration config){
+        wizardState.setMainConfiguration(config);
         return "redirect:/characters";
     }
 
     @PostMapping("/import")
     public String importFile(@RequestParam("file") MultipartFile file) throws IOException {
-        AssignmentConfiguration config = new ObjectMapper().readValue(file.getBytes(), AssignmentConfiguration.class);
-        wizardState.setAssignmentConfiguration(config);
+        MainConfiguration config = new ObjectMapper().readValue(file.getBytes(), MainConfiguration.class);
+        wizardState.setMainConfiguration(config);
         return "redirect:/configuration";
     }
 
     @PostMapping("/print")
-    public ResponseEntity<Resource> generateJson(@ModelAttribute AssignmentConfiguration config) throws JsonProcessingException {
-        wizardState.setAssignmentConfiguration(config);
+    public ResponseEntity<Resource> generateJson(@ModelAttribute MainConfiguration config) throws JsonProcessingException {
+        wizardState.setMainConfiguration(config);
         byte[] buf = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(config);
         return ResponseEntity
                 .ok()

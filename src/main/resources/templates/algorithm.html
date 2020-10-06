@@ -13,6 +13,41 @@
     <p th:text="#{algorithm-config.desc}"></p>
     <form method="post" th:object="${algorithmConfiguration}">
 
+        <div>
+            <span th:text="#{algorithm-config.loaded-users}"></span>:
+            <span th:text="*{numberOfUsers}"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <div class="custom-file">
+                    <input class="custom-file-input" id="file" name="file" type="file">
+                    <label class="custom-file-label" for="file" th:text="#{common.choose-file}"></label>
+                </div>
+                <div>
+                    <span th:text="#{common.required-file-format}"></span>:
+                    <span class="font-italic" th:text="${usersFileFormat}"></span>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-info"
+                        th:formaction="@{/assignment/import}"
+                        th:text="#{common.load-file-btn}"
+                        type="submit"></button>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label for="algorithmSelect" th:text="#{algorithm-config.algorithm}"></label>
+                <select class="custom-select" id="algorithmSelect" th:field="*{algorithmFactoryName}">
+                    <option th:each="factory, stats : ${algorithmFactorySet}"
+                            th:text="#{'algorithm-config.name.' + ${factory.name}}"
+                            th:value="${factory.factoryClass.getCanonicalName()}"></option>
+                </select>
+            </div>
+        </div>
+
         <button class="btn btn-secondary"
                 th:formaction="@{/assignment/previous}"
                 th:text="#{common.previous-btn}"

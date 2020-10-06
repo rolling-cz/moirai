@@ -18,23 +18,28 @@
             <span th:text="*{numberOfCharacters}"></span>
         </div>
 
-        <div>
-            <span th:text="#{characters-config.required-format}"></span>:
-            <span th:text="*{characterFormat}"></span>
-        </div>
-
-        <div class="custom-file">
-            <input class="custom-file-input" id="file" name="file" type="file">
-            <label class="custom-file-label" for="file" th:text="#{common.choose-file}"></label>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <div class="custom-file">
+                    <input class="custom-file-input" id="file" name="file" type="file">
+                    <label class="custom-file-label" for="file" th:text="#{common.choose-file}"></label>
+                </div>
+                <div>
+                    <span th:text="#{common.required-file-format}"></span>:
+                    <span class="font-italic" th:text="${charactersFileFormat}"></span>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-info"
+                        th:formaction="@{/characters/import}"
+                        th:text="#{common.load-file-btn}"
+                        type="submit"></button>
+            </div>
         </div>
 
         <button class="btn btn-secondary"
                 th:formaction="@{/characters/previous}"
                 th:text="#{common.previous-btn}"
-                type="submit"></button>
-        <button class="btn btn-info"
-                th:formaction="@{/characters/import}"
-                th:text="#{common.load-file-btn}"
                 type="submit"></button>
         <button class="btn btn-primary"
                 th:formaction="@{/characters/next}"

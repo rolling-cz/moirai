@@ -18,7 +18,7 @@
 
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-info btn-rounded"
-                               th:each="type : ${T(cz.rolling.moirai.model.ApproachType).values()}"
+                               th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"
                                th:classappend="${assignmentConfiguration.getApproachType() == type} ? 'active' : ''" >
                             <input type="radio" autocomplete="off"
                                    th:field="*{approachType}"

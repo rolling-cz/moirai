@@ -1,5 +1,6 @@
-package cz.rolling.moirai.model;
+package cz.rolling.moirai.model.form;
 
+import cz.rolling.moirai.model.common.ApproachType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AssignmentConfiguration {
+public class MainConfiguration {
     private ApproachType approachType = ApproachType.CHARACTERS;
 
     private int ratingForGender = -100;

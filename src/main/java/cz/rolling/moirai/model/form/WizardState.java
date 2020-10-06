@@ -1,8 +1,5 @@
-package cz.rolling.moirai;
+package cz.rolling.moirai.model.form;
 
-import cz.rolling.moirai.model.AlgorithmConfiguration;
-import cz.rolling.moirai.model.AssignmentConfiguration;
-import cz.rolling.moirai.model.CharactersConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +13,7 @@ import org.springframework.web.context.annotation.SessionScope;
 @NoArgsConstructor
 public class WizardState {
 
-    private AssignmentConfiguration assignmentConfiguration = new AssignmentConfiguration();
+    private MainConfiguration mainConfiguration = new MainConfiguration();
 
     private CharactersConfiguration charactersConfiguration = new CharactersConfiguration();
 
