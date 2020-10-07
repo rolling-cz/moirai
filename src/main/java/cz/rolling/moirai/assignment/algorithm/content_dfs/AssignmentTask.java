@@ -35,7 +35,7 @@ public class AssignmentTask {
         }
 
         addAssignment(newAssignment);
-        currentRank = previousTask.currentRank + preferencesHolder.rankAssignment(newAssignment);
+        currentRank = previousTask.currentRank + preferencesHolder.calcRatingOfAssignment(newAssignment);
     }
 
     public AssignmentTask(ContentConfiguration configuration, PreferencesHolder preferencesHolder) {

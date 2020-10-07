@@ -84,13 +84,17 @@ public class PreferencesHolder {
         int rankSum = 0;
 
         for (Assignment a : assignments) {
-            rankSum += rankAssignment(a);
+            rankSum += calcRatingOfAssignment(a);
         }
 
         return rankSum;
     }
 
-    public int rankAssignment(Assignment a) {
+    public Integer getAssignmentRank(Assignment a) {
+        return usersRankForChar.get(a);
+    }
+
+    public int calcRatingOfAssignment(Assignment a) {
         Integer rank = usersRankForChar.get(a);
         if (rank != null) {
             Character ch = characterList.get(a.getCharId());

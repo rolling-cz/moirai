@@ -38,7 +38,7 @@ public class CharactersController {
     @PostMapping("/import")
     public String importFile(@RequestParam("file") MultipartFile file) throws IOException {
         CharactersConfiguration config = wizardState.getCharactersConfiguration();
-        config.setCharacterList(importCsvParser.parseCharacterList(file.getInputStream(), wizardState.getMainConfiguration()));
+        config.setCharacterList(importCsvParser.parseCharacterList(file.getInputStream()));
         return "redirect:/characters";
     }
 

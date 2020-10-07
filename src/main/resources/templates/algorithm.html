@@ -11,7 +11,7 @@
 <div class="container mt-4">
     <h3 th:text="#{algorithm-config.title}"></h3>
     <p th:text="#{algorithm-config.desc}"></p>
-    <form method="post" th:object="${algorithmConfiguration}">
+    <form enctype="multipart/form-data" method="post" th:object="${algorithmConfiguration}">
 
         <div>
             <span th:text="#{algorithm-config.loaded-users}"></span>:

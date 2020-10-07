@@ -9,6 +9,26 @@
 </div>
 
 <div class="container mt-4">
+    <h3 th:text="#{execution-results.title}"></h3>
+    <p th:text="#{execution-results.desc}"></p>
+
+    <div class="row">
+        <div class="col-sm-1" th:text="#{execution-results.rating}">Rating</div>
+        <div class="col-sm-5" th:text="#{execution-results.positive-assign}"></div>
+        <div class="col-sm-5" th:text="#{execution-results.negative-assign}"></div>
+    </div>
+
+    <div class="row" th:each="sol, stats: ${solutions}">
+        <div class="col-sm-1" th:text="${sol.solution.rating}"></div>
+        <div class="col-sm-5" th:text="${sol.positiveAssignments}"></div>
+        <div class="col-sm-5" th:text="${sol.negativeAssignments}"></div>
+        <div class="col-sm-1">
+            <a class="btn btn-secondary"
+               role="button"
+               th:href="'/execution/solution/' + ${stats.index}"
+               th:text="#{execution-results.download-btn}"></a>
+        </div>
+    </div>
 </div>
 
 <div th:replace="fragments/footer :: scripts">

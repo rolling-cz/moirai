@@ -34,7 +34,7 @@ public class AssignmentProcessor {
             return Collections.emptyList();
         }
 
-        if (preferencesHolder.getBestPossibleOutcome(task) < solutionHolder.getWorstSolution().getRank()) {
+        if (preferencesHolder.getBestPossibleOutcome(task) < solutionHolder.getWorstSolution().getRating()) {
             int depth = task.getAssignedCharIdSet().size();
             if (depth < 100) {
                 System.out.println("cut at depth " + depth);

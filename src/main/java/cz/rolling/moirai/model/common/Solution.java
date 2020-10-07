@@ -11,24 +11,24 @@ import java.util.List;
 public class Solution implements Comparable<Solution> {
 
     public static final Solution EMPTY = new Solution(Integer.MIN_VALUE);
-    private final Integer rank;
+    private final Integer rating;
     private final List<Assignment> assignmentList;
 
-    private Solution(int rank) {
-        this(rank, Collections.emptyList());
+    private Solution(int rating) {
+        this(rating, Collections.emptyList());
     }
 
 
     @Override
     public String toString() {
         return "Solution{" +
-                "rank=" + rank +
+                "rank=" + rating +
                 ", assignmentList=" + assignmentList +
                 '}';
     }
 
     @Override
     public int compareTo(Solution o) {
-        return rank.compareTo(o.rank);
+        return rating.compareTo(o.rating);
     }
 }

@@ -52,7 +52,7 @@ public class AssignmentController {
                 wizardState.getMainConfiguration(),
                 wizardState.getCharactersConfiguration().getCharacterList()
         ));
-        return "redirect:/characters";
+        return "redirect:/assignment";
     }
 
     private List<AlgorithmFactory> filterFactories() {
@@ -62,13 +62,18 @@ public class AssignmentController {
 
     @PostMapping("/previous")
     public String previous(@ModelAttribute AlgorithmConfiguration config) {
-        wizardState.setAlgorithmConfiguration(config);
+        saveConfig(config);
         return "redirect:/characters";
     }
 
     @PostMapping("/execute")
     public String execute(@ModelAttribute AlgorithmConfiguration config) {
-        wizardState.setAlgorithmConfiguration(config);
-        return "redirect:/execution";
+        saveConfig(config);
+        return "redirect:/execution/process";
+    }
+
+    private void saveConfig(AlgorithmConfiguration newConfig) {
+        AlgorithmConfiguration currentConfig = wizardState.getAlgorithmConfiguration();
+        currentConfig.setAlgorithmFactoryName(newConfig.getAlgorithmFactoryName());
     }
 }

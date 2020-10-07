@@ -1,10 +1,13 @@
 package cz.rolling.moirai.model.form;
 
+import cz.rolling.moirai.model.common.VerboseSolution;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
+
+import java.util.List;
 
 @Component
 @SessionScope
@@ -18,4 +21,6 @@ public class WizardState {
     private CharactersConfiguration charactersConfiguration = new CharactersConfiguration();
 
     private AlgorithmConfiguration algorithmConfiguration = new AlgorithmConfiguration();
+
+    private List<VerboseSolution> solutionList;
 }

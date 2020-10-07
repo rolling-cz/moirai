@@ -28,7 +28,7 @@ public class ImportCsvParser {
     public static String WANTED_PREFIX = "WantedAs";
     public static String HATED_PREFIX = "NotWantedAs";
 
-    public List<Character> parseCharacterList(InputStream is, MainConfiguration mainConfiguration) throws IOException {
+    public List<Character> parseCharacterList(InputStream is) throws IOException {
         List<Character> characterList = new ArrayList<>();
 
         String[] header = getCharacterColumnList().toArray(new String[0]);
@@ -55,7 +55,7 @@ public class ImportCsvParser {
         int userId = 0;
         for (CSVRecord record : csvParser) {
             User newUser = new User();
-            newUser.setId(userId++);
+            newUser.setId(userId);
             newUser.setName(record.get(UserProperty.NAME.getKey()));
             newUser.setName(record.get(UserProperty.NAME.getKey()));
             newUser.setSurname(record.get(UserProperty.SURNAME.getKey()));
@@ -70,6 +70,7 @@ public class ImportCsvParser {
                 newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
             }
             userList.add(newUser);
+            userId++;
         }
         return userList;
     }
