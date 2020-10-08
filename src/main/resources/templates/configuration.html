@@ -11,7 +11,7 @@
 <div class="container mt-4">
     <h3 th:text="#{assignment-config.title}"></h3>
     <p th:text="#{assignment-config.desc}"></p>
-    <form method="post" th:object="${assignmentConfiguration}">
+    <form method="post" th:object="${mainConfiguration}">
         <div class="form-group row">
             <label class="col-sm-3 col-form-label" th:text="#{assignment-config.approach}"></label>
             <div class="col-sm-9">
@@ -19,7 +19,7 @@
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-info btn-rounded"
                                th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"
-                               th:classappend="${assignmentConfiguration.getApproachType() == type} ? 'active' : ''" >
+                               th:classappend="${mainConfiguration.getApproachType() == type} ? 'active' : ''" >
                             <input type="radio" autocomplete="off"
                                    th:field="*{approachType}"
                                    th:value="${type}"
@@ -35,57 +35,44 @@
                 <input type="text" class="form-control"
                        id="ratingForGender"
                        th:field="*{ratingForGender}"
-                       th:value="${assignmentConfiguration.getRatingForGender()}">
+                       th:value="${mainConfiguration.getRatingForGender()}">
             </div>
         </div>
 
         <div class="form-group row">
             <label for="numberOfPreferredCharacters" class="col-sm-3 col-form-label" th:text="#{assignment-config.preferred-characters}"></label>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <input type="text" class="form-control"
                        id="numberOfPreferredCharacters"
+                       th:classappend="${#fields.hasErrors('numberOfPreferredCharacters')} ? 'is-invalid' : ''"
                        th:field="*{numberOfPreferredCharacters}"
-                       th:value="${assignmentConfiguration.getNumberOfPreferredCharacters()}">
+                       th:value="${mainConfiguration.getNumberOfPreferredCharacters()}">
             </div>
-
-            <label for="ratingForPreferredCharacters" class="offset-sm-1 col-sm-1 col-form-label" th:text="#{assignment-config.rating}"></label>
-            <div class="col-sm-5">
+            <div class="col-sm-4">
+                <span class="text-danger"
+                      th:errors="*{numberOfPreferredCharacters}" th:if="${#fields.hasErrors('numberOfPreferredCharacters')}"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="ratingForPreferredCharacters" th:text="#{assignment-config.rating}"></label>
+            <div class="col-sm-4">
                 <input type="text" class="form-control"
                        id="ratingForPreferredCharacters"
                        th:field="*{ratingForPreferredCharacters}"
-                       th:value="${assignmentConfiguration.getRatingForPreferredCharacters()}"
+                       th:value="${mainConfiguration.getRatingForPreferredCharacters()}"
                        placeholder="7,5,3"
                 >
+            </div>
+            <div class="col-sm-4">
+                <span class="text-danger"
+                      th:errors="*{ratingForPreferredCharacters}" th:if="${#fields.hasErrors('ratingForPreferredCharacters')}"></span>
             </div>
         </div>
 
-        <!--<div class="form-group row">
-            <label for="numberOfHatedCharacters" class="col-sm-3 col-form-label" th:text="#{assignment-config.hated-characters}"></label>
-            <div class="col-sm-2">
-                <input type="text" class="form-control"
-                       id="numberOfHatedCharacters"
-                       th:field="*{numberOfHatedCharacters}"
-                       th:value="${assignmentConfiguration.getNumberOfHatedCharacters()}">
-            </div>
+        <div>
+            <span class="text-danger" th:errors="*{global}"> </span>
+        </div>
 
-            <label for="ratingForHatedCharacters" class="offset-sm-1 col-sm-1 col-form-label" th:text="#{assignment-config.rating}"></label>
-            <div class="col-sm-5">
-                <input type="text" class="form-control"
-                       id="ratingForHatedCharacters"
-                       th:field="*{ratingForHatedCharacters}"
-                       th:value="${assignmentConfiguration.getRatingForHatedCharacters()}"
-                       placeholder="7,5,3"
-                >
-            </div>
-        </div>-->
-
-        <button class="btn btn-secondary"
-                th:formaction="@{/configuration/print}"
-                th:text="#{assignment-config.generate}"
-                type="submit"></button>
-        <button class="btn btn-secondary" type="button"
-                th:text="#{common.load-file-btn}"
-                data-toggle="modal" data-target="#loadFileModal"></button>
         <button class="btn btn-primary"
                 th:formaction="@{/configuration/next}"
                 th:text="#{common.next-btn}"

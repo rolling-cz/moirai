@@ -9,14 +9,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ import java.io.IOException;
 @RequestMapping({ "/configuration" })
 public class ConfigurationController {
 
-    private static final String CONFIGURATION_JSON_FILE_NAME = "assignmentConfiguration.json";
+    private static final String CONFIGURATION_JSON_FILE_NAME = "mainConfiguration.json";
 
     private final WizardState wizardState;
 
@@ -32,16 +33,22 @@ public class ConfigurationController {
         this.wizardState = wizardState;
     }
 
+    @ModelAttribute("mainConfiguration")
+    public MainConfiguration mainConfiguration() {
+        return wizardState.getMainConfiguration();
+    }
+
     @GetMapping
-    public ModelAndView configuration() {
-        ModelAndView mav = new ModelAndView("configuration");
-        mav.addObject("assignmentConfiguration", wizardState.getMainConfiguration());
-        return mav;
+    public String configuration() {
+        return "configuration";
     }
 
     @PostMapping("/next")
-    public String save(@ModelAttribute MainConfiguration config){
-        wizardState.setMainConfiguration(config);
+    public String save(@Valid MainConfiguration mainConfiguration, BindingResult bindingResult){
+        wizardState.setMainConfiguration(mainConfiguration);
+        if (bindingResult.hasErrors()) {
+            return "configuration";
+        }
         return "redirect:/characters";
     }
 
