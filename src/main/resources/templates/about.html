@@ -5,13 +5,14 @@
 </head>
 <body>
 
-<div th:replace="fragments/header :: nav('')">
+<div th:replace="fragments/header :: nav('about')">
 </div>
 
 <div class="container mt-4">
-    <h3><span th:text="#{error-page.title}"></span> <span th:text="${status}"></span></h3>
-    <p th:text="#{'error-page.err-' + ${status}}"></p>
-    <p th:text="${message}"></p>
+    <h3 th:text="#{about-page.title}"></h3>
+    <p th:text="#{about-page.desc-intro}"></p>
+    <p th:text="#{about-page.desc-purpose}"></p>
+    <p th:text="#{about-page.desc-contact}"></p>
 </div>
 
 <div th:replace="fragments/footer :: scripts">

@@ -5,11 +5,12 @@
     <title>Moirai</title>
 
     <link th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} " th:rel="stylesheet"/>
-    <link th:rel="stylesheet" th:href="@{/styles/main.css}"/>
+    <link th:href="@{/webjars/font-awesome/5.15.0/css/all.css} " th:rel="stylesheet"/>
+    <link th:href="@{/styles/main.css}" th:rel="stylesheet"/>
 
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top" th:fragment="nav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top" th:fragment="nav(activePage)">
     <div class="container">
         <a class="navbar-brand" href="/">Moirai</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
@@ -19,16 +20,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/" th:text="#{nav.home}">
-                        <span class="sr-only">(current)</span>
-                    </a>
+                <li class="nav-item" th:classappend="${activePage == 'home'} ? 'active' : ''">
+                    <a class="nav-link" href="/" th:text="#{nav.home}"></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" th:text="#{nav.about}"></a>
+                <li class="nav-item" th:classappend="${activePage == 'about'} ? 'active' : ''">
+                    <a class="nav-link" href="/about" th:text="#{nav.about}"></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" th:text="#{nav.contact}"></a>
+                <li class="nav-item" th:classappend="${activePage == 'contact'} ? 'active' : ''">
+                    <a class="nav-link" href="/contact" th:text="#{nav.contact}"></a>
                 </li>
             </ul>
         </div>

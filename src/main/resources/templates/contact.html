@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head">
+    <title></title>
+</head>
+<body>
+
+<div th:replace="fragments/header :: nav('contact')">
+</div>
+
+<div class="container mt-4">
+    <h3 th:text="#{contact-page.title}"></h3>
+    <div class="mt-4">
+        <span th:text="#{contact-page.rolling-start}"></span>
+        <a href="https://rolling.cz" target="_blank">
+            <span th:text="#{contact-page.rolling}"></span>
+            <i class="fa fa-external-link-alt fa-sm"></i>
+        </a>
+    </div>
+    <div class="mt-4">
+        <span th:text="#{contact-page.repository-start}"></span>
+        <a href="https://github.com/rolling-cz/moirai" target="_blank">
+            <span th:text="#{contact-page.repository}"></span>
+            <i class="fas fa-external-link-alt fa-sm"></i>
+        </a>
+    </div>
+    <div class="mt-4">
+        <span th:text="#{contact-page.trello-start}"></span>
+        <a href="https://trello.com/b/xrDwtbIa/moirai" target="_blank">
+            <span th:text="#{contact-page.trello}"></span>
+            <i class="fas fa-external-link-alt fa-sm"></i>
+        </a>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts">
+</div>
+
+</body>
+</html>

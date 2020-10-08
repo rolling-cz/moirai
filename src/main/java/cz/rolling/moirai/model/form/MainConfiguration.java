@@ -17,7 +17,7 @@ public class MainConfiguration {
 
     private String ratingForPreferredCharacters = "7,5,3";
 
-    private int numberOfHatedCharacters = 1;
+    private int numberOfHatedCharacters = 0;
 
     private String ratingForHatedCharacters = "-10";
 }
