@@ -109,7 +109,7 @@ public class ImportCsvParser {
         Optional<Character> character = characterList.stream()
                 .filter(ch -> ch.getName().equals(definedCharacterName))
                 .findFirst();
-        if (character.isEmpty()) {
+        if (!character.isPresent()) {
             throw new RuntimeException("Unknown preferred character " + definedCharacterName);
         }
         Assignment assignment = new Assignment(userId, character.get().getId());
