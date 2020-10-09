@@ -7,6 +7,8 @@ import cz.rolling.moirai.model.common.UnwantedAssignmentType;
 import cz.rolling.moirai.model.common.VerboseSolution;
 import cz.rolling.moirai.model.content.ContentConfiguration;
 import org.apache.solr.util.BoundedTreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +25,8 @@ public class SolutionHolder {
     private final ContentConfiguration configuration;
     private final BoundedTreeSet<Solution> solutionSet;
     private int triedSolutionCounter = 0;
+
+    private final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
 
     public SolutionHolder(PreferencesHolder preferencesHolder, ContentConfiguration configuration) {
         solutionSet = new BoundedTreeSet<>(configuration.getNumberOfBestSolutions(), Comparator.reverseOrder());
@@ -53,7 +57,7 @@ public class SolutionHolder {
 
         triedSolutionCounter++;
         if (triedSolutionCounter % 10000 == 0) {
-            System.out.println("Solution tried: " + triedSolutionCounter + ", best rank: " + getBestSolution().getRating());
+            logger.debug("Solution tried: " + triedSolutionCounter + ", best rank: " + getBestSolution().getRating());
         }
     }
 
@@ -64,7 +68,7 @@ public class SolutionHolder {
     public void saveFailedSolution(AssignmentTask task) {
         triedSolutionCounter++;
         if (triedSolutionCounter % 10000 == 0) {
-            System.out.println("Solution tried: " + triedSolutionCounter + ", best rank: " + getBestSolution().getRating());
+            logger.debug("Solution tried: " + triedSolutionCounter + ", best rank: " + getBestSolution().getRating());
         }
     }
 

@@ -5,6 +5,8 @@ import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.CharacterType;
 import cz.rolling.moirai.model.content.ContentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +19,8 @@ public class AssignmentProcessor {
     private final SolutionHolder solutionHolder;
     private final List<Integer> allUserIdList = new ArrayList<>();
     private final int wideOfSearch;
+
+    private final Logger logger = LoggerFactory.getLogger(AssignmentProcessor.class);
 
     public AssignmentProcessor(PreferencesHolder preferencesHolder, SolutionHolder solutionHolder, ContentConfiguration configuration, int wideOfSearch) {
         this.preferencesHolder = preferencesHolder;
@@ -37,7 +41,7 @@ public class AssignmentProcessor {
         if (preferencesHolder.getBestPossibleOutcome(task) < solutionHolder.getWorstSolution().getRating()) {
             int depth = task.getAssignedCharIdSet().size();
             if (depth < 100) {
-                System.out.println("cut at depth " + depth);
+                logger.debug("cut at depth " + depth);
             }
             solutionHolder.saveFailedSolution(task);
             return Collections.emptyList();
@@ -54,7 +58,7 @@ public class AssignmentProcessor {
             userIdList = allUserIdList;
             canBeChosen = (uId, chId) -> task.isUserEligibleForChar(uId, chId) && preferencesHolder.isCorrectGender(uId, chId);
         } else {
-            System.out.println("Unfinished task without any other char to process - " + task);
+            logger.warn("Unfinished task without any other char to process - " + task);
             return Collections.emptyList();
         }
 
