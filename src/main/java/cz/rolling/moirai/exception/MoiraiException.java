@@ -1,7 +1,7 @@
 package cz.rolling.moirai.exception;
 
-public abstract class ImportException extends RuntimeException {
-    ImportException(String message) {
+public abstract class MoiraiException extends RuntimeException {
+    MoiraiException(String message) {
         super(message);
     }
 

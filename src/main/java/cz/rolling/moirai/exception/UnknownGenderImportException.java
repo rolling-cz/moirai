@@ -1,6 +1,6 @@
 package cz.rolling.moirai.exception;
 
-public class UnknownGenderImportException extends ImportException {
+public class UnknownGenderImportException extends MoiraiException {
     private final String genderKey;
     private long line;
 

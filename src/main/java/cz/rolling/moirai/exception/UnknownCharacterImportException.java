@@ -1,6 +1,6 @@
 package cz.rolling.moirai.exception;
 
-public class UnknownCharacterImportException extends ImportException {
+public class UnknownCharacterImportException extends MoiraiException {
     private final long line;
     private String character;
 

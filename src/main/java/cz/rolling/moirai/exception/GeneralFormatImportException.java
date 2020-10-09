@@ -1,6 +1,6 @@
 package cz.rolling.moirai.exception;
 
-public class GeneralFormatImportException extends ImportException {
+public class GeneralFormatImportException extends MoiraiException {
 
     private final String[] header;
     private final String error;

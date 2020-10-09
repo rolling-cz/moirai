@@ -7,12 +7,17 @@ import cz.rolling.moirai.assignment.helper.PreferencesHolder;
 import cz.rolling.moirai.model.common.AlgorithmSpecificParameter;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.content.ContentConfiguration;
+import cz.rolling.moirai.model.form.AlgorithmConfiguration;
+import cz.rolling.moirai.model.form.CharactersConfiguration;
+import cz.rolling.moirai.model.form.MainConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class ContentDfsFactory implements AlgorithmFactory {
@@ -55,12 +60,24 @@ public class ContentDfsFactory implements AlgorithmFactory {
     }
 
     private ContentConfiguration createConfiguration(WizardState wizardState) {
+        MainConfiguration mainConf = wizardState.getMainConfiguration();
+        CharactersConfiguration charConf = wizardState.getCharactersConfiguration();
         ContentConfiguration configuration = new ContentConfiguration();
-        configuration.setCharacterCount(wizardState.getCharactersConfiguration().getNumberOfCharacters());
-        configuration.setUserCount(wizardState.getAlgorithmConfiguration().getUserList().size());
-        // TODO map configuration
+        AlgorithmConfiguration algConf = wizardState.getAlgorithmConfiguration();
 
+        configuration.setCharacterCount(charConf.getNumberOfCharacters());
+        configuration.setUserCount(algConf.getUserList().size());
+        configuration.setPreferencesPerUser(mainConf.getNumberOfPreferredCharacters());
+        configuration.setRatings(getRatings(mainConf.getRatingForPreferredCharacters()));
+
+        configuration.setUnwantedCharPreference(mainConf.getRatingForNotSpecifiedChar());
+        configuration.setUnwantedCharGender(mainConf.getRatingForGender());
         return configuration;
+    }
+
+    private List<Integer> getRatings(String preferencesAsString) {
+        String[] prefString = preferencesAsString.split(",");
+        return Arrays.stream(prefString).map(Integer::parseInt).collect(Collectors.toList());
     }
 
     private PreferencesHolder createPreferenceHolder(WizardState wizardState, ContentConfiguration configuration) {

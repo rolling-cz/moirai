@@ -1,6 +1,6 @@
 package cz.rolling.moirai.exception;
 
-public class WrongLineImportException extends ImportException {
+public class WrongLineImportException extends MoiraiException {
     private final String[] header;
     private final long line;
 

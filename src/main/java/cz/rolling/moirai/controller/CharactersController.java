@@ -1,6 +1,6 @@
 package cz.rolling.moirai.controller;
 
-import cz.rolling.moirai.exception.ImportException;
+import cz.rolling.moirai.exception.MoiraiException;
 import cz.rolling.moirai.model.form.CharactersConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.ImportCsvParser;
@@ -51,8 +51,8 @@ public class CharactersController {
         return "redirect:/assignment";
     }
 
-    @ExceptionHandler(ImportException.class)
-    public ModelAndView handleException(ImportException exception) {
+    @ExceptionHandler(MoiraiException.class)
+    public ModelAndView handleException(MoiraiException exception) {
         ModelAndView mav = getPageModelAndView();
         mav.addObject("errorMessage", exception.getMessage());
         mav.addObject("errorParams", exception.getParams());

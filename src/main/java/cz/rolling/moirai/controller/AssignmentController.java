@@ -1,10 +1,11 @@
 package cz.rolling.moirai.controller;
 
 import cz.rolling.moirai.assignment.algorithm.AlgorithmFactory;
-import cz.rolling.moirai.exception.ImportException;
+import cz.rolling.moirai.exception.MoiraiException;
 import cz.rolling.moirai.model.form.AlgorithmConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.ImportCsvParser;
+import cz.rolling.moirai.service.WizardValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +29,15 @@ public class AssignmentController {
 
     private final ImportCsvParser importCsvParser;
 
+    private final WizardValidator wizardValidator;
 
     public AssignmentController(WizardState wizardState,
                                 List<AlgorithmFactory> algorithmFactorySet,
-                                ImportCsvParser importCsvParser) {
+                                ImportCsvParser importCsvParser, WizardValidator wizardValidator) {
         this.wizardState = wizardState;
         this.algorithmFactorySet = algorithmFactorySet;
         this.importCsvParser = importCsvParser;
+        this.wizardValidator = wizardValidator;
     }
 
     @GetMapping
@@ -62,11 +65,12 @@ public class AssignmentController {
     @PostMapping("/execute")
     public String execute(@ModelAttribute AlgorithmConfiguration config) {
         saveConfig(config);
+        wizardValidator.validate(wizardState);
         return "redirect:/execution/process";
     }
 
-    @ExceptionHandler(ImportException.class)
-    public ModelAndView handleException(ImportException exception) {
+    @ExceptionHandler(MoiraiException.class)
+    public ModelAndView handleException(MoiraiException exception) {
         ModelAndView mav = getPageModelAndView();
         mav.addObject("errorMessage", exception.getMessage());
         mav.addObject("errorParams", exception.getParams());

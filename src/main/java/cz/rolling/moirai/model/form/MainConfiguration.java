@@ -20,6 +20,7 @@ public class MainConfiguration {
     @NotNull
     private ApproachType approachType = ApproachType.CHARACTERS;
 
+    private int ratingForNotSpecifiedChar = -10;
     private int ratingForGender = -100;
 
     @Min(1)

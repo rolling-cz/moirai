@@ -1,7 +1,7 @@
 package cz.rolling.moirai.model.common;
 
 public enum ApproachType {
-    CONTENT("assignment-config.approach.content"), CHARACTERS("assignment-config.approach.characters");
+    /*CONTENT("assignment-config.approach.content"),*/ CHARACTERS("assignment-config.approach.characters");
 
     private final String key;
 
