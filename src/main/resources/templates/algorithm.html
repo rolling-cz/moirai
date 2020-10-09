@@ -13,28 +13,15 @@
     <p th:text="#{algorithm-config.desc}"></p>
     <form enctype="multipart/form-data" method="post" th:object="${algorithmConfiguration}">
 
-        <div>
-            <span th:text="#{algorithm-config.loaded-users}"></span>:
-            <span th:text="*{numberOfUsers}"></span>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-6">
-                <div class="custom-file">
-                    <input class="custom-file-input" id="file" name="file" type="file">
-                    <label class="custom-file-label" for="file" th:text="#{common.choose-file}"></label>
-                </div>
-                <div>
-                    <span th:text="#{common.required-file-format}"></span>:
-                    <span class="font-italic" th:text="${usersFileFormat}"></span>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <button class="btn btn-info"
-                        th:formaction="@{/assignment/import}"
+        <div class="row">
+            <div class="col-sm-3" th:text="#{algorithm-config.loaded-users}"></div>
+            <div class="col-sm-1" th:text="*{numberOfUsers}"></div>
+            <div class="col-sm-1">
+                <button class="btn btn-info" data-target="#loadFileModal"
                         th:text="#{common.load-file-btn}"
-                        type="submit"></button>
+                        data-toggle="modal" type="button"></button>
             </div>
+
         </div>
 
         <div class="form-group row">
@@ -57,6 +44,32 @@
                 th:text="#{algorithm-config.execute-btn}"
                 type="submit"></button>
     </form>
+</div>
+
+<div aria-hidden="true" aria-labelledby="loadFileModalLabel" class="modal fade" id="loadFileModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/assignment/import" enctype="multipart/form-data" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadFileModalLabel" th:text="#{algorithm-config.import.title}"></h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <span th:text="#{common.required-file-format}"></span>:
+                        <span class="font-italic" th:text="${usersFileFormat}"></span>
+                    </div>
+                    <input class="filestyle" id="charactersFile" name="file" th:data-text="#{common.choose-file}" type="file">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}" type="button"></button>
+                    <button class="btn btn-primary" th:text="#{common.load-file-btn}" type="submit"></button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div th:replace="fragments/footer :: scripts">
