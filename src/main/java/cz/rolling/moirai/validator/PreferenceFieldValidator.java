@@ -1,10 +1,14 @@
 package cz.rolling.moirai.validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.lang.reflect.Field;
 
 public class PreferenceFieldValidator implements ConstraintValidator<PreferenceFieldConstraint, Object> {
+    Logger logger = LoggerFactory.getLogger(PreferenceFieldValidator.class);
     private String numberField;
     private String preferencesField;
 
@@ -30,7 +34,7 @@ public class PreferenceFieldValidator implements ConstraintValidator<PreferenceF
 
             return parts.length == numberFieldValue;
         } catch (Exception e) {
-            // log error
+            logger.error("Constraint error", e);
             return false;
         }
     }
