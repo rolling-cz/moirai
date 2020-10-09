@@ -13,6 +13,9 @@
     <p th:text="#{about-page.desc-intro}"></p>
     <p th:text="#{about-page.desc-purpose}"></p>
     <p th:text="#{about-page.desc-contact}"></p>
+    <div>
+        <span th:text="#{about-page.version}"></span><span th:text="${version}"></span>
+    </div>
 </div>
 
 <div th:replace="fragments/footer :: scripts">
