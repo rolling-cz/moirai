@@ -35,6 +35,13 @@
             </div>
         </div>
 
+        <div class="mt-2 mb-2">
+            <span class="text-danger"
+                  th:if="${errorMessage != ''}"
+                  th:text="${#messages.msgWithParams(errorMessage, errorParams)}">
+            </span>
+        </div>
+
         <button class="btn btn-secondary"
                 th:formaction="@{/assignment/previous}"
                 th:text="#{common.previous-btn}"

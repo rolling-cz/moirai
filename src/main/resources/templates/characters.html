@@ -24,6 +24,13 @@
 
         </div>
 
+        <div class="mt-2 mb-2">
+            <span class="text-danger"
+                  th:if="${errorMessage != ''}"
+                  th:text="${#messages.msgWithParams(errorMessage, errorParams)}">
+            </span>
+        </div>
+
         <div class="mt-4">
             <button class="btn btn-secondary"
                     th:formaction="@{/characters/previous}"
@@ -40,7 +47,7 @@
 <div aria-hidden="true" aria-labelledby="loadFileModalLabel" class="modal fade" id="loadFileModal" role="dialog" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="/characters/import" enctype="multipart/form-data" method="POST">
+            <form action="/characters/import" enctype="multipart/form-data" method="POST" th:object="${formUpload}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loadFileModalLabel" th:text="#{characters-config.import.title}"></h5>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button">
