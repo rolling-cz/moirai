@@ -2,6 +2,7 @@ package cz.rolling.moirai.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.form.MainConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import org.springframework.core.io.InputStreamResource;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping({ "/configuration" })
@@ -40,6 +43,15 @@ public class ConfigurationController {
 
     @GetMapping
     public String configuration() {
+        return "configuration";
+    }
+
+    @GetMapping("/remove/{index}")
+    public String remove(@PathVariable int index) {
+        List<CharacterAttribute> attributeList = wizardState.getMainConfiguration().getAttributeList();
+        if (index >= 0 && index <= attributeList.size()) {
+            attributeList.remove(index);
+        }
         return "configuration";
     }
 

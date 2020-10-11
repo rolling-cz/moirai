@@ -1,15 +1,19 @@
 package cz.rolling.moirai.model.form;
 
 import cz.rolling.moirai.model.common.ApproachType;
+import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.validator.PreferenceFieldConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,4 +39,8 @@ public class MainConfiguration {
     private int numberOfHatedCharacters = 0;
 
     private String ratingForHatedCharacters = "-10";
+
+    @Valid
+    @NotNull
+    List<CharacterAttribute> attributeList = new ArrayList<>();
 }

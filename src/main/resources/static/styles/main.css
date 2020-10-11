@@ -32,3 +32,7 @@
 .index-tiles .blue {
     background: #2672EC;
 }
+
+.approach-section {
+    display: none;
+}

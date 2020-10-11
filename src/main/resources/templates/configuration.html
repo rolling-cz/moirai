@@ -8,6 +8,64 @@
 <div th:replace="fragments/header :: nav('home')">
 </div>
 
+<script th:inline="javascript">
+    $(document).ready(function () {
+
+        $("#approachSelector :input").change(function () {
+            showSection($(this).val())
+        })
+
+        showSection([[${mainConfiguration.approachType}]]);
+    })
+
+    function showSection(section) {
+        /*[# th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"]*/
+        $("#section-" + [[${type}]]).hide(200);
+        /*[/]*/
+        $("#section-" + section).show(200);
+    }
+
+    let last = [[${mainConfiguration.attributeList.size()}]];
+
+    let optionList = "";
+    /*[# th:each="fn : ${T(cz.rolling.moirai.model.common.RatingFunction).values()}"]*/
+    optionList += "<option value='" + [[${fn}]] + "' >" + [[#{${fn.getKey()}}]] + "</option>";
+    /*[/]*/
+
+    function addAttr() {
+        $("#attrList").append("<div class='row'>" +
+            "                    <div class='col-sm-2'>" +
+            "                        <input type='text' class='form-control' id='attributeList" + last + ".name' name='attributeList[" + last + "].name' >" +
+            "                    </div>" +
+            "                    <div class='col-sm-2'>" +
+            "                        <input type='text' class='form-control' id='attributeList" + last + ".min' name='attributeList[" + last + "].min' >" +
+            "                    </div>" +
+            "                    <div class='col-sm-2'>" +
+            "                        <input type='text' class='form-control' id='attributeList" + last + ".max' name='attributeList[" + last + "].max' >" +
+            "                    </div>" +
+            "                    <div class='col-sm-2'>" +
+            "                        <input type='text' class='form-control' id='attributeList" + last + ".rating' name='attributeList[" + last + "].rating' >" +
+            "                    </div>" +
+            "                    <div class='col-sm-2'>" +
+            "                       <select id='attributeList" + last + ".function' name='attributeList[" + last + "].function' class='custom-select'>" + optionList +
+            "                        </select>" +
+            "                    </div>" +
+            "                    <div class='col-sm-1'>" +
+            "                        <button class='btn btn-danger btn-sm' onclick='deleteAttr(this)'>" +
+            "                            <i class='fa fa-minus fa-sm' ></i>" +
+            "                        </button>" +
+            "                    </div>" +
+            "                </div>"
+        );
+        last++;
+    }
+
+    function deleteAttr(btn) {
+        const rowDiv = $(btn).closest(".row")
+        rowDiv.remove();
+    }
+</script>
+
 <div class="container mt-4">
     <h3 th:text="#{assignment-config.title}"></h3>
     <p th:text="#{assignment-config.desc}"></p>
@@ -16,61 +74,22 @@
             <label class="col-sm-3 col-form-label" th:text="#{assignment-config.approach}"></label>
             <div class="col-sm-9">
 
-                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-info btn-rounded"
-                               th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"
-                               th:classappend="${mainConfiguration.getApproachType() == type} ? 'active' : ''" >
-                            <input type="radio" autocomplete="off"
-                                   th:field="*{approachType}"
-                                   th:value="${type}"
-                                   th:text="#{${type.getKey()}}">
-                        </label>
+                <div class="btn-group btn-group-toggle" data-toggle="buttons" id="approachSelector">
+                    <label class="btn btn-info btn-rounded"
+                           th:classappend="${mainConfiguration.getApproachType() == type} ? 'active' : ''"
+                           th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}">
+                        <input autocomplete="off" th:field="*{approachType}"
+                               th:text="#{${type.getKey()}}"
+                               th:value="${type}"
+                               type="radio">
+                    </label>
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="numberOfPreferredCharacters" class="col-sm-3 col-form-label" th:text="#{assignment-config.preferred-characters}"></label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control"
-                       id="numberOfPreferredCharacters"
-                       th:classappend="${#fields.hasErrors('numberOfPreferredCharacters')} ? 'is-invalid' : ''"
-                       th:field="*{numberOfPreferredCharacters}"
-                       th:value="${mainConfiguration.getNumberOfPreferredCharacters()}">
-            </div>
-            <div class="col-sm-4">
-                <span class="text-danger"
-                      th:errors="*{numberOfPreferredCharacters}" th:if="${#fields.hasErrors('numberOfPreferredCharacters')}"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="ratingForPreferredCharacters" th:text="#{assignment-config.rating-for-preferred}"></label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control"
-                       id="ratingForPreferredCharacters"
-                       th:field="*{ratingForPreferredCharacters}"
-                       th:value="${mainConfiguration.getRatingForPreferredCharacters()}"
-                       placeholder="7,5,3"
-                >
-            </div>
-            <div class="col-sm-4">
-                <span class="text-danger"
-                      th:errors="*{ratingForPreferredCharacters}" th:if="${#fields.hasErrors('ratingForPreferredCharacters')}"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="ratingForNotSpecifiedChar" th:text="#{assignment-config.rating-not-specified-char}"></label>
-            <div class="col-sm-2">
-                <input class="form-control" id="ratingForNotSpecifiedChar"
-                       th:field="*{ratingForNotSpecifiedChar}"
-                       th:value="${mainConfiguration.getRatingForNotSpecifiedChar()}"
-                       type="text">
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="ratingForGender" th:text="#{assignment-config.rating-gender}"></label>
+            <label class="col-sm-3 col-form-label" for="ratingForGender"
+                   th:text="#{assignment-config.rating-gender}"></label>
             <div class="col-sm-2">
                 <input class="form-control" id="ratingForGender"
                        th:field="*{ratingForGender}"
@@ -79,36 +98,158 @@
             </div>
         </div>
 
+        <div class="approach-section" id="section-CHARACTERS">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="numberOfPreferredCharacters"
+                       th:text="#{assignment-config.preferred-characters}"></label>
+                <div class="col-sm-4">
+                    <input class="form-control" id="numberOfPreferredCharacters"
+                           th:classappend="${#fields.hasErrors('numberOfPreferredCharacters')} ? 'is-invalid' : ''"
+                           th:field="*{numberOfPreferredCharacters}"
+                           th:value="${mainConfiguration.getNumberOfPreferredCharacters()}"
+                           type="text">
+                </div>
+                <div class="col-sm-4">
+                    <span class="text-danger"
+                          th:errors="*{numberOfPreferredCharacters}"
+                          th:if="${#fields.hasErrors('numberOfPreferredCharacters')}"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="ratingForPreferredCharacters"
+                       th:text="#{assignment-config.rating-for-preferred}"></label>
+                <div class="col-sm-4">
+                    <input class="form-control" id="ratingForPreferredCharacters"
+                           placeholder="7,5,3"
+                           th:field="*{ratingForPreferredCharacters}"
+                           th:value="${mainConfiguration.getRatingForPreferredCharacters()}"
+                           type="text"
+                    >
+                </div>
+                <div class="col-sm-4">
+                    <span class="text-danger"
+                          th:errors="*{ratingForPreferredCharacters}"
+                          th:if="${#fields.hasErrors('ratingForPreferredCharacters')}"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="ratingForNotSpecifiedChar"
+                       th:text="#{assignment-config.rating-not-specified-char}"></label>
+                <div class="col-sm-2">
+                    <input class="form-control" id="ratingForNotSpecifiedChar"
+                           th:field="*{ratingForNotSpecifiedChar}"
+                           th:value="${mainConfiguration.getRatingForNotSpecifiedChar()}"
+                           type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="approach-section" id="section-CONTENT">
+            <div>
+                <h5>Content attributes
+                    <button class="btn btn-info btn-sm" onclick="addAttr()" type="button">
+                        <i class="fa fa-plus fa-sm"></i>
+                    </button>
+                </h5>
+            </div>
+            <div class="row">
+                <div class="col-sm-2 font-weight-bold text-center">Name</div>
+                <div class="col-sm-2 font-weight-bold text-center">Min</div>
+                <div class="col-sm-2 font-weight-bold text-center">Max</div>
+                <div class="col-sm-2 font-weight-bold text-center">Rating</div>
+                <div class="col-sm-2 font-weight-bold text-center">Function</div>
+                <div class="col-sm-1"></div>
+            </div>
+
+            <div id="attrList">
+                <div class="row" th:each="attr, status: *{attributeList}">
+                    <div class="col-sm-2">
+                        <input class="form-control"
+                               th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].name')} ? 'is-invalid' : ''"
+                               th:field="*{attributeList[__${status.index}__].name}" type="text">
+                        <span class="text-danger"
+                              th:errors="*{attributeList[__${status.index}__].name}"></span>
+                    </div>
+                    <div class="col-sm-2">
+                        <input class="form-control"
+                               th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].min')} ? 'is-invalid' : ''"
+                               th:field="*{attributeList[__${status.index}__].min}" type="text">
+                        <span class="text-danger"
+                              th:errors="*{attributeList[__${status.index}__].min}"></span>
+                    </div>
+                    <div class="col-sm-2">
+                        <input class="form-control"
+                               th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].max')} ? 'is-invalid' : ''"
+                               th:field="*{attributeList[__${status.index}__].max}" type="text">
+                        <span class="text-danger"
+                              th:errors="*{attributeList[__${status.index}__].max}"></span>
+                    </div>
+                    <div class="col-sm-2">
+                        <input class="form-control"
+                               th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].rating')} ? 'is-invalid' : ''"
+                               th:field="*{attributeList[__${status.index}__].rating}" type="text">
+                        <span class="text-danger"
+                              th:errors="*{attributeList[__${status.index}__].rating}"></span>
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="custom-select"
+                                th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].function')} ? 'is-invalid' : ''"
+                                th:field="*{attributeList[__${status.index}__].function}">
+                            <option th:each="fn : ${T(cz.rolling.moirai.model.common.RatingFunction).values()}"
+                                    th:text="#{${fn.getKey()}}"
+                                    th:value="${fn}"></option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1">
+                        <a class="btn btn-danger btn-sm"
+                           role="button"
+                           th:href="'/configuration/remove/' + ${status.index}">
+                            <i class="fa fa-minus fa-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span class="text-danger"
+                      th:errors="*{attributeList}"
+                      th:if="${#fields.hasErrors('attributeList')}"></span>
+            </div>
+        </div>
+
         <div>
             <span class="text-danger" th:errors="*{global}"> </span>
         </div>
 
-        <button class="btn btn-primary"
+        <button class="btn btn-primary mt-4"
                 th:formaction="@{/configuration/next}"
                 th:text="#{common.next-btn}"
                 type="submit"></button>
     </form>
 </div>
 
-<div class="modal fade" id="loadFileModal" tabindex="-1" role="dialog" aria-labelledby="loadFileModalLabel" aria-hidden="true">
+<div aria-hidden="true" aria-labelledby="loadFileModalLabel" class="modal fade" id="loadFileModal" role="dialog"
+     tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form action="/configuration/import" enctype="multipart/form-data" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loadFileModalLabel" th:text="#{assignment-config.import.title}"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="file" name="file">
+                        <input class="custom-file-input" id="file" name="file" type="file">
                         <label class="custom-file-label" for="file" th:text="#{common.choose-file}"></label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}"></button>
-                    <button type="submit" class="btn btn-primary" th:text="#{assignment-config.import.load-btn}"></button>
+                    <button class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}"
+                            type="button"></button>
+                    <button class="btn btn-primary" th:text="#{assignment-config.import.load-btn}"
+                            type="submit"></button>
                 </div>
             </form>
         </div>
