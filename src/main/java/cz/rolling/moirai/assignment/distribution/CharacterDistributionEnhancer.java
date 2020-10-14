@@ -33,7 +33,7 @@ public class CharacterDistributionEnhancer implements DistributionEnhancer{
         }
 
         solution.getAssignmentList().forEach(a -> {
-            Integer rank = preferenceResolver.getAssignmentType(a);
+            Integer rank = preferenceResolver.getRating(a);
             if (rank != null) {
                 Counter counter = goodAssignments.get(String.valueOf(rank));
                 counter.add();

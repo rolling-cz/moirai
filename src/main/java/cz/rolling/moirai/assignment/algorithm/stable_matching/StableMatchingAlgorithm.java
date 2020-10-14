@@ -1,7 +1,7 @@
 package cz.rolling.moirai.assignment.algorithm.stable_matching;
 
 import cz.rolling.moirai.assignment.algorithm.Algorithm;
-import cz.rolling.moirai.assignment.distribution.EmptyDistributionEnhancer;
+import cz.rolling.moirai.assignment.distribution.ContentDistributionEnhancer;
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.assignment.preference.ContentPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
@@ -31,7 +31,8 @@ public class StableMatchingAlgorithm implements Algorithm {
 
     @Override
     public SolutionHolder findBestAssignment() {
-        SolutionHolder solutionHolder = new SolutionHolder(preferenceResolver, new EmptyDistributionEnhancer(), 1);
+        SolutionHolder solutionHolder = new SolutionHolder(
+                preferenceResolver, new ContentDistributionEnhancer(preferenceResolver), 1);
         solutionHolder.saveSolution(calculateSolution());
         return solutionHolder;
     }
@@ -45,7 +46,7 @@ public class StableMatchingAlgorithm implements Algorithm {
     }
 
     protected int[][] transformPreferences(Function<Assignment, Integer> getKeyFn,
-                                         Function<Assignment, Integer> getValueFn) {
+                                           Function<Assignment, Integer> getValueFn) {
         List<List<IdWithRating>> preference2dList = init2dList(numberOfCharacters);
         preferenceResolver.getPreferenceMap().forEach(((assignment, rating) ->
                 preference2dList.get(getKeyFn.apply(assignment)).add(

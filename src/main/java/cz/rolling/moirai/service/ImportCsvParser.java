@@ -5,6 +5,7 @@ import cz.rolling.moirai.exception.UnknownCharacterImportException;
 import cz.rolling.moirai.exception.UnknownGenderImportException;
 import cz.rolling.moirai.exception.WrongAttributeValueImportException;
 import cz.rolling.moirai.exception.WrongLineImportException;
+import cz.rolling.moirai.model.common.ApproachType;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.Character;
@@ -52,7 +53,9 @@ public class ImportCsvParser {
             newCharacter.setId(index);
             newCharacter.setName(record.get(CharacterProperty.NAME.getKey()));
             newCharacter.setGender(translateGender(record.get(CharacterProperty.GENDER.getKey()), index + 1));
-            newCharacter.setAttributeMap(loadAttributes(record, mainConfiguration, index + 1));
+            if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
+                newCharacter.setAttributeMap(loadAttributes(record, mainConfiguration, index + 1));
+            }
             characterList.add(newCharacter);
             index++;
         }
@@ -118,15 +121,19 @@ public class ImportCsvParser {
             newUser.setSurname(record.get(UserProperty.SURNAME.getKey()));
             newUser.setWantsPlayGender(translateGender(record.get(UserProperty.GENDER.getKey()), userId + 1));
 
-            for (int i = 1; i <= mainConfiguration.getNumberOfPreferredCharacters(); i++) {
-                String definedCharacterName = record.get(WANTED_PREFIX + i);
-                newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
+            if (mainConfiguration.getApproachType() == ApproachType.CHARACTERS) {
+                for (int i = 1; i <= mainConfiguration.getNumberOfPreferredCharacters(); i++) {
+                    String definedCharacterName = record.get(WANTED_PREFIX + i);
+                    newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
+                }
+                for (int i = 1; i <= mainConfiguration.getNumberOfHatedCharacters(); i++) {
+                    String definedCharacterName = record.get(HATED_PREFIX + i);
+                    newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
+                }
             }
-            for (int i = 1; i <= mainConfiguration.getNumberOfHatedCharacters(); i++) {
-                String definedCharacterName = record.get(HATED_PREFIX + i);
-                newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
+            if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
+                newUser.setAttributeMap(loadAttributes(record, mainConfiguration, userId + 1));
             }
-            newUser.setAttributeMap(loadAttributes(record, mainConfiguration, userId + 1));
 
             userList.add(newUser);
             userId++;
@@ -139,7 +146,9 @@ public class ImportCsvParser {
         for (CharacterProperty value : CharacterProperty.values()) {
             columnList.add(value.getKey());
         }
-        mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
+        if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
+            mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
+        }
         return columnList;
     }
 
@@ -152,13 +161,17 @@ public class ImportCsvParser {
         for (UserProperty value : UserProperty.values()) {
             columnList.add(value.getKey());
         }
-        IntStream.range(0, mainConfiguration.getNumberOfPreferredCharacters()).forEach(
-                i -> columnList.add(WANTED_PREFIX + (i + 1))
-        );
-        IntStream.range(0, mainConfiguration.getNumberOfHatedCharacters()).forEach(
-                i -> columnList.add(HATED_PREFIX + (i + 1))
-        );
-        mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
+        if (mainConfiguration.getApproachType() == ApproachType.CHARACTERS) {
+            IntStream.range(0, mainConfiguration.getNumberOfPreferredCharacters()).forEach(
+                    i -> columnList.add(WANTED_PREFIX + (i + 1))
+            );
+            IntStream.range(0, mainConfiguration.getNumberOfHatedCharacters()).forEach(
+                    i -> columnList.add(HATED_PREFIX + (i + 1))
+            );
+        }
+        if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
+            mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
+        }
         return columnList;
     }
 

@@ -6,7 +6,6 @@ import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.CharacterType;
-import cz.rolling.moirai.model.common.Gender;
 import cz.rolling.moirai.model.common.UnwantedAssignmentType;
 import cz.rolling.moirai.model.common.User;
 import cz.rolling.moirai.model.content.ContentConfiguration;
@@ -55,7 +54,7 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
     }
 
     @Override
-    public Integer getAssignmentType(Assignment a) {
+    public Integer getRating(Assignment a) {
         return usersRankForChar.get(a);
     }
 
@@ -184,9 +183,6 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
     public boolean isCorrectGender(Integer userId, Integer charId) {
         User u = userList.get(userId);
         Character ch = characterList.get(charId);
-
-        return u.getWantsPlayGender() == ch.getGender() ||
-                u.getWantsPlayGender() == Gender.AMBIGUOUS ||
-                ch.getGender() == Gender.AMBIGUOUS;
+        return PreferenceUtils.isCorrectGender(u, ch);
     }
 }

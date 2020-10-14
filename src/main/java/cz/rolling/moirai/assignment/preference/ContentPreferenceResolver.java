@@ -15,16 +15,30 @@ public class ContentPreferenceResolver implements PreferenceResolver {
 
     private final Map<Assignment, Integer> preferenceMap;
 
-    public ContentPreferenceResolver(WizardState wizardState){
-        preferenceMap = collectPreferences(wizardState);
+    private final int maximumRating;
+
+    public ContentPreferenceResolver(WizardState wizardState) {
+        maximumRating = calculateMaximumRating(wizardState);
+        preferenceMap = collectPreferences(maximumRating, wizardState);
     }
 
-    private static Map<Assignment, Integer> collectPreferences(WizardState wizardState) {
-        Map<Assignment, Integer> prefMap = new HashMap<>();
+    private static int calculateMaximumRating(WizardState wizardState) {
+        int rating = wizardState.getMainConfiguration().getRatingForGender();
+        for (CharacterAttribute attr : wizardState.getMainConfiguration().getAttributeList()) {
+            int maxDelta = attr.getMax() - attr.getMin();
+            rating += attr.getFunction().getRating(attr.getRating(), maxDelta);
+        }
+        return -1 * rating;
+    }
 
-        for (User user: wizardState.getAlgorithmConfiguration().getUserList()) {
-            for (Character character: wizardState.getCharactersConfiguration().getCharacterList()) {
-                Integer rating = calculateRating(user, character, wizardState.getMainConfiguration().getAttributeList());
+    private static Map<Assignment, Integer> collectPreferences(int maximumRating, WizardState wizardState) {
+        Map<Assignment, Integer> prefMap = new HashMap<>();
+        int ratingForGender = wizardState.getMainConfiguration().getRatingForGender();
+        List<CharacterAttribute> attributeList = wizardState.getMainConfiguration().getAttributeList();
+
+        for (User user : wizardState.getAlgorithmConfiguration().getUserList()) {
+            for (Character character : wizardState.getCharactersConfiguration().getCharacterList()) {
+                Integer rating = calculateRating(maximumRating, ratingForGender, user, character, attributeList);
                 prefMap.put(new Assignment(user.getId(), character.getId()), rating);
             }
         }
@@ -32,8 +46,12 @@ public class ContentPreferenceResolver implements PreferenceResolver {
         return prefMap;
     }
 
-    private static int calculateRating(User user, Character character, List<CharacterAttribute> attributeList) {
-        int rating = 0;
+    private static int calculateRating(int maximumRating,
+                                       int ratingForGender,
+                                       User user,
+                                       Character character,
+                                       List<CharacterAttribute> attributeList) {
+        int rating = maximumRating;
 
         Map<String, Integer> userAttrMap = user.getAttributeMap();
         Map<String, Integer> charAttrMap = character.getAttributeMap();
@@ -52,7 +70,15 @@ public class ContentPreferenceResolver implements PreferenceResolver {
             rating += attr.getFunction().getRating(attr.getRating(), delta);
         }
 
+        if (!PreferenceUtils.isCorrectGender(user, character)) {
+            rating += ratingForGender;
+        }
+
         return rating;
+    }
+
+    public int getMaximumRating() {
+        return maximumRating;
     }
 
     @Override
@@ -65,8 +91,7 @@ public class ContentPreferenceResolver implements PreferenceResolver {
     }
 
     @Override
-    public Integer getAssignmentType(Assignment a) {
-        // TODO translate to buckets
+    public Integer getRating(Assignment a) {
         return preferenceMap.get(a);
     }
 

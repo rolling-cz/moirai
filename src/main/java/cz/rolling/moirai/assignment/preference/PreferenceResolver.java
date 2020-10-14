@@ -7,5 +7,5 @@ import java.util.List;
 public interface PreferenceResolver {
     int calculateRating(List<Assignment> assignmentList);
 
-    Integer getAssignmentType(Assignment a);
+    Integer getRating(Assignment a);
 }
