@@ -1,6 +1,6 @@
-package cz.rolling.moirai.assignment.algorithm.content_dfs;
+package cz.rolling.moirai.assignment.algorithm.character_dfs;
 
-import cz.rolling.moirai.assignment.helper.PreferencesHolder;
+import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.CharacterType;
 import cz.rolling.moirai.model.content.ContentConfiguration;
@@ -17,7 +17,7 @@ import java.util.Set;
 public class AssignmentTask {
 
     private final ContentConfiguration configuration;
-    private final PreferencesHolder preferencesHolder;
+    private final CharacterPreferenceResolver preferencesHolder;
     private final List<Assignment> assignmentList;
     private final Set<Integer> assignedCharIdSet;
     private final Set<Integer> unwantedCharIdSet;
@@ -38,7 +38,7 @@ public class AssignmentTask {
         currentRank = previousTask.currentRank + preferencesHolder.calcRatingOfAssignment(newAssignment);
     }
 
-    public AssignmentTask(ContentConfiguration configuration, PreferencesHolder preferencesHolder) {
+    public AssignmentTask(ContentConfiguration configuration, CharacterPreferenceResolver preferencesHolder) {
         this.configuration = configuration;
         this.preferencesHolder = preferencesHolder;
         this.assignmentList = new ArrayList<>();

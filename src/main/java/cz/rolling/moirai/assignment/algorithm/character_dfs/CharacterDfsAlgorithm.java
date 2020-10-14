@@ -1,28 +1,30 @@
-package cz.rolling.moirai.assignment.algorithm.content_dfs;
+package cz.rolling.moirai.assignment.algorithm.character_dfs;
 
 
 import cz.rolling.moirai.assignment.algorithm.Algorithm;
-import cz.rolling.moirai.assignment.helper.PreferencesHolder;
+import cz.rolling.moirai.assignment.distribution.CharacterDistributionEnhancer;
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
+import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.content.ContentConfiguration;
 
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class ContentDfsAlgorithm implements Algorithm {
+public class CharacterDfsAlgorithm implements Algorithm {
 
-    private final PreferencesHolder preferencesHolder;
+    private final CharacterPreferenceResolver preferencesHolder;
     private final ContentConfiguration configuration;
 
-    public ContentDfsAlgorithm(PreferencesHolder preferencesHolder, ContentConfiguration configuration) {
+    public CharacterDfsAlgorithm(CharacterPreferenceResolver preferencesHolder, ContentConfiguration configuration) {
         this.preferencesHolder = preferencesHolder;
         this.configuration = configuration;
     }
 
     @Override
     public SolutionHolder findBestAssignment() {
-        SolutionHolder solutionHolder = new SolutionHolder(preferencesHolder, configuration);
+        CharacterDistributionEnhancer enhancer = new CharacterDistributionEnhancer(configuration.getPreferencesPerUser(), preferencesHolder);
+        SolutionHolder solutionHolder = new SolutionHolder(preferencesHolder, enhancer, configuration.getNumberOfBestSolutions());
 
         Deque<AssignmentTask> taskQueue = new ConcurrentLinkedDeque<>();
         AssignmentProcessor processor = new AssignmentProcessor(preferencesHolder, solutionHolder, configuration, configuration.getSearchWide());

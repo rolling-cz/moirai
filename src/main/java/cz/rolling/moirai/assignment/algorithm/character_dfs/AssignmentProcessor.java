@@ -1,7 +1,7 @@
-package cz.rolling.moirai.assignment.algorithm.content_dfs;
+package cz.rolling.moirai.assignment.algorithm.character_dfs;
 
-import cz.rolling.moirai.assignment.helper.PreferencesHolder;
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
+import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.CharacterType;
 import cz.rolling.moirai.model.content.ContentConfiguration;
@@ -15,14 +15,14 @@ import java.util.function.BiFunction;
 
 public class AssignmentProcessor {
 
-    private final PreferencesHolder preferencesHolder;
+    private final CharacterPreferenceResolver preferencesHolder;
     private final SolutionHolder solutionHolder;
     private final List<Integer> allUserIdList = new ArrayList<>();
     private final int wideOfSearch;
 
     private final Logger logger = LoggerFactory.getLogger(AssignmentProcessor.class);
 
-    public AssignmentProcessor(PreferencesHolder preferencesHolder, SolutionHolder solutionHolder, ContentConfiguration configuration, int wideOfSearch) {
+    public AssignmentProcessor(CharacterPreferenceResolver preferencesHolder, SolutionHolder solutionHolder, ContentConfiguration configuration, int wideOfSearch) {
         this.preferencesHolder = preferencesHolder;
         this.solutionHolder = solutionHolder;
         this.wideOfSearch = wideOfSearch;
@@ -34,7 +34,7 @@ public class AssignmentProcessor {
 
     public List<AssignmentTask> process(AssignmentTask task) {
         if (task.isComplete()) {
-            solutionHolder.saveSolution(task);
+            solutionHolder.saveSolution(task.getAssignmentList());
             return Collections.emptyList();
         }
 
@@ -43,7 +43,7 @@ public class AssignmentProcessor {
             if (depth < 100) {
                 logger.debug("cut at depth " + depth);
             }
-            solutionHolder.saveFailedSolution(task);
+            solutionHolder.saveFailedSolution();
             return Collections.emptyList();
         }
 
@@ -91,7 +91,7 @@ public class AssignmentProcessor {
         }
 
         if (newTasks.isEmpty()) {
-            solutionHolder.saveFailedSolution(task);
+            solutionHolder.saveFailedSolution();
         }
 
         Collections.reverse(newTasks);

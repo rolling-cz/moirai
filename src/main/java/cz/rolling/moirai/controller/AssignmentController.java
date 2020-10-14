@@ -1,9 +1,11 @@
 package cz.rolling.moirai.controller;
 
 import cz.rolling.moirai.assignment.algorithm.AlgorithmFactory;
+import cz.rolling.moirai.assignment.algorithm.AlgorithmFeature;
 import cz.rolling.moirai.exception.MoiraiException;
 import cz.rolling.moirai.model.form.AlgorithmConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
+import cz.rolling.moirai.service.AlgorithmFeatureService;
 import cz.rolling.moirai.service.ImportCsvParser;
 import cz.rolling.moirai.service.WizardValidator;
 import org.springframework.stereotype.Controller;
@@ -18,26 +20,29 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping({"/assignment"})
 public class AssignmentController {
 
     private final WizardState wizardState;
-
     private final List<AlgorithmFactory> algorithmFactorySet;
-
     private final ImportCsvParser importCsvParser;
-
     private final WizardValidator wizardValidator;
+    private final AlgorithmFeatureService algorithmFeatureService;
 
     public AssignmentController(WizardState wizardState,
                                 List<AlgorithmFactory> algorithmFactorySet,
-                                ImportCsvParser importCsvParser, WizardValidator wizardValidator) {
+                                ImportCsvParser importCsvParser,
+                                WizardValidator wizardValidator,
+                                AlgorithmFeatureService algorithmFeatureService) {
         this.wizardState = wizardState;
         this.algorithmFactorySet = algorithmFactorySet;
         this.importCsvParser = importCsvParser;
         this.wizardValidator = wizardValidator;
+        this.algorithmFeatureService = algorithmFeatureService;
     }
 
     @GetMapping
@@ -88,8 +93,10 @@ public class AssignmentController {
     }
 
     private List<AlgorithmFactory> filterFactories() {
-        // TODO filter by feature labels
-        return algorithmFactorySet;
+        Set<AlgorithmFeature> requiredFeatureSet = algorithmFeatureService.determineRequiredFeatureSet(wizardState);
+        return algorithmFactorySet.stream()
+                .filter(factory -> factory.getSupportedFeatures().containsAll(requiredFeatureSet))
+                .collect(Collectors.toList());
     }
 
     private void saveConfig(AlgorithmConfiguration newConfig) {

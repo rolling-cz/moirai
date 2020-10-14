@@ -1,7 +1,7 @@
-package cz.rolling.moirai.assignment.helper;
+package cz.rolling.moirai.assignment.preference;
 
 
-import cz.rolling.moirai.assignment.algorithm.content_dfs.AssignmentTask;
+import cz.rolling.moirai.assignment.algorithm.character_dfs.AssignmentTask;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.Character;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PreferencesHolder {
+public class CharacterPreferenceResolver implements PreferenceResolver {
 
     private final Map<Assignment, Integer> usersRankForChar = new HashMap<>();
     private final List<Character> characterList;
@@ -30,7 +30,10 @@ public class PreferencesHolder {
     private final Set<Integer> usersForSingleRole = new HashSet<>();
     private final Set<Integer> usersForDoubleRole = new HashSet<>();
 
-    public PreferencesHolder(ContentConfiguration configuration, Set<AssignmentWithRank> preferenceSet, List<Character> characterList, List<User> userList) {
+    public CharacterPreferenceResolver(ContentConfiguration configuration,
+                                       Set<AssignmentWithRank> preferenceSet,
+                                       List<Character> characterList,
+                                       List<User> userList) {
         this.configuration = configuration;
         this.characterList = characterList;
         this.userList = userList;
@@ -38,6 +41,42 @@ public class PreferencesHolder {
         initRatingsByAssignment(preferenceSet);
         initWantedCharacters();
         initSingleDoubleRoles(userList);
+    }
+
+    @Override
+    public int calculateRating(List<Assignment> assignments) {
+        int rankSum = 0;
+
+        for (Assignment a : assignments) {
+            rankSum += calcRatingOfAssignment(a);
+        }
+
+        return rankSum;
+    }
+
+    @Override
+    public Integer getAssignmentType(Assignment a) {
+        return usersRankForChar.get(a);
+    }
+
+    public UnwantedAssignmentType getUnwantedAssignmentType(Assignment assignment) {
+        Character ch = characterList.get(assignment.getCharId());
+        User u = userList.get(assignment.getUserId());
+
+        if (!isCorrectGender(u.getId(), ch.getId())) {
+            return UnwantedAssignmentType.UNWANTED_CHAR_GENDER;
+        } else if (ch.getType() == CharacterType.FULL && !u.isWantsToPlaySingleRole()) {
+            return UnwantedAssignmentType.UNWANTED_SINGLE_ROLE;
+        } else if ((ch.getType() == CharacterType.FIRST_PART || ch.getType() == CharacterType.SECOND_PART)
+                && !u.isWantsToPlayDoubleRole()) {
+            return UnwantedAssignmentType.UNWANTED_DOUBLE_ROLE;
+        } else {
+            if (u.getPreferences().isEmpty()) {
+                return UnwantedAssignmentType.UNWANTED_CHAR_BUT_NO_PREF;
+            } else {
+                return UnwantedAssignmentType.UNWANTED_CHAR;
+            }
+        }
     }
 
     private void initRatingsByAssignment(Set<AssignmentWithRank> preferenceSet) {
@@ -80,20 +119,6 @@ public class PreferencesHolder {
         return usersWantingCharacter.get(charId);
     }
 
-    public int rankAssignmentList(List<Assignment> assignments) {
-        int rankSum = 0;
-
-        for (Assignment a : assignments) {
-            rankSum += calcRatingOfAssignment(a);
-        }
-
-        return rankSum;
-    }
-
-    public Integer getAssignmentRank(Assignment a) {
-        return usersRankForChar.get(a);
-    }
-
     public int calcRatingOfAssignment(Assignment a) {
         Integer rank = usersRankForChar.get(a);
         if (rank != null) {
@@ -124,26 +149,6 @@ public class PreferencesHolder {
 
     public User getUser(Integer userId) {
         return userList.get(userId);
-    }
-
-    public UnwantedAssignmentType getUnwantedAssignmentType(Assignment assignment) {
-        Character ch = characterList.get(assignment.getCharId());
-        User u = userList.get(assignment.getUserId());
-
-        if (!isCorrectGender(u.getId(), ch.getId())) {
-            return UnwantedAssignmentType.UNWANTED_CHAR_GENDER;
-        } else if (ch.getType() == CharacterType.FULL && !u.isWantsToPlaySingleRole()) {
-            return UnwantedAssignmentType.UNWANTED_SINGLE_ROLE;
-        } else if ((ch.getType() == CharacterType.FIRST_PART || ch.getType() == CharacterType.SECOND_PART)
-                && !u.isWantsToPlayDoubleRole()) {
-            return UnwantedAssignmentType.UNWANTED_DOUBLE_ROLE;
-        } else {
-            if (u.getPreferences().isEmpty()) {
-                return UnwantedAssignmentType.UNWANTED_CHAR_BUT_NO_PREF;
-            } else {
-                return UnwantedAssignmentType.UNWANTED_CHAR;
-            }
-        }
     }
 
     public boolean isUserWillingToPlayCharType(CharacterType type, Integer userId) {

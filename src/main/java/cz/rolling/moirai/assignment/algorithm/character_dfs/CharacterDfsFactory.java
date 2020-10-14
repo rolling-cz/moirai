@@ -1,9 +1,9 @@
-package cz.rolling.moirai.assignment.algorithm.content_dfs;
+package cz.rolling.moirai.assignment.algorithm.character_dfs;
 
 import cz.rolling.moirai.assignment.algorithm.Algorithm;
 import cz.rolling.moirai.assignment.algorithm.AlgorithmFactory;
 import cz.rolling.moirai.assignment.algorithm.AlgorithmFeature;
-import cz.rolling.moirai.assignment.helper.PreferencesHolder;
+import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.common.AlgorithmSpecificParameter;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.content.ContentConfiguration;
@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class ContentDfsFactory implements AlgorithmFactory {
+public class CharacterDfsFactory implements AlgorithmFactory {
 
     private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Arrays.asList(
             AlgorithmFeature.CHARACTER_APPROACH,
@@ -55,8 +55,8 @@ public class ContentDfsFactory implements AlgorithmFactory {
     @Override
     public Algorithm createAlgorithmManager(WizardState wizardState) {
         ContentConfiguration configuration = createConfiguration(wizardState);
-        PreferencesHolder preferenceHolder = createPreferenceHolder(wizardState, configuration);
-        return new ContentDfsAlgorithm(preferenceHolder, configuration);
+        CharacterPreferenceResolver preferenceHolder = createPreferenceHolder(wizardState, configuration);
+        return new CharacterDfsAlgorithm(preferenceHolder, configuration);
     }
 
     private ContentConfiguration createConfiguration(WizardState wizardState) {
@@ -80,12 +80,12 @@ public class ContentDfsFactory implements AlgorithmFactory {
         return Arrays.stream(prefString).map(Integer::parseInt).collect(Collectors.toList());
     }
 
-    private PreferencesHolder createPreferenceHolder(WizardState wizardState, ContentConfiguration configuration) {
+    private CharacterPreferenceResolver createPreferenceHolder(WizardState wizardState, ContentConfiguration configuration) {
         Set<AssignmentWithRank> preferenceSet = new HashSet<>();
         wizardState.getAlgorithmConfiguration().getUserList().forEach(user -> {
             preferenceSet.addAll(user.getPreferences());
         });
-        return new PreferencesHolder(
+        return new CharacterPreferenceResolver(
                 configuration,
                 preferenceSet,
                 wizardState.getCharactersConfiguration().getCharacterList(),

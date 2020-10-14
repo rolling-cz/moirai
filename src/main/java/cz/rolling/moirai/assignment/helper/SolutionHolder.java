@@ -1,37 +1,33 @@
 package cz.rolling.moirai.assignment.helper;
 
-import cz.rolling.moirai.assignment.algorithm.content_dfs.AssignmentTask;
+import cz.rolling.moirai.assignment.distribution.DistributionEnhancer;
+import cz.rolling.moirai.assignment.preference.PreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.Solution;
-import cz.rolling.moirai.model.common.UnwantedAssignmentType;
 import cz.rolling.moirai.model.common.VerboseSolution;
-import cz.rolling.moirai.model.content.ContentConfiguration;
 import org.apache.solr.util.BoundedTreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class SolutionHolder {
 
-    private final PreferencesHolder preferencesHolder;
-    private final ContentConfiguration configuration;
+    private final PreferenceResolver preferenceResolver;
     private final BoundedTreeSet<Solution> solutionSet;
+    private final DistributionEnhancer distributionEnhancer;
+    private final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
     private int triedSolutionCounter = 0;
 
-    private final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
-
-    public SolutionHolder(PreferencesHolder preferencesHolder, ContentConfiguration configuration) {
-        solutionSet = new BoundedTreeSet<>(configuration.getNumberOfBestSolutions(), Comparator.reverseOrder());
-        this.preferencesHolder = preferencesHolder;
-        this.configuration = configuration;
+    public SolutionHolder(PreferenceResolver preferenceResolver,
+                          DistributionEnhancer distributionEnhancer,
+                          int numberOfSolutions) {
+        this.distributionEnhancer = distributionEnhancer;
+        solutionSet = new BoundedTreeSet<>(numberOfSolutions, Comparator.reverseOrder());
+        this.preferenceResolver = preferenceResolver;
     }
 
     public Solution getBestSolution() {
@@ -50,10 +46,9 @@ public class SolutionHolder {
         }
     }
 
-    public void saveSolution(AssignmentTask task) {
-        List<Assignment> assignments = task.getAssignmentList();
-        Integer rank = preferencesHolder.rankAssignmentList(assignments);
-        solutionSet.add(new Solution(rank, assignments));
+    public void saveSolution(List<Assignment> assignmentList) {
+        Integer rank = preferenceResolver.calculateRating(assignmentList);
+        solutionSet.add(new Solution(rank, assignmentList));
 
         triedSolutionCounter++;
         if (triedSolutionCounter % 10000 == 0) {
@@ -65,7 +60,7 @@ public class SolutionHolder {
         return triedSolutionCounter;
     }
 
-    public void saveFailedSolution(AssignmentTask task) {
+    public void saveFailedSolution() {
         triedSolutionCounter++;
         if (triedSolutionCounter % 10000 == 0) {
             logger.debug("Solution tried: " + triedSolutionCounter + ", best rank: " + getBestSolution().getRating());
@@ -76,40 +71,8 @@ public class SolutionHolder {
         Iterator<Solution> iterator = solutionSet.iterator();
         List<VerboseSolution> solutionList = new ArrayList<>();
         while (iterator.hasNext()) {
-            solutionList.add(mapDistribution(iterator.next()));
+            solutionList.add(distributionEnhancer.addDistribution(iterator.next()));
         }
         return solutionList;
-    }
-
-    private VerboseSolution mapDistribution(Solution solution) {
-        Map<String, Counter> goodAssignments = new HashMap<>();
-        IntStream.rangeClosed(1, configuration.getPreferencesPerUser()).forEach(i ->
-                goodAssignments.put(String.valueOf(i), new Counter())
-        );
-        Map<String, Counter> badAssignments = new HashMap<>();
-        for (UnwantedAssignmentType type : UnwantedAssignmentType.values()) {
-            badAssignments.put(type.toString(), new Counter());
-        }
-
-        solution.getAssignmentList().forEach(a -> {
-            Integer rank = preferencesHolder.getAssignmentRank(a);
-            if (rank != null) {
-                Counter counter = goodAssignments.get(String.valueOf(rank));
-                counter.add();
-            } else {
-                UnwantedAssignmentType type = preferencesHolder.getUnwantedAssignmentType(a);
-                Counter counter = badAssignments.get(type.toString());
-                counter.add();
-            }
-        });
-
-        return new VerboseSolution(solution, mapMapToNumbers(goodAssignments), mapMapToNumbers(badAssignments));
-    }
-
-    private Map<String, Integer> mapMapToNumbers(Map<String, Counter> originalMap) {
-        return originalMap
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getNumber()));
     }
 }
