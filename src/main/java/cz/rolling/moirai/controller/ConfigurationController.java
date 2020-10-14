@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.form.MainConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
+import cz.rolling.moirai.service.WizardValidator;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -32,8 +33,11 @@ public class ConfigurationController {
 
     private final WizardState wizardState;
 
-    public ConfigurationController(WizardState wizardState) {
+    private final WizardValidator wizardValidator;
+
+    public ConfigurationController(WizardState wizardState, WizardValidator wizardValidator) {
         this.wizardState = wizardState;
+        this.wizardValidator = wizardValidator;
     }
 
     @ModelAttribute("mainConfiguration")
@@ -58,6 +62,8 @@ public class ConfigurationController {
     @PostMapping("/next")
     public String save(@Valid MainConfiguration mainConfiguration, BindingResult bindingResult){
         wizardState.setMainConfiguration(mainConfiguration);
+        wizardValidator.validateMainConfig(mainConfiguration, bindingResult);
+
         if (bindingResult.hasErrors()) {
             return "configuration";
         }

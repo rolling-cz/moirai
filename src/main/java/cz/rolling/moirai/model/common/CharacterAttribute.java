@@ -14,13 +14,16 @@ public class CharacterAttribute {
     @NotBlank
     private String name;
 
+    @NotNull
     @Min(1)
-    private int min;
+    private Integer min;
 
+    @NotNull
     @Min(1)
-    private int max;
+    private Integer max;
 
-    private int rating;
+    @NotNull
+    private Integer rating;
 
     @NotNull
     private RatingFunction function;

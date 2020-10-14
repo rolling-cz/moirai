@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -18,6 +19,7 @@ public class User {
     private String name;
     private String surname;
     private Gender wantsPlayGender;
+    private Map<String, Integer> attributeMap;
 
     public void savePreference(AssignmentWithRank assignmentWithRank) {
         preferences.add(assignmentWithRank);

@@ -3,10 +3,12 @@ package cz.rolling.moirai.service;
 import cz.rolling.moirai.exception.GeneralFormatImportException;
 import cz.rolling.moirai.exception.UnknownCharacterImportException;
 import cz.rolling.moirai.exception.UnknownGenderImportException;
+import cz.rolling.moirai.exception.WrongAttributeValueImportException;
 import cz.rolling.moirai.exception.WrongLineImportException;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.Character;
+import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.common.CharacterProperty;
 import cz.rolling.moirai.model.common.Gender;
 import cz.rolling.moirai.model.common.User;
@@ -22,7 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -32,10 +36,10 @@ public class ImportCsvParser {
     public static String WANTED_PREFIX = "WantedAs";
     public static String HATED_PREFIX = "NotWantedAs";
 
-    public List<Character> parseCharacterList(InputStream is) {
+    public List<Character> parseCharacterList(InputStream is, MainConfiguration mainConfiguration) {
         List<Character> characterList = new ArrayList<>();
 
-        String[] header = getCharacterColumnList().toArray(new String[0]);
+        String[] header = getCharacterColumnList(mainConfiguration).toArray(new String[0]);
         CSVFormat csvFormat = CSVFormat.RFC4180.withHeader(header);
         CSVParser csvParser = createParser(is, csvFormat);
         int index = 0;
@@ -48,11 +52,35 @@ public class ImportCsvParser {
             newCharacter.setId(index);
             newCharacter.setName(record.get(CharacterProperty.NAME.getKey()));
             newCharacter.setGender(translateGender(record.get(CharacterProperty.GENDER.getKey()), index + 1));
+            newCharacter.setAttributeMap(loadAttributes(record, mainConfiguration, index + 1));
             characterList.add(newCharacter);
             index++;
         }
 
         return characterList;
+    }
+
+    private Map<String, Integer> loadAttributes(CSVRecord record, MainConfiguration mainConfiguration, int line) {
+        Map<String, Integer> attributeMap = new HashMap<>();
+
+
+        for (CharacterAttribute attr : mainConfiguration.getAttributeList()) {
+            String valueString = record.get(attr.getName());
+            int value;
+            try {
+                value = Integer.parseInt(valueString);
+            } catch (NumberFormatException e) {
+                throw new WrongAttributeValueImportException(line, valueString, attr);
+            }
+
+            if (value < attr.getMin() || value > attr.getMax()) {
+                throw new WrongAttributeValueImportException(line, valueString, attr);
+            }
+
+            attributeMap.put(attr.getName(), value);
+        }
+
+        return attributeMap;
     }
 
     private CSVParser createParser(InputStream is, CSVFormat csvFormat) {
@@ -98,22 +126,25 @@ public class ImportCsvParser {
                 String definedCharacterName = record.get(HATED_PREFIX + i);
                 newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
             }
+            newUser.setAttributeMap(loadAttributes(record, mainConfiguration, userId + 1));
+
             userList.add(newUser);
             userId++;
         }
         return userList;
     }
 
-    public List<String> getCharacterColumnList() {
+    public List<String> getCharacterColumnList(MainConfiguration mainConfiguration) {
         List<String> columnList = new ArrayList<>();
         for (CharacterProperty value : CharacterProperty.values()) {
             columnList.add(value.getKey());
         }
+        mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
         return columnList;
     }
 
-    public String getCharactersFileFormat() {
-        return String.join(",", getCharacterColumnList());
+    public String getCharactersFileFormat(MainConfiguration mainConfiguration) {
+        return String.join(",", getCharacterColumnList(mainConfiguration));
     }
 
     public List<String> getUserColumnList(MainConfiguration mainConfiguration) {
@@ -127,6 +158,7 @@ public class ImportCsvParser {
         IntStream.range(0, mainConfiguration.getNumberOfHatedCharacters()).forEach(
                 i -> columnList.add(HATED_PREFIX + (i + 1))
         );
+        mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
         return columnList;
     }
 
