@@ -2,12 +2,14 @@ package cz.rolling.moirai.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.rolling.moirai.exception.GeneralException;
 import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.form.MainConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.WizardValidator;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -71,8 +73,13 @@ public class ConfigurationController {
     }
 
     @PostMapping("/import")
-    public String importFile(@RequestParam("file") MultipartFile file) throws IOException {
-        MainConfiguration config = new ObjectMapper().readValue(file.getBytes(), MainConfiguration.class);
+    public String importFile(@RequestParam("file") MultipartFile file) {
+        MainConfiguration config;
+        try {
+            config = new ObjectMapper().readValue(file.getBytes(), MainConfiguration.class);
+        } catch (IOException e) {
+            throw new GeneralException(HttpStatus.BAD_REQUEST, "exception.incorrect_config_format");
+        }
         wizardState.setMainConfiguration(config);
         return "redirect:/configuration";
     }

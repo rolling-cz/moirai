@@ -69,9 +69,29 @@
 </script>
 
 <div class="container mt-4">
-    <h3 th:text="#{assignment-config.title}"></h3>
-    <p th:text="#{assignment-config.desc}"></p>
     <form method="post" th:object="${mainConfiguration}">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 th:text="#{assignment-config.title}"></h3>
+                <p th:text="#{assignment-config.desc}"></p>
+            </div>
+            <div class="col-sm-3 offset-3">
+                <span data-placement="top" data-toggle="tooltip" th:title="#{assignment-config.save.tooltip}">
+                    <button class="btn btn-secondary"
+                            th:formaction="@{/configuration/print}"
+                            type="submit">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </span>
+                <span data-placement="top" data-toggle="tooltip" th:title="#{assignment-config.load.tooltip}">
+                    <button class="btn btn-secondary" data-target="#loadFileModal"
+                            data-toggle="modal" type="button">
+                        <i class="fas fa-file-upload"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+
         <div class="form-group row">
             <div class="col-sm-4">
                 <label class="col-form-label" th:text="#{assignment-config.approach}"></label>
@@ -275,15 +295,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="custom-file">
-                        <input class="custom-file-input" id="file" name="file" type="file">
-                        <label class="custom-file-label" for="file" th:text="#{common.choose-file}"></label>
-                    </div>
+                    <input class="filestyle" id="charactersFile" name="file" th:data-text="#{common.choose-file}" type="file">
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}"
                             type="button"></button>
-                    <button class="btn btn-primary" th:text="#{assignment-config.import.load-btn}"
+                    <button class="btn btn-primary" th:text="#{common.load-file-btn}"
                             type="submit"></button>
                 </div>
             </form>
