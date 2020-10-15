@@ -1,5 +1,6 @@
 package cz.rolling.moirai.model.form;
 
+import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.VerboseSolution;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,4 +24,6 @@ public class WizardState {
     private AlgorithmConfiguration algorithmConfiguration = new AlgorithmConfiguration();
 
     private List<VerboseSolution> solutionList;
+
+    private List<DistributionHeader> distributionHeaderList;
 }

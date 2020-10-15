@@ -13,15 +13,25 @@
     <p th:text="#{execution-results.desc}"></p>
 
     <div class="row">
-        <div class="col-sm-1" th:text="#{execution-results.rating}">Rating</div>
-        <div class="col-sm-5" th:text="#{execution-results.positive-assign}"></div>
-        <div class="col-sm-5" th:text="#{execution-results.negative-assign}"></div>
+        <div class="col-sm-1 font-weight-bold" th:text="#{execution-results.rating}">Rating</div>
+        <div class="col-sm-5 font-weight-bold" >Positive assignments</div>
+        <div class="col-sm-5 font-weight-bold" th:if="${hasNegativeDist}">Negative assignments</div>
     </div>
 
     <div class="row" th:each="sol, stats: ${solutions}">
         <div class="col-sm-1" th:text="${sol.solution.rating}"></div>
-        <div class="col-sm-5" th:text="${sol.positiveAssignments}"></div>
-        <div class="col-sm-5" th:text="${sol.negativeAssignments}"></div>
+        <div class="col-sm-5">
+            <div th:each="header: ${headerList.?[isPositive()]}">
+                <span class="font-weight-bold" th:text="${#messages.msgWithParams(header.message.key, header.message.params)}"></span>
+                <span th:text="${sol.assignments.get(header.distributionKey)}"></span>
+            </div>
+        </div>
+        <div class="col-sm-5" th:if="${hasNegativeDist}">
+            <div th:each="header: ${headerList.?[!isPositive()]}">
+                <span class="font-weight-bold" th:text="${#messages.msgWithParams(header.message.key, header.message.params)}"></span>
+                <span th:text="${sol.assignments.get(header.distributionKey)}"></span>
+            </div>
+        </div>
         <div class="col-sm-1">
             <a class="btn btn-secondary"
                role="button"

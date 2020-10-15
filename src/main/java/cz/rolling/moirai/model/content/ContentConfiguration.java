@@ -14,7 +14,6 @@ public class ContentConfiguration {
     private int preferencesPerUser = 0;
     private List<Integer> ratings = new ArrayList<>();
 
-    private int unwantedCharWithNoPref = 0;
     private int unwantedCharPreference = -10;
     private int unwantedCharType = -100;
     private int unwantedCharGender = -150;
@@ -22,6 +21,8 @@ public class ContentConfiguration {
     private int searchWide = 2;
     private int maximumTriedSolution = 5000000;
     private int numberOfBestSolutions = 10;
+
+    private boolean isMoreCharRoleTypes = false;
 
     public int getRatingForNthPred(int nth) {
         return ratings.get(nth);

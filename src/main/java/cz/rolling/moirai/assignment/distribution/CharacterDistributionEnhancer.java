@@ -2,16 +2,21 @@ package cz.rolling.moirai.assignment.distribution;
 
 import cz.rolling.moirai.assignment.helper.Counter;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
+import cz.rolling.moirai.model.common.DistributionHeader;
+import cz.rolling.moirai.model.common.MessageWithParams;
 import cz.rolling.moirai.model.common.Solution;
 import cz.rolling.moirai.model.common.UnwantedAssignmentType;
 import cz.rolling.moirai.model.common.VerboseSolution;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CharacterDistributionEnhancer implements DistributionEnhancer{
+public class CharacterDistributionEnhancer implements DistributionEnhancer {
+
+    private final static String WANTED_MESSAGE = "execution-results.header.preferredAs";
 
     private final int numberOfPreferences;
     private final CharacterPreferenceResolver preferenceResolver;
@@ -23,34 +28,51 @@ public class CharacterDistributionEnhancer implements DistributionEnhancer{
 
     @Override
     public VerboseSolution addDistribution(Solution solution) {
-        Map<String, Counter> goodAssignments = new HashMap<>();
+        Map<Integer, Counter> goodAssignments = new HashMap<>();
         IntStream.rangeClosed(1, numberOfPreferences).forEach(i ->
-                goodAssignments.put(String.valueOf(i), new Counter())
+                goodAssignments.put(i, new Counter())
         );
-        Map<String, Counter> badAssignments = new HashMap<>();
-        for (UnwantedAssignmentType type : UnwantedAssignmentType.values()) {
-            badAssignments.put(type.toString(), new Counter());
+        Map<UnwantedAssignmentType, Counter> badAssignments = new HashMap<>();
+        for (UnwantedAssignmentType type : preferenceResolver.getPossibleUnwantedTypes()) {
+            badAssignments.put(type, new Counter());
         }
 
         solution.getAssignmentList().forEach(a -> {
             Integer rank = preferenceResolver.getRating(a);
             if (rank != null) {
-                Counter counter = goodAssignments.get(String.valueOf(rank));
+                Counter counter = goodAssignments.get(rank);
                 counter.add();
             } else {
                 UnwantedAssignmentType type = preferenceResolver.getUnwantedAssignmentType(a);
-                Counter counter = badAssignments.get(type.toString());
+                Counter counter = badAssignments.get(type);
                 counter.add();
             }
         });
 
-        return new VerboseSolution(solution, mapMapToNumbers(goodAssignments), mapMapToNumbers(badAssignments));
+        return new VerboseSolution(solution, mapMapToNumbers(goodAssignments, badAssignments));
     }
 
-    private Map<String, Integer> mapMapToNumbers(Map<String, Counter> originalMap) {
-        return originalMap
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getNumber()));
+
+    @Override
+    public List<DistributionHeader> getHeaderList() {
+        List<DistributionHeader> headerList = new ArrayList<>();
+        IntStream.rangeClosed(1, numberOfPreferences).forEach(i -> {
+            MessageWithParams message = new MessageWithParams(WANTED_MESSAGE, new Object[]{i});
+            headerList.add(new DistributionHeader(message, String.valueOf(i), true));
+        });
+        for (UnwantedAssignmentType type : preferenceResolver.getPossibleUnwantedTypes()) {
+            MessageWithParams message = new MessageWithParams(type.getKey(), new Object[0]);
+            headerList.add(new DistributionHeader(message, type.toString(), false));
+        }
+        return headerList;
+    }
+
+    private Map<String, Integer> mapMapToNumbers(Map<Integer, Counter> goodAssignments,
+                                                 Map<UnwantedAssignmentType, Counter> badAssignments) {
+        Map<String, Integer> resultMap = new HashMap<>();
+        goodAssignments.forEach((key, value) -> resultMap.put(String.valueOf(key), value.getNumber()));
+        badAssignments.forEach((key, value) -> resultMap.put(key.toString(), value.getNumber()));
+
+        return resultMap;
     }
 }

@@ -10,7 +10,5 @@ import java.util.Map;
 public class VerboseSolution {
     private final Solution solution;
 
-    private final Map<String, Integer> positiveAssignments;
-
-    private final Map<String, Integer> negativeAssignments;
+    private final Map<String, Integer> assignments;
 }

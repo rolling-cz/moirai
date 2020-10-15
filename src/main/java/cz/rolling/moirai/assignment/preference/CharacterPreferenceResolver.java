@@ -11,6 +11,8 @@ import cz.rolling.moirai.model.common.User;
 import cz.rolling.moirai.model.content.ContentConfiguration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,11 +72,17 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
                 && !u.isWantsToPlayDoubleRole()) {
             return UnwantedAssignmentType.UNWANTED_DOUBLE_ROLE;
         } else {
-            if (u.getPreferences().isEmpty()) {
-                return UnwantedAssignmentType.UNWANTED_CHAR_BUT_NO_PREF;
-            } else {
-                return UnwantedAssignmentType.UNWANTED_CHAR;
-            }
+            return UnwantedAssignmentType.UNWANTED_CHAR;
+        }
+    }
+
+    public Collection<UnwantedAssignmentType> getPossibleUnwantedTypes() {
+        if (configuration.isMoreCharRoleTypes()) {
+            return Arrays.asList(UnwantedAssignmentType.values());
+        } else {
+            return Arrays.stream(UnwantedAssignmentType.values())
+                    .filter(type -> !type.isForMoreRoles())
+                    .collect(Collectors.toList());
         }
     }
 
@@ -132,8 +140,6 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
             switch (unwantedType) {
                 case UNWANTED_CHAR:
                     return configuration.getUnwantedCharPreference();
-                case UNWANTED_CHAR_BUT_NO_PREF:
-                    return configuration.getUnwantedCharWithNoPref();
                 case UNWANTED_SINGLE_ROLE:
                     return configuration.getUnwantedCharType();
                 case UNWANTED_DOUBLE_ROLE:
@@ -164,7 +170,7 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
 
     public int getBestPossibleOutcome(AssignmentTask task) {
         int result = task.getCurrentRank();
-        result += task.getUnwantedCharNumber() * configuration.getUnwantedCharWithNoPref();
+        result += task.getUnwantedCharNumber() * configuration.getUnwantedCharPreference();
 
         Set<Integer> assignedCharIdSet = task.getAssignedCharIdSet();
         for (Character ch : characterList) {

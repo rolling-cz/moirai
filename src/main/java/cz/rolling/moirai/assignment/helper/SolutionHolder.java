@@ -3,6 +3,7 @@ package cz.rolling.moirai.assignment.helper;
 import cz.rolling.moirai.assignment.distribution.DistributionEnhancer;
 import cz.rolling.moirai.assignment.preference.PreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
+import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.Solution;
 import cz.rolling.moirai.model.common.VerboseSolution;
 import org.apache.solr.util.BoundedTreeSet;
@@ -74,5 +75,9 @@ public class SolutionHolder {
             solutionList.add(distributionEnhancer.addDistribution(iterator.next()));
         }
         return solutionList;
+    }
+
+    public List<DistributionHeader> getDistributionHeaderList() {
+        return distributionEnhancer.getHeaderList();
     }
 }

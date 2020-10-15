@@ -1,5 +1,6 @@
 package cz.rolling.moirai.controller;
 
+import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.model.common.VerboseSolution;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.AlgorithmExecutor;
@@ -40,8 +41,9 @@ public class ExecutionController {
 
     @GetMapping({"/process"})
     public String execution() throws ClassNotFoundException {
-        List<VerboseSolution> solutionList = algorithmExecutor.executeAlgorithm(wizardState);
-        wizardState.setSolutionList(solutionList);
+        SolutionHolder solutionHolder = algorithmExecutor.executeAlgorithm(wizardState);
+        wizardState.setSolutionList(solutionHolder.getSolutions());
+        wizardState.setDistributionHeaderList(solutionHolder.getDistributionHeaderList());
         return "redirect:/execution";
     }
 
@@ -49,6 +51,9 @@ public class ExecutionController {
     public ModelAndView results() {
         ModelAndView mav = new ModelAndView("execution");
         mav.addObject("solutions", wizardState.getSolutionList());
+        mav.addObject("approachType", wizardState.getMainConfiguration().getApproachType());
+        mav.addObject("headerList", wizardState.getDistributionHeaderList());
+        mav.addObject("hasNegativeDist", wizardState.getDistributionHeaderList().stream().anyMatch(d -> !d.isPositive()));
         return mav;
     }
 
