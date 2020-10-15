@@ -123,9 +123,15 @@
             </div>
             <div class="col-sm-2">
                 <input class="form-control" id="ratingForGender"
+                       th:classappend="${#fields.hasErrors('ratingForGender')} ? 'is-invalid' : ''"
                        th:field="*{ratingForGender}"
                        th:value="${mainConfiguration.getRatingForGender()}"
                        type="text">
+            </div>
+            <div class="col-sm-4">
+                    <span class="text-danger"
+                          th:errors="*{ratingForGender}"
+                          th:if="${#fields.hasErrors('ratingForGender')}"></span>
             </div>
         </div>
 
@@ -158,6 +164,7 @@
                 <div class="col-sm-4">
                     <input class="form-control" id="ratingForPreferredCharacters"
                            placeholder="7,5,3"
+                           th:classappend="${#fields.hasErrors('ratingForPreferredCharacters')} ? 'is-invalid' : ''"
                            th:field="*{ratingForPreferredCharacters}"
                            th:value="${mainConfiguration.getRatingForPreferredCharacters()}"
                            type="text"
@@ -178,9 +185,15 @@
                 </div>
                 <div class="col-sm-2">
                     <input class="form-control" id="ratingForNotSpecifiedChar"
+                           th:classappend="${#fields.hasErrors('ratingForNotSpecifiedChar')} ? 'is-invalid' : ''"
                            th:field="*{ratingForNotSpecifiedChar}"
                            th:value="${mainConfiguration.getRatingForNotSpecifiedChar()}"
                            type="text">
+                </div>
+                <div class="col-sm-4">
+                    <span class="text-danger"
+                          th:errors="*{ratingForNotSpecifiedChar}"
+                          th:if="${#fields.hasErrors('ratingForNotSpecifiedChar')}"></span>
                 </div>
             </div>
         </div>

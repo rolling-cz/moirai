@@ -24,19 +24,23 @@ public class MainConfiguration {
     @NotNull
     private ApproachType approachType = ApproachType.CHARACTERS;
 
-    private int ratingForNotSpecifiedChar = -10;
-    private int ratingForGender = -100;
+    @NotNull
+    private Integer ratingForNotSpecifiedChar = -10;
+    @NotNull
+    private Integer ratingForGender = -100;
 
+    @NotNull
     @Min(1)
     @Max(15)
-    private int numberOfPreferredCharacters = 3;
+    private Integer numberOfPreferredCharacters = 3;
 
     @NotBlank
     private String ratingForPreferredCharacters = "7,5,3";
 
+    @NotNull
     @Min(0)
     @Max(15)
-    private int numberOfHatedCharacters = 0;
+    private Integer numberOfHatedCharacters = 0;
 
     private String ratingForHatedCharacters = "-10";
 
