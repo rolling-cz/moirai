@@ -41,3 +41,17 @@
     cursor: pointer;
     color: #2672EC;
 }
+
+.flag {
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+}
+
+.icon-cs {
+    background-image: url("/img/cs-icon.png");
+}
+
+.icon-en {
+    background-image: url("/img/en-icon.png");
+}
