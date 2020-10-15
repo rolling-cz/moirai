@@ -16,6 +16,8 @@
         })
 
         showSection([[${mainConfiguration.approachType}]]);
+
+        $('[data-toggle="tooltip"]').tooltip();
     })
 
     function showSection(section) {
@@ -71,13 +73,18 @@
     <p th:text="#{assignment-config.desc}"></p>
     <form method="post" th:object="${mainConfiguration}">
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label" th:text="#{assignment-config.approach}"></label>
-            <div class="col-sm-9">
+            <div class="col-sm-4">
+                <label class="col-form-label" th:text="#{assignment-config.approach}"></label>
+                <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.approach.tooltip}"></i>
+            </div>
+            <div class="col-sm-8">
 
                 <div class="btn-group btn-group-toggle" data-toggle="buttons" id="approachSelector">
                     <label class="btn btn-info btn-rounded"
                            th:classappend="${mainConfiguration.getApproachType() == type} ? 'active' : ''"
-                           th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}">
+                           data-toggle="tooltip"
+                           th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"
+                           th:title="#{${type.getKey() + '.tooltip'}}">
                         <input autocomplete="off" th:field="*{approachType}"
                                th:text="#{${type.getKey()}}"
                                th:value="${type}"
@@ -88,8 +95,12 @@
         </div>
 
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="ratingForGender"
-                   th:text="#{assignment-config.rating-gender}"></label>
+            <div class="col-sm-4">
+                <label class="col-form-label" for="ratingForGender"
+                       th:text="#{assignment-config.rating-gender}">
+                </label>
+                <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.rating-gender.tooltip}"></i>
+            </div>
             <div class="col-sm-2">
                 <input class="form-control" id="ratingForGender"
                        th:field="*{ratingForGender}"
@@ -100,8 +111,11 @@
 
         <div class="approach-section" id="section-CHARACTERS">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="numberOfPreferredCharacters"
-                       th:text="#{assignment-config.preferred-characters}"></label>
+                <div class="col-sm-4">
+                    <label class="col-form-label" for="numberOfPreferredCharacters"
+                           th:text="#{assignment-config.preferred-characters}"></label>
+                    <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.preferred-characters.tooltip}"></i>
+                </div>
                 <div class="col-sm-4">
                     <input class="form-control" id="numberOfPreferredCharacters"
                            th:classappend="${#fields.hasErrors('numberOfPreferredCharacters')} ? 'is-invalid' : ''"
@@ -116,8 +130,11 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="ratingForPreferredCharacters"
-                       th:text="#{assignment-config.rating-for-preferred}"></label>
+                <div class="col-sm-4">
+                    <label class="col-form-label" for="ratingForPreferredCharacters"
+                           th:text="#{assignment-config.rating-for-preferred}"></label>
+                    <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.rating-for-preferred.tooltip}"></i>
+                </div>
                 <div class="col-sm-4">
                     <input class="form-control" id="ratingForPreferredCharacters"
                            placeholder="7,5,3"
@@ -134,8 +151,11 @@
             </div>
 
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="ratingForNotSpecifiedChar"
-                       th:text="#{assignment-config.rating-not-specified-char}"></label>
+                <div class="col-sm-4">
+                    <label class="col-form-label" for="ratingForNotSpecifiedChar"
+                           th:text="#{assignment-config.rating-not-specified-char}"></label>
+                    <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.rating-not-specified-char.tooltip}"></i>
+                </div>
                 <div class="col-sm-2">
                     <input class="form-control" id="ratingForNotSpecifiedChar"
                            th:field="*{ratingForNotSpecifiedChar}"
@@ -148,17 +168,32 @@
         <div class="approach-section" id="section-CONTENT">
             <div>
                 <h5>Content attributes
-                    <button class="btn btn-info btn-sm" onclick="addAttr()" type="button">
+                    <button class="btn btn-info btn-sm" data-placement="right" data-toggle="tooltip" onclick="addAttr()" th:title="#{assignment-config.attr.add.tooltip}" type="button">
                         <i class="fa fa-plus fa-sm"></i>
                     </button>
                 </h5>
             </div>
             <div class="row">
-                <div class="col-sm-2 font-weight-bold text-center">Name</div>
-                <div class="col-sm-2 font-weight-bold text-center">Min</div>
-                <div class="col-sm-2 font-weight-bold text-center">Max</div>
-                <div class="col-sm-2 font-weight-bold text-center">Rating</div>
-                <div class="col-sm-2 font-weight-bold text-center">Function</div>
+                <div class="col-sm-2 font-weight-bold text-center">
+                    <span th:text="#{assignment-config.attr.name}"></span>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.name.tooltip}"></i>
+                </div>
+                <div class="col-sm-2 font-weight-bold text-center">
+                    <span th:text="#{assignment-config.attr.min}"></span>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.min.tooltip}"></i>
+                </div>
+                <div class="col-sm-2 font-weight-bold text-center">
+                    <span th:text="#{assignment-config.attr.max}"></span>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.max.tooltip}"></i>
+                </div>
+                <div class="col-sm-2 font-weight-bold text-center">
+                    <span th:text="#{assignment-config.attr.rating}"></span>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.rating.tooltip}"></i>
+                </div>
+                <div class="col-sm-2 font-weight-bold text-center">
+                    <span th:text="#{assignment-config.attr.function}"></span>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.function.tooltip}"></i>
+                </div>
                 <div class="col-sm-1"></div>
             </div>
 

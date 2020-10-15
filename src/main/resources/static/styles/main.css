@@ -36,3 +36,8 @@
 .approach-section {
     display: none;
 }
+
+.help-tooltip {
+    cursor: pointer;
+    color: #2672EC;
+}

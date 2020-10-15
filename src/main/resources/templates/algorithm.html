@@ -8,6 +8,12 @@
 <div th:replace="fragments/header :: nav('home')">
 </div>
 
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+
 <div class="container mt-4">
     <h3 th:text="#{algorithm-config.title}"></h3>
     <p th:text="#{algorithm-config.desc}"></p>
@@ -26,12 +32,17 @@
 
         <div class="form-group row">
             <div class="col-sm-6">
-                <label for="algorithmSelect" th:text="#{algorithm-config.algorithm}"></label>
-                <select class="custom-select" id="algorithmSelect" th:field="*{algorithmFactoryName}">
-                    <option th:each="factory, stats : ${algorithmFactorySet}"
-                            th:text="#{'algorithm-config.name.' + ${factory.name}}"
-                            th:value="${factory.factoryClass.getCanonicalName()}"></option>
-                </select>
+                <div>
+                    <label for="algorithmSelect" th:text="#{algorithm-config.algorithm}"></label>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{algorithm-config.algorithm.tooltip}"></i>
+                </div>
+                <div>
+                    <select class="custom-select" id="algorithmSelect" th:field="*{algorithmFactoryName}">
+                        <option th:each="factory, stats : ${algorithmFactorySet}"
+                                th:text="#{'algorithm-config.name.' + ${factory.name}}"
+                                th:value="${factory.factoryClass.getCanonicalName()}"></option>
+                    </select>
+                </div>
             </div>
         </div>
 
