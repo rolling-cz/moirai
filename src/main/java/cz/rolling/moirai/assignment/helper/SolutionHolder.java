@@ -1,6 +1,6 @@
 package cz.rolling.moirai.assignment.helper;
 
-import cz.rolling.moirai.assignment.distribution.DistributionEnhancer;
+import cz.rolling.moirai.assignment.enhancer.SolutionEnhancer;
 import cz.rolling.moirai.assignment.preference.PreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.DistributionHeader;
@@ -19,14 +19,14 @@ public class SolutionHolder {
 
     private final PreferenceResolver preferenceResolver;
     private final BoundedTreeSet<Solution> solutionSet;
-    private final DistributionEnhancer distributionEnhancer;
+    private final SolutionEnhancer solutionEnhancer;
     private final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
     private int triedSolutionCounter = 0;
 
     public SolutionHolder(PreferenceResolver preferenceResolver,
-                          DistributionEnhancer distributionEnhancer,
+                          SolutionEnhancer solutionEnhancer,
                           int numberOfSolutions) {
-        this.distributionEnhancer = distributionEnhancer;
+        this.solutionEnhancer = solutionEnhancer;
         solutionSet = new BoundedTreeSet<>(numberOfSolutions, Comparator.reverseOrder());
         this.preferenceResolver = preferenceResolver;
     }
@@ -72,12 +72,12 @@ public class SolutionHolder {
         Iterator<Solution> iterator = solutionSet.iterator();
         List<VerboseSolution> solutionList = new ArrayList<>();
         while (iterator.hasNext()) {
-            solutionList.add(distributionEnhancer.addDistribution(iterator.next()));
+            solutionList.add(solutionEnhancer.enhance(iterator.next()));
         }
         return solutionList;
     }
 
     public List<DistributionHeader> getDistributionHeaderList() {
-        return distributionEnhancer.getHeaderList();
+        return solutionEnhancer.getHeaderList();
     }
 }

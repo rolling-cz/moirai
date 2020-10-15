@@ -2,7 +2,7 @@ package cz.rolling.moirai.assignment.algorithm.character_dfs;
 
 
 import cz.rolling.moirai.assignment.algorithm.Algorithm;
-import cz.rolling.moirai.assignment.distribution.CharacterDistributionEnhancer;
+import cz.rolling.moirai.assignment.enhancer.CharacterSolutionEnhancer;
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.content.ContentConfiguration;
@@ -23,7 +23,7 @@ public class CharacterDfsAlgorithm implements Algorithm {
 
     @Override
     public SolutionHolder findBestAssignment() {
-        CharacterDistributionEnhancer enhancer = new CharacterDistributionEnhancer(configuration.getPreferencesPerUser(), preferencesHolder);
+        CharacterSolutionEnhancer enhancer = new CharacterSolutionEnhancer(configuration.getPreferencesPerUser(), preferencesHolder);
         SolutionHolder solutionHolder = new SolutionHolder(preferencesHolder, enhancer, configuration.getNumberOfBestSolutions());
 
         Deque<AssignmentTask> taskQueue = new ConcurrentLinkedDeque<>();

@@ -19,17 +19,17 @@
     </div>
 
     <div class="row" th:each="sol, stats: ${solutions}">
-        <div class="col-sm-1" th:text="${sol.solution.rating}"></div>
+        <div class="col-sm-1" th:text="${sol.rating}"></div>
         <div class="col-sm-5">
             <div th:each="header: ${headerList.?[isPositive()]}">
                 <span class="font-weight-bold" th:text="${#messages.msgWithParams(header.message.key, header.message.params)}"></span>
-                <span th:text="${sol.assignments.get(header.distributionKey)}"></span>
+                <span th:text="${sol.distributionMap.get(header.distributionKey)}"></span>
             </div>
         </div>
         <div class="col-sm-5" th:if="${hasNegativeDist}">
             <div th:each="header: ${headerList.?[!isPositive()]}">
                 <span class="font-weight-bold" th:text="${#messages.msgWithParams(header.message.key, header.message.params)}"></span>
-                <span th:text="${sol.assignments.get(header.distributionKey)}"></span>
+                <span th:text="${sol.distributionMap.get(header.distributionKey)}"></span>
             </div>
         </div>
         <div class="col-sm-1">

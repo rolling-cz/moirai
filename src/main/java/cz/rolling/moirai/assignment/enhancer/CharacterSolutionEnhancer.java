@@ -1,7 +1,8 @@
-package cz.rolling.moirai.assignment.distribution;
+package cz.rolling.moirai.assignment.enhancer;
 
 import cz.rolling.moirai.assignment.helper.Counter;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
+import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
 import cz.rolling.moirai.model.common.Solution;
@@ -14,20 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class CharacterDistributionEnhancer implements DistributionEnhancer {
+public class CharacterSolutionEnhancer implements SolutionEnhancer {
 
     private final static String WANTED_MESSAGE = "execution-results.header.preferredAs";
 
     private final int numberOfPreferences;
     private final CharacterPreferenceResolver preferenceResolver;
 
-    public CharacterDistributionEnhancer(int numberOfPreferences, CharacterPreferenceResolver preferenceResolver) {
+    public CharacterSolutionEnhancer(int numberOfPreferences, CharacterPreferenceResolver preferenceResolver) {
         this.numberOfPreferences = numberOfPreferences;
         this.preferenceResolver = preferenceResolver;
     }
 
     @Override
-    public VerboseSolution addDistribution(Solution solution) {
+    public VerboseSolution enhance(Solution solution) {
         Map<Integer, Counter> goodAssignments = new HashMap<>();
         IntStream.rangeClosed(1, numberOfPreferences).forEach(i ->
                 goodAssignments.put(i, new Counter())
@@ -49,7 +50,12 @@ public class CharacterDistributionEnhancer implements DistributionEnhancer {
             }
         });
 
-        return new VerboseSolution(solution, mapMapToNumbers(goodAssignments, badAssignments));
+        List<AssignmentWithRank> assignmentList = new ArrayList<>();
+        solution.getAssignmentList().forEach(a -> {
+            assignmentList.add(new AssignmentWithRank(a, preferenceResolver.calcRatingOfAssignment(a)));
+        });
+
+        return new VerboseSolution(solution.getRating(), assignmentList, mapMapToNumbers(goodAssignments, badAssignments));
     }
 
 

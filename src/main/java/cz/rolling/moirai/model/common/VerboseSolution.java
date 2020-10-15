@@ -3,12 +3,15 @@ package cz.rolling.moirai.model.common;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
 @AllArgsConstructor
 public class VerboseSolution {
-    private final Solution solution;
+    private final Integer rating;
 
-    private final Map<String, Integer> assignments;
+    private final List<AssignmentWithRank> assignmentList;
+
+    private final Map<String, Integer> distributionMap;
 }
