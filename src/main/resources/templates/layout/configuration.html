@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html lang="en" layout:decorate="~{layout/main}" th:with="activePage='home'" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<div layout:fragment="script">
+    <script>
+        $(document).ready(function () {
+
+            $("#approachSelector :input").change(function () {
+                showSection($(this).val())
+            })
+
+            showSection($("#approachSelector .active :input").val());
+
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+
+        function showSection(section) {
+            $("#section-CONTENT").hide(200);
+            $("#section-CHARACTERS").hide(200);
+            $("#section-" + section).show(200);
+        }
+
+        function deleteAttr(btn) {
+            const rowDiv = $(btn).closest(".row")
+            rowDiv.remove();
+        }
+        let optionList = "";
+
+        let last = [[${mainConfiguration.attributeList.size()}]];
+    </script>
+    <script layout:fragment="config-script">
+    </script>
+</div>
+
+<div layout:fragment="content">
+
+    <form method="post" th:object="${mainConfiguration}">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 th:text="#{assignment-config.title}"></h3>
+                <p th:text="#{assignment-config.desc}"></p>
+            </div>
+            <div class="col-sm-3 offset-3">
+                <span data-placement="top" data-toggle="tooltip" th:title="#{assignment-config.save.tooltip}">
+                    <button class="btn btn-secondary"
+                            th:formaction="@{/configuration/print}"
+                            type="submit">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </span>
+                <span data-placement="top" data-toggle="tooltip" th:title="#{assignment-config.load.tooltip}">
+                    <button class="btn btn-secondary" data-target="#loadFileModal"
+                            data-toggle="modal" type="button">
+                        <i class="fas fa-file-upload"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+
+        <div layout:fragment="config-content">
+
+        </div>
+
+        <div>
+            <span class="text-danger" th:errors="*{global}"> </span>
+        </div>
+
+        <button class="btn btn-primary mt-4"
+                th:formaction="@{/configuration/next}"
+                th:text="#{common.next-btn}"
+                type="submit"></button>
+    </form>
+
+
+    <div aria-hidden="true" aria-labelledby="loadFileModalLabel" class="modal fade" id="loadFileModal" role="dialog"
+         tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="/configuration/import" enctype="multipart/form-data" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loadFileModalLabel" th:text="#{assignment-config.import.title}"></h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input class="filestyle" id="charactersFile" name="file" th:data-text="#{common.choose-file}" type="file">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}"
+                                type="button"></button>
+                        <button class="btn btn-primary" th:text="#{common.load-file-btn}"
+                                type="submit"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

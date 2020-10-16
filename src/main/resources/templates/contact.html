@@ -1,14 +1,12 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: head">
+<html lang="en" layout:decorate="~{layout/main}" th:with="activePage='contact'" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
     <title></title>
 </head>
 <body>
 
-<div th:replace="fragments/header :: nav('contact')">
-</div>
-
-<div class="container mt-4">
+<div layout:fragment="content">
     <h3 th:text="#{contact-page.title}"></h3>
     <div class="mt-4">
         <span th:text="#{contact-page.rolling-start}"></span>
@@ -32,9 +30,5 @@
         </a>
     </div>
 </div>
-
-<div th:replace="fragments/footer :: scripts">
-</div>
-
 </body>
 </html>

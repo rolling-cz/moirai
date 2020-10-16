@@ -1,17 +1,21 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: head">
+<html lang="en" layout:decorate="~{layout/main}" th:with="activePage='home'" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
     <title></title>
 </head>
 <body>
 
-<div th:replace="fragments/header :: nav('home')">
-</div>
-
-<div class="container">
+<div layout:fragment="content">
     <div class="row justify-content-center index-tiles">
         <div class="col-md-4">
-            <a class="tile blue" href="/configuration">
+            <a class="tile blue" href="/configuration?uiStyle=BASIC">
+                <h3 class="title" th:text="#{index.tile.start.title}"></h3>
+                <p th:text="#{index.tile.start.desc}"></p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="tile green" href="/configuration?uiStyle=CUSTOM">
                 <h3 class="title" th:text="#{index.tile.start.title}"></h3>
                 <p th:text="#{index.tile.start.desc}"></p>
             </a>
@@ -19,9 +23,5 @@
     </div>
 
 </div>
-
-<div th:replace="fragments/footer :: scripts">
-</div>
-
 </body>
 </html>

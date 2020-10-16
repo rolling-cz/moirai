@@ -1,14 +1,12 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: head">
+<html lang="en" layout:decorate="~{layout/main}" th:with="activePage='about'" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
     <title></title>
 </head>
 <body>
 
-<div th:replace="fragments/header :: nav('about')">
-</div>
-
-<div class="container mt-4">
+<div layout:fragment="content">
     <h3 th:text="#{about-page.title}"></h3>
     <p th:text="#{about-page.desc-intro}"></p>
     <p th:text="#{about-page.desc-purpose}"></p>
@@ -16,9 +14,6 @@
     <div>
         <span th:text="#{about-page.version}"></span>&nbsp;<span th:text="${version}"></span>
     </div>
-</div>
-
-<div th:replace="fragments/footer :: scripts">
 </div>
 
 </body>

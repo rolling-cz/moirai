@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.rolling.moirai.exception.GeneralException;
 import cz.rolling.moirai.model.common.CharacterAttribute;
+import cz.rolling.moirai.model.common.UiStyle;
 import cz.rolling.moirai.model.form.MainConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.WizardValidator;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -33,8 +37,8 @@ public class ConfigurationController {
 
     private static final String CONFIGURATION_JSON_FILE_NAME = "mainConfiguration.json";
 
+    private final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
     private final WizardState wizardState;
-
     private final WizardValidator wizardValidator;
 
     public ConfigurationController(WizardState wizardState, WizardValidator wizardValidator) {
@@ -48,8 +52,17 @@ public class ConfigurationController {
     }
 
     @GetMapping
-    public String configuration() {
-        return "configuration";
+    public String configuration(@RequestParam(value = "uiStyle", required = false) String uiStyleAsString) {
+        if (StringUtils.isNotBlank(uiStyleAsString)) {
+            try {
+                UiStyle uiStyle = UiStyle.valueOf(uiStyleAsString);
+                wizardState.setUiStyle(uiStyle);
+            } catch (IllegalArgumentException e) {
+                logger.error("Unknown ui style " + uiStyleAsString);
+            }
+        }
+
+        return getTemplate();
     }
 
     @GetMapping("/remove/{index}")
@@ -58,7 +71,7 @@ public class ConfigurationController {
         if (index >= 0 && index <= attributeList.size()) {
             attributeList.remove(index);
         }
-        return "configuration";
+        return getTemplate();
     }
 
     @PostMapping("/next")
@@ -67,7 +80,7 @@ public class ConfigurationController {
         wizardValidator.validateMainConfig(mainConfiguration, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "configuration";
+            return getTemplate();
         }
         return "redirect:/characters";
     }
@@ -94,5 +107,16 @@ public class ConfigurationController {
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .header("Content-Disposition", "attachment; filename=\"" + CONFIGURATION_JSON_FILE_NAME + "\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(buf)));
+    }
+
+    private String getTemplate() {
+        switch (wizardState.getUiStyle()) {
+            case BASIC:
+                return "configurationBasic";
+            case CUSTOM:
+                return "configurationCustom";
+            default:
+                throw new IllegalArgumentException("Unknown ui style " + wizardState.getUiStyle());
+        }
     }
 }

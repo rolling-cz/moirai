@@ -23,7 +23,7 @@ public class IndexController {
 
     @GetMapping({"/"})
     public String index() {
-        return "redirect:/configuration";
+        return "index";
     }
 
     @GetMapping({"/about"})

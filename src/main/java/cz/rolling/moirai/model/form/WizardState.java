@@ -1,6 +1,7 @@
 package cz.rolling.moirai.model.form;
 
 import cz.rolling.moirai.model.common.DistributionHeader;
+import cz.rolling.moirai.model.common.UiStyle;
 import cz.rolling.moirai.model.common.VerboseSolution;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class WizardState {
+
+    private UiStyle uiStyle = UiStyle.BASIC;
 
     private MainConfiguration mainConfiguration = new MainConfiguration();
 
