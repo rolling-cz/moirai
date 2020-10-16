@@ -94,27 +94,10 @@
         </div>
     </div>
 
-    <div class="form-group row">
-        <div class="col-sm-5">
-            <label class="col-form-label" for="ratingForGender"
-                   th:text="#{assignment-config.rating-gender.basic}">
-            </label>
-            <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.rating-gender.basic.tooltip}"></i>
-        </div>
-        <div class="col-sm-3">
-            <select class="custom-select"
-                    id="ratingForGender"
-                    th:classappend="${#fields.hasErrors('ratingForGender')} ? 'is-invalid' : ''"
-                    th:field="*{ratingForGender}"
-                    th:insert="fragments/form :: negativeImpactSelect">
-            </select>
-        </div>
-        <div class="col-sm-4">
-                <span class="text-danger"
-                      th:errors="*{ratingForGender}"
-                      th:if="${#fields.hasErrors('ratingForGender')}"></span>
-        </div>
-    </div>
+    <input class="form-control" id="ratingForGender"
+           th:field="*{ratingForGender}"
+           th:value="${mainConfiguration.getRatingForGender()}"
+           type="hidden">
 
     <div class="approach-section" id="section-CHARACTERS">
         <div class="form-group row">

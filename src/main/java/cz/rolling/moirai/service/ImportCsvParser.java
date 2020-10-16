@@ -153,7 +153,7 @@ public class ImportCsvParser {
     }
 
     public String getCharactersFileFormat(MainConfiguration mainConfiguration) {
-        return String.join(",", getCharacterColumnList(mainConfiguration));
+        return String.join(", ", getCharacterColumnList(mainConfiguration));
     }
 
     public List<String> getUserColumnList(MainConfiguration mainConfiguration) {
@@ -176,7 +176,7 @@ public class ImportCsvParser {
     }
 
     public String getUsersFileFormat(MainConfiguration mainConfiguration) {
-        return String.join(",", getUserColumnList(mainConfiguration));
+        return String.join(", ", getUserColumnList(mainConfiguration));
     }
 
     private AssignmentWithRank createPref(String definedCharacterName, int userId, int nth, List<Character> characterList) {
