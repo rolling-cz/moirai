@@ -64,7 +64,7 @@ public class StableMatchingAlgorithmTest {
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 
         Solution solution = solutionHolder.getBestSolution();
-        Assert.assertEquals(600, solution.getRating().intValue());
+        Assert.assertEquals(5100, solution.getRating().intValue());
 
         List<Assignment> assignmentList = solution.getAssignmentList();
         Assert.assertEquals(5, assignmentList.size());
