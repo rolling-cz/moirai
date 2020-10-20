@@ -25,6 +25,9 @@
                 <li class="nav-item" th:classappend="${activePage == 'home'} ? 'active' : ''">
                     <a class="nav-link" href="/" th:text="#{nav.home}"></a>
                 </li>
+                <li class="nav-item" th:classappend="${activePage == 'faq'} ? 'active' : ''">
+                    <a class="nav-link" href="/faq" th:text="#{nav.faq}"></a>
+                </li>
                 <li class="nav-item" th:classappend="${activePage == 'about'} ? 'active' : ''">
                     <a class="nav-link" href="/about" th:text="#{nav.about}"></a>
                 </li>

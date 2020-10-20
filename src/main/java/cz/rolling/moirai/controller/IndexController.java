@@ -35,4 +35,9 @@ public class IndexController {
     public String contact() {
         return "contact";
     }
+
+    @GetMapping({"/faq"})
+    public String faq() {
+        return "faq";
+    }
 }

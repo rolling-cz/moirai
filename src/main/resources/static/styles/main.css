@@ -55,3 +55,7 @@
 .icon-en {
     background-image: url("/img/en-icon.png");
 }
+
+.answer {
+    text-align: justify;
+}

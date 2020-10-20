@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html lang="en" layout:decorate="~{layout/main}" th:with="activePage='faq'" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h3 th:text="#{faq-page.title}"></h3>
+
+    <div class="row mt-4">
+        <div class="col-12 mx-auto">
+            <div class="accordion" id="faqSection">
+                <div class="card" th:each="i : ${#numbers.sequence( 1, 8)}">
+                    <div class="card-header p-2" th:id="${'#heading' + i}">
+                        <h5 class="mb-0">
+                            <button aria-expanded="true" class="btn btn-link"
+                                    data-toggle="collapse"
+                                    th:aria-controls="${'collapse' + i}"
+                                    th:data-target="${'#collapse' + i}"
+                                    th:text="#{'faq-page.question.' + ${i}}"
+                                    type="button"
+                            >
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div class="collapse" data-parent="#faqSection" th:aria-labelledby="${'heading' + i}" th:id="${'collapse' + i}">
+                        <div class="card-body answer" th:text="#{'faq-page.answer.' + ${i}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
