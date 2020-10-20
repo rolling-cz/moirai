@@ -10,6 +10,15 @@
 
     <script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async th:if="${@environment.getActiveProfiles()[0] == 'prod'}"
+            th:src="${'https://www.googletagmanager.com/gtag/js?id=' + @environment.getProperty('ga_tag')}"></script>
+    <script th:if="${@environment.getActiveProfiles()[0] == 'prod'}">
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', "[[${@environment.getProperty('ga_tag')}]]");
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top" th:fragment="nav">
