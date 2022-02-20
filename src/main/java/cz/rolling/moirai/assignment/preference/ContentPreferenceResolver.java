@@ -1,6 +1,7 @@
 package cz.rolling.moirai.assignment.preference;
 
 import cz.rolling.moirai.model.common.Assignment;
+import cz.rolling.moirai.model.common.AttributeAssignment;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.common.User;
@@ -10,35 +11,58 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class ContentPreferenceResolver implements PreferenceResolver {
+public class ContentPreferenceResolver extends AbstractPreferenceResolver {
 
     private final Map<Assignment, Integer> preferenceMap;
-
+    private final int ratingForGender;
     private final int maximumRating;
+    private final List<CharacterAttribute> attributeList;
 
     public ContentPreferenceResolver(WizardState wizardState) {
-        maximumRating = calculateMaximumRating(wizardState);
-        preferenceMap = collectPreferences(maximumRating, wizardState);
+        super(wizardState.getCharactersConfiguration().getCharacterList(), wizardState.getAlgorithmConfiguration().getUserList());
+        ratingForGender = wizardState.getMainConfiguration().getRatingForGender();
+        attributeList = wizardState.getMainConfiguration().getAttributeList();
+
+        maximumRating = calculateMaximumRating();
+        preferenceMap = collectPreferences(maximumRating);
     }
 
-    private static int calculateMaximumRating(WizardState wizardState) {
-        int rating = wizardState.getMainConfiguration().getRatingForGender();
-        for (CharacterAttribute attr : wizardState.getMainConfiguration().getAttributeList()) {
+    private static double getDeltaRating(User user, Character character, CharacterAttribute attr) {
+        Integer userAttrValue = user.getAttributeMap().get(attr.getName());
+        Integer charAttrValue = character.getAttributeMap().get(attr.getName());
+        if (userAttrValue == null) {
+            throw new IllegalArgumentException("User " + user.getName() + " doesn't have attribute " + attr.getName());
+        }
+        if (charAttrValue == null) {
+            throw new IllegalArgumentException("Char " + character.getName() + " doesn't have attribute " + attr.getName());
+        }
+
+        int deltaAttr = Math.abs(userAttrValue - charAttrValue);
+        return attr.getFunction().getRating(attr.getRating(), deltaAttr);
+    }
+
+    @Override
+    protected int getRatingForGender() {
+        return ratingForGender;
+    }
+
+    private int calculateMaximumRating() {
+        int rating = ratingForGender;
+        for (CharacterAttribute attr : attributeList) {
             int maxDelta = attr.getMax() - attr.getMin();
             rating += attr.getFunction().getRating(attr.getRating(), maxDelta);
         }
         return -1 * rating;
     }
 
-    private static Map<Assignment, Integer> collectPreferences(int maximumRating, WizardState wizardState) {
+    private Map<Assignment, Integer> collectPreferences(int maximumRating) {
         Map<Assignment, Integer> prefMap = new HashMap<>();
-        int ratingForGender = wizardState.getMainConfiguration().getRatingForGender();
-        List<CharacterAttribute> attributeList = wizardState.getMainConfiguration().getAttributeList();
 
-        for (User user : wizardState.getAlgorithmConfiguration().getUserList()) {
-            for (Character character : wizardState.getCharactersConfiguration().getCharacterList()) {
-                Integer rating = calculateRating(maximumRating, ratingForGender, user, character, attributeList);
+        for (User user : getUserList()) {
+            for (Character character : getCharacterList()) {
+                Integer rating = calculateRating(maximumRating, user, character);
                 prefMap.put(new Assignment(user.getId(), character.getId()), rating);
             }
         }
@@ -46,28 +70,11 @@ public class ContentPreferenceResolver implements PreferenceResolver {
         return prefMap;
     }
 
-    private static int calculateRating(int maximumRating,
-                                       int ratingForGender,
-                                       User user,
-                                       Character character,
-                                       List<CharacterAttribute> attributeList) {
+    private int calculateRating(int maximumRating, User user, Character character) {
         int rating = maximumRating;
 
-        Map<String, Integer> userAttrMap = user.getAttributeMap();
-        Map<String, Integer> charAttrMap = character.getAttributeMap();
-
         for (CharacterAttribute attr : attributeList) {
-            Integer userAttrValue = userAttrMap.get(attr.getName());
-            Integer charAttrValue = charAttrMap.get(attr.getName());
-            if (userAttrValue == null) {
-                throw new IllegalArgumentException("User " + user.getName() + " doesn't have attribute " + attr.getName());
-            }
-            if (charAttrValue == null) {
-                throw new IllegalArgumentException("Char " + character.getName() + " doesn't have attribute " + attr.getName());
-            }
-
-            int delta = Math.abs(userAttrValue - charAttrValue);
-            rating += attr.getFunction().getRating(attr.getRating(), delta);
+            rating += getDeltaRating(user, character, attr);
         }
 
         if (!PreferenceUtils.isCorrectGender(user, character)) {
@@ -97,5 +104,17 @@ public class ContentPreferenceResolver implements PreferenceResolver {
 
     public Map<Assignment, Integer> getPreferenceMap() {
         return Collections.unmodifiableMap(preferenceMap);
+    }
+
+    public List<AttributeAssignment> evaluateAssignmentAttributes(Assignment assignment) {
+        User user = getUserList().get(assignment.getUserId());
+        Character character = getCharacterList().get(assignment.getCharId());
+
+        return attributeList.stream().map(attribute -> new AttributeAssignment(
+                attribute.getName(),
+                user.getAttributeMap().get(attribute.getName()),
+                character.getAttributeMap().get(attribute.getName()),
+                Math.round(getDeltaRating(user, character, attribute))
+        )).collect(Collectors.toList());
     }
 }

@@ -24,7 +24,7 @@
                 <span th:text="${sol.distributionMap.get(header.distributionKey)}"></span>
             </div>
         </div>
-        <div class="col-sm-5" th:if="${hasNegativeDist}">
+        <div class="col-sm-4" th:if="${hasNegativeDist}">
             <div th:each="header: ${headerList.?[!isPositive()]}">
                 <span class="font-weight-bold" th:text="${#messages.msgWithParams(header.message.key, header.message.params)}"></span>
                 <span th:text="${sol.distributionMap.get(header.distributionKey)}"></span>
@@ -33,10 +33,21 @@
         <div class="col-sm-1">
             <a class="btn btn-secondary"
                role="button"
-               th:href="'/execution/solution/' + ${stats.index}"
+               th:href="'/execution/solution/' + ${stats.index} + '/display'"
+               th:text="#{execution-results.display-btn}"></a>
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-secondary"
+               role="button"
+               th:href="'/execution/solution/' + ${stats.index} + '/download'"
                th:text="#{execution-results.download-btn}"></a>
         </div>
     </div>
+
+    <a class="btn btn-secondary mt-2"
+       role="button"
+       th:href="'/execution/previous'"
+       th:text="#{common.previous-btn}"></a>
 </div>
 </body>
 </html>

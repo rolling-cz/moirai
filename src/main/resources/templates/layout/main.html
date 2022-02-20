@@ -11,7 +11,7 @@
 <script layout:fragment="script"  th:inline="javascript">
 </script>
 
-<div class="container mt-4">
+<div class="mt-4" th:classappend="${fullPage == true} ? 'container-fluid' : 'container'">
     <div layout:fragment="content">
 
     </div>

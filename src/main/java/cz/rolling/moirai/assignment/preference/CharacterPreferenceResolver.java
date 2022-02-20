@@ -5,6 +5,7 @@ import cz.rolling.moirai.assignment.algorithm.character_dfs.AssignmentTask;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.Character;
+import cz.rolling.moirai.model.common.CharacterAssignmentType;
 import cz.rolling.moirai.model.common.CharacterType;
 import cz.rolling.moirai.model.common.UnwantedAssignmentType;
 import cz.rolling.moirai.model.common.User;
@@ -21,11 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CharacterPreferenceResolver implements PreferenceResolver {
+public class CharacterPreferenceResolver extends AbstractPreferenceResolver {
 
     private final Map<Assignment, Integer> usersRankForChar = new HashMap<>();
-    private final List<Character> characterList;
-    private final List<User> userList;
     private final Map<Integer, List<Integer>> usersWantingCharacter = new HashMap<>();
     private final ContentConfiguration configuration;
     private final Set<Integer> usersForSingleRole = new HashSet<>();
@@ -35,13 +34,17 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
                                        Set<AssignmentWithRank> preferenceSet,
                                        List<Character> characterList,
                                        List<User> userList) {
+        super(characterList, userList);
         this.configuration = configuration;
-        this.characterList = characterList;
-        this.userList = userList;
 
         initRatingsByAssignment(preferenceSet);
         initWantedCharacters();
         initSingleDoubleRoles(userList);
+    }
+
+    @Override
+    protected int getRatingForGender() {
+        return configuration.getUnwantedCharGender();
     }
 
     @Override
@@ -61,8 +64,8 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
     }
 
     public UnwantedAssignmentType getUnwantedAssignmentType(Assignment assignment) {
-        Character ch = characterList.get(assignment.getCharId());
-        User u = userList.get(assignment.getUserId());
+        Character ch = getCharacterList().get(assignment.getCharId());
+        User u = getUserList().get(assignment.getUserId());
 
         if (!isCorrectGender(u.getId(), ch.getId())) {
             return UnwantedAssignmentType.UNWANTED_CHAR_GENDER;
@@ -126,18 +129,26 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
         return usersWantingCharacter.get(charId);
     }
 
-    public int calcRatingOfAssignment(Assignment a) {
-        Integer rank = usersRankForChar.get(a);
+    public CharacterAssignmentType calcCharacterAssignmentType(Assignment assignment) {
+        Integer rank = usersRankForChar.get(assignment);
         if (rank != null) {
-            Character ch = characterList.get(a.getCharId());
+            return CharacterAssignmentType.createPreferredType(rank);
+        } else {
+            return CharacterAssignmentType.createNotPreferredType(getUnwantedAssignmentType(assignment));
+        }
+    }
+
+    public int calcRatingOfAssignment(Assignment assignment) {
+        CharacterAssignmentType assignmentType = calcCharacterAssignmentType(assignment);
+        if (assignmentType.isPreferred()) {
+            Character ch = getCharacterList().get(assignment.getCharId());
             if (ch.getType() == CharacterType.FULL) {
-                return configuration.getRatingForNthPred(rank - 1);
+                return configuration.getRatingForNthPred(assignmentType.getPreferredRank() - 1);
             } else {
-                return configuration.getRatingForNthPred(rank - 1) / 2;
+                return configuration.getRatingForNthPred(assignmentType.getPreferredRank() - 1) / 2;
             }
         } else {
-            UnwantedAssignmentType unwantedType = getUnwantedAssignmentType(a);
-            switch (unwantedType) {
+            switch (assignmentType.getUnwantedAssignmentType()) {
                 case UNWANTED_CHAR:
                     return configuration.getUnwantedCharPreference();
                 case UNWANTED_SINGLE_ROLE:
@@ -147,13 +158,13 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
                 case UNWANTED_CHAR_GENDER:
                     return configuration.getUnwantedCharGender();
                 default:
-                    throw new RuntimeException("Unknown type " + unwantedType);
+                    throw new RuntimeException("Unknown type " + assignmentType.getUnwantedAssignmentType());
             }
         }
     }
 
     public User getUser(Integer userId) {
-        return userList.get(userId);
+        return getUserList().get(userId);
     }
 
     public boolean isUserWillingToPlayCharType(CharacterType type, Integer userId) {
@@ -165,7 +176,7 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
     }
 
     public CharacterType getTypeOfCharacter(Integer charId) {
-        return characterList.get(charId).getType();
+        return getCharacterList().get(charId).getType();
     }
 
     public int getBestPossibleOutcome(AssignmentTask task) {
@@ -173,7 +184,7 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
         result += task.getUnwantedCharNumber() * configuration.getUnwantedCharPreference();
 
         Set<Integer> assignedCharIdSet = task.getAssignedCharIdSet();
-        for (Character ch : characterList) {
+        for (Character ch : getCharacterList()) {
             if (!assignedCharIdSet.contains(ch.getId())) {
                 if (ch.getType() == CharacterType.FULL) {
                     result += configuration.getRatingForNthPred(0);
@@ -187,8 +198,8 @@ public class CharacterPreferenceResolver implements PreferenceResolver {
     }
 
     public boolean isCorrectGender(Integer userId, Integer charId) {
-        User u = userList.get(userId);
-        Character ch = characterList.get(charId);
+        User u = getUserList().get(userId);
+        Character ch = getCharacterList().get(charId);
         return PreferenceUtils.isCorrectGender(u, ch);
     }
 }

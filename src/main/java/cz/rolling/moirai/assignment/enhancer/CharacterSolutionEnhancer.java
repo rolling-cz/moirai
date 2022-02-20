@@ -2,7 +2,8 @@ package cz.rolling.moirai.assignment.enhancer;
 
 import cz.rolling.moirai.assignment.helper.Counter;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
-import cz.rolling.moirai.model.common.AssignmentWithRank;
+import cz.rolling.moirai.model.common.AssignmentDetail;
+import cz.rolling.moirai.model.common.AssignmentDetailCharacters;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
 import cz.rolling.moirai.model.common.Solution;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CharacterSolutionEnhancer implements SolutionEnhancer {
@@ -50,10 +52,13 @@ public class CharacterSolutionEnhancer implements SolutionEnhancer {
             }
         });
 
-        List<AssignmentWithRank> assignmentList = new ArrayList<>();
-        solution.getAssignmentList().forEach(a -> {
-            assignmentList.add(new AssignmentWithRank(a, preferenceResolver.calcRatingOfAssignment(a)));
-        });
+        List<AssignmentDetail> assignmentList = solution.getAssignmentList().stream()
+                .map(assignment -> new AssignmentDetailCharacters(
+                        assignment,
+                        preferenceResolver.calcRatingOfAssignment(assignment),
+                        preferenceResolver.evaluateGenderAssignment(assignment),
+                        preferenceResolver.calcCharacterAssignmentType(assignment)
+                )).collect(Collectors.toList());
 
         return new VerboseSolution(solution.getRating(), assignmentList, mapMapToNumbers(goodAssignments, badAssignments));
     }

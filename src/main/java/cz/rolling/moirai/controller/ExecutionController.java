@@ -1,12 +1,17 @@
 package cz.rolling.moirai.controller;
 
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
+import cz.rolling.moirai.exception.GeneralException;
+import cz.rolling.moirai.model.common.ApproachType;
+import cz.rolling.moirai.model.common.PrintableAssignment;
 import cz.rolling.moirai.model.common.VerboseSolution;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.AlgorithmExecutor;
 import cz.rolling.moirai.service.SolutionCsvPrinter;
+import cz.rolling.moirai.service.SolutionDisplayService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,12 +36,16 @@ public class ExecutionController {
 
     private final SolutionCsvPrinter solutionCsvPrinter;
 
+    private final SolutionDisplayService solutionDisplayService;
+
     public ExecutionController(WizardState wizardState,
                                AlgorithmExecutor algorithmExecutor,
-                               SolutionCsvPrinter solutionCsvPrinter) {
+                               SolutionCsvPrinter solutionCsvPrinter,
+                               SolutionDisplayService solutionDisplayService) {
         this.wizardState = wizardState;
         this.algorithmExecutor = algorithmExecutor;
         this.solutionCsvPrinter = solutionCsvPrinter;
+        this.solutionDisplayService = solutionDisplayService;
     }
 
     @GetMapping({"/process"})
@@ -45,6 +54,11 @@ public class ExecutionController {
         wizardState.setSolutionList(solutionHolder.getSolutions());
         wizardState.setDistributionHeaderList(solutionHolder.getDistributionHeaderList());
         return "redirect:/execution";
+    }
+
+    @GetMapping("/previous")
+    public String previous() {
+        return "redirect:/assignment";
     }
 
     @GetMapping
@@ -57,7 +71,28 @@ public class ExecutionController {
         return mav;
     }
 
-    @GetMapping({"/solution/{index}"})
+    @GetMapping({"/solution/{index}/display"})
+    public ModelAndView displayDetail(@PathVariable("index") int index) {
+        List<VerboseSolution> solutionList = wizardState.getSolutionList();
+        if (index < 0 || index >= solutionList.size()) {
+            throw new GeneralException(HttpStatus.NOT_FOUND, "Teh requested solution doesn't exist");
+        }
+
+        ApproachType approachType = wizardState.getMainConfiguration().getApproachType();
+        List<PrintableAssignment> assignments = solutionDisplayService.getDetailAssignments(
+                wizardState.getAlgorithmConfiguration().getUserList(),
+                wizardState.getCharactersConfiguration().getCharacterList(),
+                approachType,
+                solutionList.get(index));
+
+        String viewName = approachType == ApproachType.CONTENT ? "solutionDetailContent" : "solutionDetailCharacters";
+        ModelAndView mav = new ModelAndView("solutionDetailCharacters");
+        mav.addObject("assignments", assignments);
+        mav.addObject("attributes", wizardState.getMainConfiguration().getAttributeList());
+        return mav;
+    }
+
+    @GetMapping({"/solution/{index}/download"})
     public ResponseEntity<Resource> download(@PathVariable("index") int index) throws IOException {
         List<VerboseSolution> solutionList = wizardState.getSolutionList();
         if (index < 0 || index >= solutionList.size()) {

@@ -11,7 +11,7 @@ import java.util.Map;
 public class VerboseSolution {
     private final Integer rating;
 
-    private final List<AssignmentWithRank> assignmentList;
+    private final List<AssignmentDetail> assignmentList;
 
     private final Map<String, Integer> distributionMap;
 }

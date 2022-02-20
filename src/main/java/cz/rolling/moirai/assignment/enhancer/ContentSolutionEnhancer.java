@@ -2,7 +2,8 @@ package cz.rolling.moirai.assignment.enhancer;
 
 import cz.rolling.moirai.assignment.helper.Counter;
 import cz.rolling.moirai.assignment.preference.ContentPreferenceResolver;
-import cz.rolling.moirai.model.common.AssignmentWithRank;
+import cz.rolling.moirai.model.common.AssignmentDetail;
+import cz.rolling.moirai.model.common.AssignmentDetailContent;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
 import cz.rolling.moirai.model.common.Solution;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ContentSolutionEnhancer implements SolutionEnhancer {
@@ -33,11 +35,16 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
                 goodAssignments.put(i, new Counter())
         );
 
-        List<AssignmentWithRank> assignmentList = new ArrayList<>();
-        solution.getAssignmentList().forEach(a -> {
-            Integer rating = preferenceResolver.getRating(a);
-            assignmentList.add(new AssignmentWithRank(a, rating));
-            Counter counter = goodAssignments.get(getBucketNumber(rating));
+        List<AssignmentDetail> assignmentList = solution.getAssignmentList().stream()
+                .map(assignment -> new AssignmentDetailContent(
+                        assignment,
+                        preferenceResolver.getRating(assignment),
+                        preferenceResolver.evaluateGenderAssignment(assignment),
+                        preferenceResolver.evaluateAssignmentAttributes(assignment)
+                )).collect(Collectors.toList());
+
+        assignmentList.forEach(a -> {
+            Counter counter = goodAssignments.get(getBucketNumber(a.getRating()));
             counter.add();
         });
 

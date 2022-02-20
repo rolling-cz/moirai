@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html lang="en" layout:decorate="~{layout/main}" th:with="activePage='home'" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h3 th:text="#{solution-detail.title}"></h3>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Surname</th>
+            <th scope="col">Name</th>
+            <th scope="col">Character</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Gender</th>
+            <th scope="col">Assignment</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="assignment: ${assignments}">
+            <th scope="row" th:text="${assignment.surname}"></th>
+            <td th:text="${assignment.name}"></th>
+            <td th:text="${assignment.character}"></td>
+            <td th:text="${assignment.rating}"></td>
+            <td>
+                <div th:text="${assignment.gender.assigned}"></div>
+                <div th:text="${assignment.gender.rating}"></div>
+            </td>
+            <td>
+                <span th:if="${assignment.assignmentType.isPreferred()}" th:text="${#messages.msgWithParams('execution-results.header.preferredAs', assignment.assignmentType.preferredRank)}"></span>
+                <span th:if="${!assignment.assignmentType.isPreferred()}" th:text="#{${assignment.assignmentType.unwantedAssignmentType.key}}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary mt-2"
+       role="button"
+       th:href="'/execution'"
+       th:text="#{common.previous-btn}"></a>
+</div>
+</body>
+</html>
