@@ -74,8 +74,8 @@ public class ExecutionController {
     @GetMapping({"/solution/{index}/display"})
     public ModelAndView displayDetail(@PathVariable("index") int index) {
         List<VerboseSolution> solutionList = wizardState.getSolutionList();
-        if (index < 0 || index >= solutionList.size()) {
-            throw new GeneralException(HttpStatus.NOT_FOUND, "Teh requested solution doesn't exist");
+        if (solutionList == null || index < 0 || index >= solutionList.size()) {
+            throw new GeneralException(HttpStatus.NOT_FOUND, "exception.solution-does-not-exist");
         }
 
         ApproachType approachType = wizardState.getMainConfiguration().getApproachType();
@@ -86,7 +86,7 @@ public class ExecutionController {
                 solutionList.get(index));
 
         String viewName = approachType == ApproachType.CONTENT ? "solutionDetailContent" : "solutionDetailCharacters";
-        ModelAndView mav = new ModelAndView("solutionDetailCharacters");
+        ModelAndView mav = new ModelAndView(viewName);
         mav.addObject("assignments", assignments);
         mav.addObject("attributes", wizardState.getMainConfiguration().getAttributeList());
         return mav;

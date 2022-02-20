@@ -72,7 +72,7 @@ public class StableMatchingAlgorithm implements Algorithm {
 
     protected List<Assignment> transformCouplesToAssignments(Map<Integer, Integer> couples) {
         List<Assignment> assignmentList = new ArrayList<>();
-        couples.forEach((userId, charId) -> assignmentList.add(new Assignment(userId, charId)));
+        couples.forEach((charId, userId) -> assignmentList.add(new Assignment(userId, charId)));
         return assignmentList;
     }
 

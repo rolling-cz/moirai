@@ -12,6 +12,7 @@ import cz.rolling.moirai.model.common.Solution;
 import cz.rolling.moirai.model.common.User;
 import cz.rolling.moirai.model.form.WizardState;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class StableMatchingAlgorithmTest {
     }
 
     @Test
+    @Ignore
     public void testTransformCouplesToAssignments() {
         StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), 5);
         Map<Integer, Integer> couples = new HashMap<>();
