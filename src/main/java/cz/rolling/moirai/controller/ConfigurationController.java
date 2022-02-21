@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.rolling.moirai.exception.GeneralException;
 import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.common.UiStyle;
+import cz.rolling.moirai.model.form.AlgorithmConfiguration;
+import cz.rolling.moirai.model.form.CharactersConfiguration;
 import cz.rolling.moirai.model.form.MainConfiguration;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.WizardValidator;
@@ -53,6 +55,11 @@ public class ConfigurationController {
 
     @GetMapping
     public String configuration(@RequestParam(value = "uiStyle", required = false) String uiStyleAsString) {
+        applyUiStyle(uiStyleAsString);
+        return getTemplate();
+    }
+
+    private void applyUiStyle(String uiStyleAsString) {
         if (StringUtils.isNotBlank(uiStyleAsString)) {
             try {
                 UiStyle uiStyle = UiStyle.valueOf(uiStyleAsString);
@@ -61,8 +68,6 @@ public class ConfigurationController {
                 logger.error("Unknown ui style " + uiStyleAsString);
             }
         }
-
-        return getTemplate();
     }
 
     @GetMapping("/remove/{index}")
@@ -72,6 +77,17 @@ public class ConfigurationController {
             attributeList.remove(index);
         }
         return getTemplate();
+    }
+
+    @GetMapping("/new")
+    public String reset(@RequestParam(value = "uiStyle", required = false) String uiStyleAsString){
+        wizardState.setMainConfiguration(new MainConfiguration());
+        wizardState.setCharactersConfiguration(new CharactersConfiguration());
+        wizardState.setAlgorithmConfiguration(new AlgorithmConfiguration());
+        wizardState.setSolutionList(null);
+        wizardState.setDistributionHeaderList(null);
+        applyUiStyle(uiStyleAsString);
+        return "redirect:/configuration";
     }
 
     @PostMapping("/next")
