@@ -27,20 +27,21 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: 'Build Docker image'
         run: |
-          docker build -t ${{ env.serviceName }} -f ./${{ env.serviceName }}/Dockerfile .
+          docker build -t ${{ env.serviceName }} -f ./Dockerfile .
       - name: 'Push Docker image to repository'
         run: |
+          docker tag ${{ env.serviceName }}:latest ${{ env.repository }}/${{ env.serviceName }}:${{ env.appVersion }}
           docker tag ${{ env.serviceName }}:latest ${{ env.repository }}/${{ env.serviceName }}:latest
           docker push ${{ env.repository }}/${{ env.serviceName }}:latest
       - name: 'Register a new version'
         run: |
-          aws --region ${{ env.region }} elasticbeanstalk create-application-version --application-name ${{ env.serviceName }} --version-label ${{ env.appVersion }} --source-bundle S3Bucket=${{ env.s3Bucket }},S3Key=Dockerrun.aws.json
+          aws --region ${{ env.region }} elasticbeanstalk create-application-version --application-name ${{ env.serviceName }} --version-label ${{ env.serviceName }}-${{ env.appVersion }} --source-bundle S3Bucket=${{ env.s3Bucket }},S3Key=Dockerrun.aws.json
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: 'Trigger deployment'
         run: |
-          aws --region ${{ env.region }} elasticbeanstalk update-environment --application-name ${{ env.serviceName }} --environment-name ${{ env.envName }} --version-label=$APP_VERSION
+          aws --region ${{ env.region }} elasticbeanstalk update-environment --application-name ${{ env.serviceName }} --environment-name ${{ env.envName }} --version-label=${{ env.serviceName }}-${{ env.appVersion }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
