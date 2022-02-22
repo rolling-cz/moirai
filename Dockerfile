@@ -3,7 +3,7 @@ COPY . /tmp/moirai
 WORKDIR /tmp/moirai
 RUN mvn package
 
-FROM openjdk:11-jdk-alpine
+FROM adoptopenjdk:11-jre-hotspot
 
 COPY  --from=maven --chown=nonroot:nonroot /tmp/moirai/target/*.jar app.jar
 
