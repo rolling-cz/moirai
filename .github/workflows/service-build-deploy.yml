@@ -30,6 +30,7 @@ jobs:
           docker build -t ${{ env.serviceName }} -f ./Dockerfile .
       - name: 'Push Docker image to repository'
         run: |
+          docker tag ${{ env.serviceName }}:${{ env.appVersion }} ${{ env.repository }}/${{ env.serviceName }}:${{ env.appVersion }}
           docker tag ${{ env.serviceName }}:latest ${{ env.repository }}/${{ env.serviceName }}:latest
           docker push ${{ env.repository }}/${{ env.serviceName }}:latest
       - name: 'Register a new version'
