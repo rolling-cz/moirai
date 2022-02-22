@@ -40,7 +40,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: 'Trigger deployment'
         run: |
-          aws --region ${{ env.region }} elasticbeanstalk update-environment --application-name ${{ env.serviceName }} --environment-name ${{ env.envName }} --version-label=$APP_VERSION
+          aws --region ${{ env.region }} elasticbeanstalk update-environment --application-name ${{ env.serviceName }} --environment-name ${{ env.envName }} --version-label=${{ env.appVersion }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
