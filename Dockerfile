@@ -5,7 +5,7 @@ RUN mvn package
 
 FROM adoptopenjdk:11-jre-hotspot
 
-COPY  --from=maven --chown=nonroot:nonroot /tmp/moirai/target/*.jar app.jar
+COPY  --from=maven /tmp/moirai/target/*.jar app.jar
 
 EXPOSE 8080
 
