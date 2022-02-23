@@ -3,7 +3,7 @@ package cz.rolling.moirai.service;
 import cz.rolling.moirai.model.common.AssignmentDetail;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.User;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.VerboseSolution;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;

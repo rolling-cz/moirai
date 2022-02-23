@@ -2,7 +2,7 @@ package cz.rolling.moirai.model.form;
 
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.UiStyle;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.VerboseSolution;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

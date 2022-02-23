@@ -7,7 +7,7 @@ import cz.rolling.moirai.model.common.AssignmentDetailContent;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.PrintableAssignment;
 import cz.rolling.moirai.model.common.User;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.VerboseSolution;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

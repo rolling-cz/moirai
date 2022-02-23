@@ -5,6 +5,7 @@ import cz.rolling.moirai.assignment.enhancer.ContentSolutionEnhancer;
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.assignment.preference.ContentPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
+import cz.rolling.moirai.model.common.result.DirectSolution;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -31,9 +32,9 @@ public class StableMatchingAlgorithm implements Algorithm {
 
     @Override
     public SolutionHolder findBestAssignment() {
-        SolutionHolder solutionHolder = new SolutionHolder(
-                preferenceResolver, new ContentSolutionEnhancer(preferenceResolver), 1);
-        solutionHolder.saveSolution(calculateSolution());
+        SolutionHolder solutionHolder = new SolutionHolder(new ContentSolutionEnhancer(preferenceResolver), 1);
+        List<Assignment> assignments = calculateSolution();
+        solutionHolder.saveSolution(new DirectSolution(preferenceResolver.calculateRating(assignments), assignments));
         return solutionHolder;
     }
 

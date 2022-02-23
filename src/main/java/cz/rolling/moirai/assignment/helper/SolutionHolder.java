@@ -1,11 +1,10 @@
 package cz.rolling.moirai.assignment.helper;
 
 import cz.rolling.moirai.assignment.enhancer.SolutionEnhancer;
-import cz.rolling.moirai.assignment.preference.PreferenceResolver;
-import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.DistributionHeader;
-import cz.rolling.moirai.model.common.Solution;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.DirectSolution;
+import cz.rolling.moirai.model.common.result.Solution;
+import cz.rolling.moirai.model.common.result.VerboseSolution;
 import org.apache.solr.util.BoundedTreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,25 +16,22 @@ import java.util.List;
 
 public class SolutionHolder {
 
-    private final PreferenceResolver preferenceResolver;
     private final BoundedTreeSet<Solution> solutionSet;
     private final SolutionEnhancer solutionEnhancer;
     private final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
     private int triedSolutionCounter = 0;
 
-    public SolutionHolder(PreferenceResolver preferenceResolver,
-                          SolutionEnhancer solutionEnhancer,
+    public SolutionHolder(SolutionEnhancer solutionEnhancer,
                           int numberOfSolutions) {
         this.solutionEnhancer = solutionEnhancer;
         solutionSet = new BoundedTreeSet<>(numberOfSolutions, Comparator.reverseOrder());
-        this.preferenceResolver = preferenceResolver;
     }
 
     public Solution getBestSolution() {
         if (!solutionSet.isEmpty()) {
             return solutionSet.first();
         } else {
-            return Solution.EMPTY;
+            return DirectSolution.EMPTY;
         }
     }
 
@@ -43,14 +39,12 @@ public class SolutionHolder {
         if (!solutionSet.isEmpty()) {
             return solutionSet.last();
         } else {
-            return Solution.EMPTY;
+            return DirectSolution.EMPTY;
         }
     }
 
-    public void saveSolution(List<Assignment> assignmentList) {
-        Integer rank = preferenceResolver.calculateRating(assignmentList);
-        solutionSet.add(new Solution(rank, assignmentList));
-
+    public void saveSolution(Solution solution) {
+        solutionSet.add(solution);
         triedSolutionCounter++;
         if (triedSolutionCounter % 10000 == 0) {
             logger.debug("Solution tried: " + triedSolutionCounter + ", best rank: " + getBestSolution().getRating());

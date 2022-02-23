@@ -24,7 +24,7 @@ public class CharacterDfsAlgorithm implements Algorithm {
     @Override
     public SolutionHolder findBestAssignment() {
         CharacterSolutionEnhancer enhancer = new CharacterSolutionEnhancer(configuration.getPreferencesPerUser(), preferencesHolder);
-        SolutionHolder solutionHolder = new SolutionHolder(preferencesHolder, enhancer, configuration.getNumberOfBestSolutions());
+        SolutionHolder solutionHolder = new SolutionHolder(enhancer, configuration.getNumberOfBestSolutions());
 
         Deque<AssignmentTask> taskQueue = new ConcurrentLinkedDeque<>();
         AssignmentProcessor processor = new AssignmentProcessor(preferencesHolder, solutionHolder, configuration, configuration.getSearchWide());

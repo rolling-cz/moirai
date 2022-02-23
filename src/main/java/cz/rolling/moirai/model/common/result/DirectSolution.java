@@ -1,5 +1,6 @@
-package cz.rolling.moirai.model.common;
+package cz.rolling.moirai.model.common.result;
 
+import cz.rolling.moirai.model.common.Assignment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,13 +9,13 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class Solution implements Comparable<Solution> {
+public class DirectSolution implements Solution {
 
-    public static final Solution EMPTY = new Solution(Integer.MIN_VALUE);
+    public static final DirectSolution EMPTY = new DirectSolution(Integer.MIN_VALUE);
     private final Integer rating;
     private final List<Assignment> assignmentList;
 
-    private Solution(int rating) {
+    private DirectSolution(int rating) {
         this(rating, Collections.emptyList());
     }
 
@@ -29,6 +30,6 @@ public class Solution implements Comparable<Solution> {
 
     @Override
     public int compareTo(Solution o) {
-        return rating.compareTo(o.rating);
+        return rating.compareTo(o.getRating());
     }
 }

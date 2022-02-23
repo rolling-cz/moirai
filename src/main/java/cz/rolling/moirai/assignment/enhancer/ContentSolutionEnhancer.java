@@ -6,8 +6,8 @@ import cz.rolling.moirai.model.common.AssignmentDetail;
 import cz.rolling.moirai.model.common.AssignmentDetailContent;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
-import cz.rolling.moirai.model.common.Solution;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.Solution;
+import cz.rolling.moirai.model.common.result.VerboseSolution;
 
 import java.util.ArrayList;
 import java.util.HashMap;

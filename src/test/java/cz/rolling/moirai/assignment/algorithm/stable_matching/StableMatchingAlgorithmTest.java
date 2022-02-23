@@ -8,8 +8,9 @@ import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.common.CharacterType;
 import cz.rolling.moirai.model.common.Gender;
 import cz.rolling.moirai.model.common.RatingFunction;
-import cz.rolling.moirai.model.common.Solution;
+import cz.rolling.moirai.model.common.result.DirectSolution;
 import cz.rolling.moirai.model.common.User;
+import cz.rolling.moirai.model.common.result.Solution;
 import cz.rolling.moirai.model.form.WizardState;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -68,7 +69,8 @@ public class StableMatchingAlgorithmTest {
         Solution solution = solutionHolder.getBestSolution();
         Assert.assertEquals(5100, solution.getRating().intValue());
 
-        List<Assignment> assignmentList = solution.getAssignmentList();
+        Assert.assertTrue(solution instanceof DirectSolution);
+        List<Assignment> assignmentList = ((DirectSolution)solution).getAssignmentList();
         Assert.assertEquals(5, assignmentList.size());
         Assert.assertTrue(assignmentList.contains(new Assignment(0, 4)));
         Assert.assertTrue(assignmentList.contains(new Assignment(1, 3)));

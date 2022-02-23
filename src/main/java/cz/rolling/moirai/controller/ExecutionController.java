@@ -4,7 +4,7 @@ import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.exception.GeneralException;
 import cz.rolling.moirai.model.common.ApproachType;
 import cz.rolling.moirai.model.common.PrintableAssignment;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.VerboseSolution;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.AlgorithmExecutor;
 import cz.rolling.moirai.service.SolutionCsvPrinter;

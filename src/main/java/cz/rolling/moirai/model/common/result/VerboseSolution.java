@@ -1,5 +1,6 @@
-package cz.rolling.moirai.model.common;
+package cz.rolling.moirai.model.common.result;
 
+import cz.rolling.moirai.model.common.AssignmentDetail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
