@@ -24,6 +24,10 @@ public class AlgorithmFeatureService {
                 throw new IllegalArgumentException("Unknown approach " + wizardState.getMainConfiguration().getApproachType());
         }
 
+        if (wizardState.getMainConfiguration().getMultiSelect() > 1) {
+            featureSet.add(AlgorithmFeature.MULTI_SELECT);
+        }
+
         return featureSet;
     }
 }

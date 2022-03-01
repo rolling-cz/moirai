@@ -47,6 +47,11 @@ public class MainConfiguration {
 
     private String ratingForHatedCharacters = "-10";
 
+    @NotNull
+    @Min(0)
+    @Max(5)
+    private Integer multiSelect = 0;
+
     @Valid
     @NotNull
     List<CharacterAttribute> attributeList = new ArrayList<>();
