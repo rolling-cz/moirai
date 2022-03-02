@@ -26,7 +26,7 @@
             <AppenderRef ref="RollingFile" />
         </Root>
 
-        <Logger name="cz.rolling.moirai" level="trace" additivity="false">
+        <Logger name="cz.rolling.moirai" level="debug" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Logger>
