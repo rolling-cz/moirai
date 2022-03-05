@@ -18,9 +18,9 @@
     <form enctype="multipart/form-data" method="post" th:object="${algorithmConfiguration}">
 
         <div class="row">
-            <div class="col-sm-3" th:text="#{algorithm-config.loaded-users}"></div>
+            <div class="col-sm-4" th:text="#{algorithm-config.loaded-users}"></div>
             <div class="col-sm-1" th:text="*{numberOfUsers}"></div>
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <button class="btn btn-info" data-target="#loadFileModal"
                         th:text="#{common.load-file-btn}"
                         data-toggle="modal" type="button"></button>

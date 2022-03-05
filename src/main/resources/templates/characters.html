@@ -12,9 +12,9 @@
     <form enctype="multipart/form-data" method="post" th:object="${characterConfiguration}">
 
         <div class="row">
-            <div class="col-sm-3" th:text="#{characters-config.loaded-chars}"></div>
+            <div class="col-sm-4" th:text="#{characters-config.loaded-chars}"></div>
             <div class="col-sm-1" th:text="*{numberOfCharacters}"></div>
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <button class="btn btn-info" data-target="#loadFileModal"
                         data-toggle="modal"
                         th:text="#{common.load-file-btn}" type="button"></button>
