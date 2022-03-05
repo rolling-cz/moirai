@@ -3,7 +3,7 @@ package cz.rolling.moirai.service;
 import cz.rolling.moirai.model.common.AssignmentDetail;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.User;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class SolutionCsvPrinter {
             "userName", "userSurname", "characterName", "assignmentRating"
     };
 
-    public byte[] printSolution(VerboseSolution solution, List<User> userList, List<Character> characterList) throws IOException {
+    public byte[] printSolution(ResultSummary solution, List<User> userList, List<Character> characterList) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(byteArrayOutputStream, StandardCharsets.UTF_8), CSVFormat.RFC4180.withHeader(FILE_HEADER));
 

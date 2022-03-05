@@ -145,6 +145,20 @@
     </div>
 
     <div class="approach-section" id="section-CONTENT">
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label class="col-form-label" for="multiSelect"
+                       th:text="#{assignment-config.multi-select.label}"></label>
+                <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.multi-select.tooltip}"></i>
+            </div>
+            <div class="col-sm-5">
+                <select class="custom-select" id="multiSelect" th:field="*{multiSelect}">
+                    <option th:label="#{'assignment-config.multi-select.option-0'}" value="0"></option>
+                    <option th:label="#{'assignment-config.multi-select.option-2'}" value="2"></option>
+                    <option th:label="#{'assignment-config.multi-select.option-3'}" value="3"></option>
+                </select>
+            </div>
+        </div>
         <div>
             <h5>
                 <span th:text="#{assignment-config.attr.title}"></span>

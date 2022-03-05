@@ -4,6 +4,7 @@ import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.CharacterType;
+import cz.rolling.moirai.model.common.result.DirectSolution;
 import cz.rolling.moirai.model.content.ContentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,8 @@ public class AssignmentProcessor {
 
     public List<AssignmentTask> process(AssignmentTask task) {
         if (task.isComplete()) {
-            solutionHolder.saveSolution(task.getAssignmentList());
+            DirectSolution solution = new DirectSolution(preferencesHolder.calculateRating(task.getAssignmentList()), task.getAssignmentList());
+            solutionHolder.saveSolution(solution);
             return Collections.emptyList();
         }
 

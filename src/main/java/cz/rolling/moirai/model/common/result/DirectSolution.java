@@ -1,23 +1,18 @@
-package cz.rolling.moirai.model.common;
+package cz.rolling.moirai.model.common.result;
 
+import cz.rolling.moirai.assignment.enhancer.SolutionEnhancer;
+import cz.rolling.moirai.model.common.Assignment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Collections;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class Solution implements Comparable<Solution> {
+public class DirectSolution implements Solution {
 
-    public static final Solution EMPTY = new Solution(Integer.MIN_VALUE);
     private final Integer rating;
     private final List<Assignment> assignmentList;
-
-    private Solution(int rating) {
-        this(rating, Collections.emptyList());
-    }
-
 
     @Override
     public String toString() {
@@ -29,6 +24,11 @@ public class Solution implements Comparable<Solution> {
 
     @Override
     public int compareTo(Solution o) {
-        return rating.compareTo(o.rating);
+        return rating.compareTo(o.getRating());
+    }
+
+    @Override
+    public ResultSummary enhanceBy(SolutionEnhancer solutionEnhancer) {
+        return solutionEnhancer.enhance(this);
     }
 }

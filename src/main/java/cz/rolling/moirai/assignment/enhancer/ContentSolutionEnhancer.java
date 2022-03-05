@@ -2,14 +2,19 @@ package cz.rolling.moirai.assignment.enhancer;
 
 import cz.rolling.moirai.assignment.helper.Counter;
 import cz.rolling.moirai.assignment.preference.ContentPreferenceResolver;
+import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentDetail;
 import cz.rolling.moirai.model.common.AssignmentDetailContent;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
-import cz.rolling.moirai.model.common.Solution;
-import cz.rolling.moirai.model.common.VerboseSolution;
+import cz.rolling.moirai.model.common.result.DirectSolution;
+import cz.rolling.moirai.model.common.result.MetaSolution;
+import cz.rolling.moirai.model.common.result.NoSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
+import cz.rolling.moirai.model.common.result.Solution;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +34,30 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
     }
 
     @Override
-    public VerboseSolution enhance(Solution solution) {
+    public ResultSummary enhance(MetaSolution solution) {
+        List<Assignment> assignments = solution.getSolutionList().stream()
+                .map(Solution::getAssignmentList)
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(Assignment::getUserId))
+                .collect(Collectors.toList());
+        return enhanceInner(assignments, solution.getRating());
+    }
+
+    public ResultSummary enhance(DirectSolution solution) {
+        return enhanceInner(solution.getAssignmentList(), solution.getRating());
+    }
+
+    public ResultSummary enhance(NoSolution solution) {
+        return ResultSummary.createSummaryWithoutSolution(solution.getReasonCode());
+    }
+
+    private ResultSummary enhanceInner(List<Assignment> assignmentList, int rating) {
         Map<Integer, Counter> goodAssignments = new HashMap<>();
         IntStream.range(0, NUMBER_OF_BUCKETS).forEach(i ->
                 goodAssignments.put(i, new Counter())
         );
 
-        List<AssignmentDetail> assignmentList = solution.getAssignmentList().stream()
+        List<AssignmentDetail> assignmentDetailList = assignmentList.stream()
                 .map(assignment -> new AssignmentDetailContent(
                         assignment,
                         preferenceResolver.getRating(assignment),
@@ -43,13 +65,14 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
                         preferenceResolver.evaluateAssignmentAttributes(assignment)
                 )).collect(Collectors.toList());
 
-        assignmentList.forEach(a -> {
+        assignmentDetailList.forEach(a -> {
             Counter counter = goodAssignments.get(getBucketNumber(a.getRating()));
             counter.add();
         });
 
-        return new VerboseSolution(solution.getRating(), assignmentList, mapMapToNumbers(goodAssignments));
+        return ResultSummary.createSummaryWithSolution(rating, assignmentDetailList, mapMapToNumbers(goodAssignments));
     }
+
 
     @Override
     public List<DistributionHeader> getHeaderList() {

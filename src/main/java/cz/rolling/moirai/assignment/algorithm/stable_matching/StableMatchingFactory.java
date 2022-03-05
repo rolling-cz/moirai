@@ -8,15 +8,16 @@ import cz.rolling.moirai.model.common.AlgorithmSpecificParameter;
 import cz.rolling.moirai.model.form.WizardState;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
 public class StableMatchingFactory implements AlgorithmFactory {
 
-    private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Collections.singletonList(
-            AlgorithmFeature.CONTENT_APPROACH
+    private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Arrays.asList(
+            AlgorithmFeature.CONTENT_APPROACH,
+            AlgorithmFeature.MULTI_SELECT
     ));
 
     private static final Set<AlgorithmSpecificParameter<?>> PARAMETER_SET = new HashSet<>();
@@ -44,6 +45,11 @@ public class StableMatchingFactory implements AlgorithmFactory {
     @Override
     public Algorithm createAlgorithmManager(WizardState wizardState) {
         ContentPreferenceResolver preferenceResolver = new ContentPreferenceResolver(wizardState);
-        return new StableMatchingAlgorithm(preferenceResolver, wizardState.getCharactersConfiguration().getNumberOfCharacters());
+        return new StableMatchingAlgorithm(
+                preferenceResolver,
+                new StableMatchingProcessorVar1(),
+                wizardState.getCharactersConfiguration().getNumberOfCharacters(),
+                wizardState.getMainConfiguration().getMultiSelect()
+        );
     }
 }
