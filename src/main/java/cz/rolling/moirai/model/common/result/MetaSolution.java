@@ -1,6 +1,7 @@
 package cz.rolling.moirai.model.common.result;
 
 
+import cz.rolling.moirai.assignment.enhancer.SolutionEnhancer;
 import cz.rolling.moirai.model.common.Assignment;
 import lombok.Getter;
 
@@ -37,5 +38,10 @@ public class MetaSolution implements Solution{
     @Override
     public int compareTo(Solution o) {
         return getRating().compareTo(o.getRating());
+    }
+
+    @Override
+    public ResultSummary enhanceBy(SolutionEnhancer solutionEnhancer) {
+        return solutionEnhancer.enhance(this);
     }
 }

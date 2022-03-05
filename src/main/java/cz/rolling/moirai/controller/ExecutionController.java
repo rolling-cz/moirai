@@ -4,7 +4,7 @@ import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.exception.GeneralException;
 import cz.rolling.moirai.model.common.ApproachType;
 import cz.rolling.moirai.model.common.PrintableAssignment;
-import cz.rolling.moirai.model.common.result.VerboseSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
 import cz.rolling.moirai.model.form.WizardState;
 import cz.rolling.moirai.service.AlgorithmExecutor;
 import cz.rolling.moirai.service.SolutionCsvPrinter;
@@ -65,15 +65,21 @@ public class ExecutionController {
     public ModelAndView results() {
         ModelAndView mav = new ModelAndView("execution");
         mav.addObject("solutions", wizardState.getSolutionList());
+        mav.addObject("hasSolution", wizardState.getSolutionList().stream().anyMatch(ResultSummary::isHasSolution));
+
         mav.addObject("approachType", wizardState.getMainConfiguration().getApproachType());
         mav.addObject("headerList", wizardState.getDistributionHeaderList());
-        mav.addObject("hasNegativeDist", wizardState.getDistributionHeaderList().stream().anyMatch(d -> !d.isPositive()));
+        boolean hasNegativeDist = false;
+        if (wizardState.getDistributionHeaderList() != null) {
+            hasNegativeDist = wizardState.getDistributionHeaderList().stream().anyMatch(d -> !d.isPositive());
+        }
+        mav.addObject("hasNegativeDist", hasNegativeDist);
         return mav;
     }
 
     @GetMapping({"/solution/{index}/display"})
     public ModelAndView displayDetail(@PathVariable("index") int index) {
-        List<VerboseSolution> solutionList = wizardState.getSolutionList();
+        List<ResultSummary> solutionList = wizardState.getSolutionList();
         if (solutionList == null || index < 0 || index >= solutionList.size()) {
             throw new GeneralException(HttpStatus.NOT_FOUND, "exception.solution-does-not-exist");
         }
@@ -94,11 +100,11 @@ public class ExecutionController {
 
     @GetMapping({"/solution/{index}/download"})
     public ResponseEntity<Resource> download(@PathVariable("index") int index) throws IOException {
-        List<VerboseSolution> solutionList = wizardState.getSolutionList();
+        List<ResultSummary> solutionList = wizardState.getSolutionList();
         if (index < 0 || index >= solutionList.size()) {
             return ResponseEntity.notFound().build();
         }
-        VerboseSolution solution = solutionList.get(index);
+        ResultSummary solution = solutionList.get(index);
 
         byte[] buf = solutionCsvPrinter.printSolution(
                 solution,

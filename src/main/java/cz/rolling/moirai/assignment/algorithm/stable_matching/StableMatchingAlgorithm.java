@@ -48,21 +48,20 @@ public class StableMatchingAlgorithm implements Algorithm {
         SolutionHolder solutionHolder = new SolutionHolder(new ContentSolutionEnhancer(preferenceResolver), 1);
 
         Solution completeSolution;
-        if (multiSelect > 1) {
-            completeSolution = new MetaSolution();
-            Set<Assignment> forbiddenAssignments = new HashSet<>();
-
-            try {
+        try {
+            if (multiSelect > 1) {
+                completeSolution = new MetaSolution();
+                Set<Assignment> forbiddenAssignments = new HashSet<>();
                 for (int i = 0; i < multiSelect; i++) {
                     DirectSolution solution = calculateDirectSolution(forbiddenAssignments);
                     ((MetaSolution) completeSolution).addSolution(solution);
                     forbiddenAssignments.addAll(solution.getAssignmentList());
                 }
-            } catch (NoSolutionException e) {
-                completeSolution = new NoSolution(e.getMessage());
+            } else {
+                completeSolution = calculateDirectSolution(Collections.emptySet());
             }
-        } else {
-            completeSolution = calculateDirectSolution(Collections.emptySet());
+        } catch (NoSolutionException e) {
+            completeSolution = new NoSolution(e.getMessage());
         }
 
         solutionHolder.saveSolution(completeSolution);

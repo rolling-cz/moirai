@@ -2,13 +2,14 @@ package cz.rolling.moirai.model.form;
 
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.UiStyle;
-import cz.rolling.moirai.model.common.result.VerboseSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -26,7 +27,7 @@ public class WizardState {
 
     private AlgorithmConfiguration algorithmConfiguration = new AlgorithmConfiguration();
 
-    private List<VerboseSolution> solutionList;
+    private List<ResultSummary> solutionList = Collections.singletonList(ResultSummary.createSummaryWithoutSolution("no-solution.no-input"));
 
     private List<DistributionHeader> distributionHeaderList;
 }

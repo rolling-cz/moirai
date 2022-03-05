@@ -2,20 +2,20 @@ package cz.rolling.moirai.assignment.helper;
 
 import cz.rolling.moirai.assignment.enhancer.SolutionEnhancer;
 import cz.rolling.moirai.model.common.DistributionHeader;
-import cz.rolling.moirai.model.common.result.DirectSolution;
+import cz.rolling.moirai.model.common.result.NoSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
 import cz.rolling.moirai.model.common.result.Solution;
-import cz.rolling.moirai.model.common.result.VerboseSolution;
 import org.apache.solr.util.BoundedTreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SolutionHolder {
 
+    private static final NoSolution EMPTY_SOLUTION = new NoSolution("no-solution.no-input");
     private final BoundedTreeSet<Solution> solutionSet;
     private final SolutionEnhancer solutionEnhancer;
     private final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
@@ -31,7 +31,7 @@ public class SolutionHolder {
         if (!solutionSet.isEmpty()) {
             return solutionSet.first();
         } else {
-            return DirectSolution.EMPTY;
+            return EMPTY_SOLUTION;
         }
     }
 
@@ -39,7 +39,7 @@ public class SolutionHolder {
         if (!solutionSet.isEmpty()) {
             return solutionSet.last();
         } else {
-            return DirectSolution.EMPTY;
+            return EMPTY_SOLUTION;
         }
     }
 
@@ -62,13 +62,10 @@ public class SolutionHolder {
         }
     }
 
-    public List<VerboseSolution> getSolutions() {
-        Iterator<Solution> iterator = solutionSet.iterator();
-        List<VerboseSolution> solutionList = new ArrayList<>();
-        while (iterator.hasNext()) {
-            solutionList.add(solutionEnhancer.enhance(iterator.next()));
-        }
-        return solutionList;
+    public List<ResultSummary> getSolutions() {
+        return solutionSet.stream()
+                .map(solution -> solution.enhanceBy(solutionEnhancer))
+                .collect(Collectors.toList());
     }
 
     public List<DistributionHeader> getDistributionHeaderList() {

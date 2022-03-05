@@ -7,8 +7,10 @@ import cz.rolling.moirai.model.common.AssignmentDetailCharacters;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
 import cz.rolling.moirai.model.common.UnwantedAssignmentType;
-import cz.rolling.moirai.model.common.result.Solution;
-import cz.rolling.moirai.model.common.result.VerboseSolution;
+import cz.rolling.moirai.model.common.result.DirectSolution;
+import cz.rolling.moirai.model.common.result.MetaSolution;
+import cz.rolling.moirai.model.common.result.NoSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class CharacterSolutionEnhancer implements SolutionEnhancer {
     }
 
     @Override
-    public VerboseSolution enhance(Solution solution) {
+    public ResultSummary enhance(DirectSolution solution) {
         Map<Integer, Counter> goodAssignments = new HashMap<>();
         IntStream.rangeClosed(1, numberOfPreferences).forEach(i ->
                 goodAssignments.put(i, new Counter())
@@ -60,9 +62,19 @@ public class CharacterSolutionEnhancer implements SolutionEnhancer {
                         preferenceResolver.calcCharacterAssignmentType(assignment)
                 )).collect(Collectors.toList());
 
-        return new VerboseSolution(solution.getRating(), assignmentList, mapMapToNumbers(goodAssignments, badAssignments));
+        Map<String, Integer> distributionMap = mapMapToNumbers(goodAssignments, badAssignments);
+        return ResultSummary.createSummaryWithSolution(solution.getRating(), assignmentList, distributionMap);
     }
 
+    @Override
+    public ResultSummary enhance(MetaSolution solution) {
+        throw new RuntimeException("The character solution doesn't support meta solutions.");
+    }
+
+    @Override
+    public ResultSummary enhance(NoSolution solution) {
+        return ResultSummary.createSummaryWithoutSolution(solution.getReasonCode());
+    }
 
     @Override
     public List<DistributionHeader> getHeaderList() {

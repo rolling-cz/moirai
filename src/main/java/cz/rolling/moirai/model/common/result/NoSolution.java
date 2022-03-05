@@ -1,5 +1,6 @@
 package cz.rolling.moirai.model.common.result;
 
+import cz.rolling.moirai.assignment.enhancer.SolutionEnhancer;
 import cz.rolling.moirai.model.common.Assignment;
 
 import java.util.Collections;
@@ -30,5 +31,10 @@ public class NoSolution implements Solution{
     @Override
     public int compareTo(Solution o) {
         return 1;
+    }
+
+    @Override
+    public ResultSummary enhanceBy(SolutionEnhancer solutionEnhancer) {
+        return solutionEnhancer.enhance(this);
     }
 }

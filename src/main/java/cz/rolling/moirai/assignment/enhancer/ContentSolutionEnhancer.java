@@ -7,9 +7,11 @@ import cz.rolling.moirai.model.common.AssignmentDetail;
 import cz.rolling.moirai.model.common.AssignmentDetailContent;
 import cz.rolling.moirai.model.common.DistributionHeader;
 import cz.rolling.moirai.model.common.MessageWithParams;
+import cz.rolling.moirai.model.common.result.DirectSolution;
 import cz.rolling.moirai.model.common.result.MetaSolution;
+import cz.rolling.moirai.model.common.result.NoSolution;
+import cz.rolling.moirai.model.common.result.ResultSummary;
 import cz.rolling.moirai.model.common.result.Solution;
-import cz.rolling.moirai.model.common.result.VerboseSolution;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,21 +34,24 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
     }
 
     @Override
-    public VerboseSolution enhance(Solution solution) {
-        if (solution instanceof MetaSolution) {
-            MetaSolution metaSolution = (MetaSolution) solution;
-            List<Assignment> assignments = metaSolution.getSolutionList().stream()
-                    .map(Solution::getAssignmentList)
-                    .flatMap(List::stream)
-                    .sorted(Comparator.comparing(Assignment::getUserId))
-                    .collect(Collectors.toList());
-            return enhanceInner(assignments, solution.getRating());
-        } else {
-            return enhanceInner(solution.getAssignmentList(), solution.getRating());
-        }
+    public ResultSummary enhance(MetaSolution solution) {
+        List<Assignment> assignments = solution.getSolutionList().stream()
+                .map(Solution::getAssignmentList)
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(Assignment::getUserId))
+                .collect(Collectors.toList());
+        return enhanceInner(assignments, solution.getRating());
     }
 
-    private VerboseSolution enhanceInner(List<Assignment> assignmentList, int rating) {
+    public ResultSummary enhance(DirectSolution solution) {
+        return enhanceInner(solution.getAssignmentList(), solution.getRating());
+    }
+
+    public ResultSummary enhance(NoSolution solution) {
+        return ResultSummary.createSummaryWithoutSolution(solution.getReasonCode());
+    }
+
+    private ResultSummary enhanceInner(List<Assignment> assignmentList, int rating) {
         Map<Integer, Counter> goodAssignments = new HashMap<>();
         IntStream.range(0, NUMBER_OF_BUCKETS).forEach(i ->
                 goodAssignments.put(i, new Counter())
@@ -65,7 +70,7 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
             counter.add();
         });
 
-        return new VerboseSolution(rating, assignmentDetailList, mapMapToNumbers(goodAssignments));
+        return ResultSummary.createSummaryWithSolution(rating, assignmentDetailList, mapMapToNumbers(goodAssignments));
     }
 
 
