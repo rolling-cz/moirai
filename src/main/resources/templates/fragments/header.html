@@ -4,11 +4,11 @@
     <meta charset="UTF-8"/>
     <title>Moirai</title>
 
-    <link th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} " th:rel="stylesheet"/>
-    <link th:href="@{/webjars/font-awesome/5.15.0/css/all.css} " th:rel="stylesheet"/>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css} " th:rel="stylesheet"/>
+    <link th:href="@{/webjars/font-awesome/5.15.3/css/all.css} " th:rel="stylesheet"/>
     <link th:href="@{/styles/main.css}" th:rel="stylesheet"/>
 
-    <script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async th:if="${@environment.getActiveProfiles()[0] == 'prod'}"

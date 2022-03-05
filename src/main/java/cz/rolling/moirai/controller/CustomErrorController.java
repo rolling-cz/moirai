@@ -22,10 +22,4 @@ public class CustomErrorController implements ErrorController {
 
         return mav;
     }
-
-    @Override
-    public String getErrorPath() {
-        // NOOP - deprecated method
-        return null;
-    }
 }
