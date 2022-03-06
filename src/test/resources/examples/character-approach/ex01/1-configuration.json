@@ -1,0 +1,11 @@
+{
+  "approachType" : "CHARACTERS",
+  "ratingForNotSpecifiedChar" : -3,
+  "ratingForGender" : -100,
+  "numberOfPreferredCharacters" : 3,
+  "ratingForPreferredCharacters" : "5,3,1",
+  "numberOfHatedCharacters" : 0,
+  "ratingForHatedCharacters" : "-10",
+  "multiSelect" : 0,
+  "attributeList" : [ ]
+}
