@@ -1,0 +1,10 @@
+player01,player01,MALE,char01,char02,char03
+player02,player02,MALE,char02,char03,char04
+player03,player03,MALE,char03,char04,char05
+player04,player04,MALE,char04,char05,char01
+player05,player05,MALE,char05,char01,char02
+player06,player06,FEMALE,char06,char07,char08
+player07,player07,FEMALE,char07,char08,char09
+player08,player08,FEMALE,char08,char09,char10
+player09,player09,FEMALE,char09,char10,char06
+player10,player10,FEMALE,char10,char06,char07

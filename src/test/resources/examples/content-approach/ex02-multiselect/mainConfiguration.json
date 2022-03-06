@@ -1,0 +1,119 @@
+{
+  "approachType" : "CONTENT",
+  "ratingForNotSpecifiedChar" : -100,
+  "ratingForGender" : -1500,
+  "numberOfPreferredCharacters" : 3,
+  "ratingForPreferredCharacters" : "5,3,1",
+  "numberOfHatedCharacters" : 0,
+  "ratingForHatedCharacters" : "-10",
+  "multiSelect" : 3,
+  "attributeList" : [ {
+    "name" : "Script/Sandbox",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -100,
+    "function" : "CUBIC"
+  }, {
+    "name" : "Death",
+    "min" : 1,
+    "max" : 3,
+    "rating" : -100,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Romance",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -25,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Family relations",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -5,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Leadership",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -5,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Combat",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -25,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Faith",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -5,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Magic",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -5,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Diplomacy",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -5,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Konflikty ",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -5,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Hobbits",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -10,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Humans",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -10,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Half-elves",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -10,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Dwarfs",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -10,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Elves",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -10,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Barbarians",
+    "min" : 1,
+    "max" : 5,
+    "rating" : -10,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Facial masks",
+    "min" : 1,
+    "max" : 3,
+    "rating" : -100,
+    "function" : "LINEAR"
+  }, {
+    "name" : "Singing",
+    "min" : 1,
+    "max" : 3,
+    "rating" : -100,
+    "function" : "CUBIC"
+  } ]
+}
