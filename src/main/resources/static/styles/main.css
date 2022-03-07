@@ -59,3 +59,19 @@
 .answer {
     text-align: justify;
 }
+
+.moirai-footer {
+    position: fixed;
+    font-size: 10px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: #706f6f;
+    text-align: right;
+    padding-right: 15px;
+    padding-bottom: 15px;
+}
+
+.moirai-footer a {
+    color: #706f6f;
+}
