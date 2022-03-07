@@ -21,6 +21,16 @@
             </a>
         </div>
     </div>
+    <footer class="moirai-footer">
+        <div>
+            <span th:text="#{index.version}"></span>
+            <a th:href="'https://github.com/rolling-cz/moirai/commit/' + ${versionInfo.commitId}" target="_blank">
+                <span th:text="${versionInfo.commitAbbrev}"></span>
+                <i class="fas fa-external-link-alt fa-sm"></i>
+            </a>
+        </div>
+        <div th:text="${versionInfo.buildTime}"></div>
+    </footer>
 
 </div>
 </body>
