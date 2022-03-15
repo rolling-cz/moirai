@@ -1,7 +1,7 @@
 package cz.rolling.moirai.model.common;
 
 public enum CharacterProperty {
-    NAME("CharacterName"), GENDER("Gender");
+    NAME("common.required-file-format.header.character"), GENDER("common.required-file-format.header.char-gender");
 
     private String key;
 

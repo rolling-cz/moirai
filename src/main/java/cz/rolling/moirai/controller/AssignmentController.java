@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,17 +47,18 @@ public class AssignmentController {
     }
 
     @GetMapping
-    public ModelAndView assignment() {
-        return getPageModelAndView();
+    public ModelAndView assignment(Locale locale) {
+        return getPageModelAndView(locale);
     }
 
     @PostMapping("/import")
-    public String importFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public String importFile(@RequestParam("file") MultipartFile file, Locale locale) throws IOException {
         AlgorithmConfiguration config = wizardState.getAlgorithmConfiguration();
         config.setUserList(importCsvParser.parseUserList(
                 file.getInputStream(),
                 wizardState.getMainConfiguration(),
-                wizardState.getCharactersConfiguration().getCharacterList()
+                wizardState.getCharactersConfiguration().getCharacterList(),
+                locale
         ));
         return "redirect:/assignment";
     }
@@ -75,16 +77,18 @@ public class AssignmentController {
     }
 
     @ExceptionHandler(MoiraiException.class)
-    public ModelAndView handleException(MoiraiException exception) {
-        ModelAndView mav = getPageModelAndView();
+    public ModelAndView handleException(MoiraiException exception, Locale locale) {
+        ModelAndView mav = getPageModelAndView(locale);
         mav.addObject("errorMessage", exception.getMessage());
         mav.addObject("errorParams", exception.getParams());
         return mav;
     }
 
-    private ModelAndView getPageModelAndView() {
+    private ModelAndView getPageModelAndView(Locale locale) {
         ModelAndView mav = new ModelAndView("algorithm");
-        mav.addObject("usersFileFormat", importCsvParser.getUsersFileFormat(wizardState.getMainConfiguration()));
+        mav.addObject("usersFileFormat",
+                importCsvParser.getUsersFileFormat(wizardState.getMainConfiguration(), locale)
+        );
         mav.addObject("algorithmConfiguration", wizardState.getAlgorithmConfiguration());
         mav.addObject("algorithmFactorySet", filterFactories());
         mav.addObject("errorMessage", "");

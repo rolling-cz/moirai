@@ -1,9 +1,9 @@
 package cz.rolling.moirai.model.common;
 
 public enum UserProperty {
-    NAME("Name"),
-    SURNAME("Surname"),
-    GENDER("WantsPlayGender");
+    NAME("common.required-file-format.header.name"),
+    SURNAME("common.required-file-format.header.surname"),
+    GENDER("common.required-file-format.header.wanted-gender");
 
     private String key;
 

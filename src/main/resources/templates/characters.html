@@ -53,8 +53,9 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-2">
-                            <span th:text="#{common.required-file-format(1)}"></span>:
-                            <span class="font-italic" th:text="${charactersFileFormat}"></span>
+                            <div th:text="#{common.required-file-format.line1}"></div>
+                            <div th:text="#{common.required-file-format.line2(1)}" class="mt-1"></div>
+                            <div class="font-italic" th:text="${charactersFileFormat}"></div>
                         </div>
                         <input class="filestyle" id="charactersFile" name="file" th:data-text="#{common.choose-file}" type="file">
                     </div>

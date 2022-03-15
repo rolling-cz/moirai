@@ -21,7 +21,23 @@
         function showSection(section) {
             $("#section-CONTENT").hide(200);
             $("#section-CHARACTERS").hide(200);
-            $("#section-" + section).show(200);
+            if (section) {
+                $("#section-" + section).show(200);
+                $("#config-examples").removeClass("d-none");
+                $("#config-next-btn").removeClass("d-none");
+                $("#fragment-div").removeClass("d-none");
+            }
+        }
+
+        function selectApproach(approachType, approachBtnNumber) {
+            $("#approach-selector-init").hide(200)
+            $("#approach-selector-normal").removeClass("d-none")
+
+            $("#approachType" + approachBtnNumber)
+                .prop('checked', true)
+                .parent('label')
+                .addClass('active')
+            showSection(approachType)
         }
 
         function deleteAttr(btn) {
@@ -44,7 +60,7 @@
                 <h3 th:text="#{assignment-config.title}"></h3>
                 <p th:text="#{assignment-config.desc}"></p>
             </div>
-            <div class="col-sm-3 offset-3">
+            <div class="col-sm-3 offset-3 text-right">
                 <span data-placement="top" data-toggle="tooltip" th:title="#{assignment-config.save.tooltip}">
                     <button class="btn btn-secondary"
                             th:formaction="@{/configuration/print}"
@@ -68,7 +84,52 @@
             </div>
         </div>
 
-        <div layout:fragment="config-content">
+        <div th:classappend="${mainConfiguration.getApproachType() != null} ? 'd-none' : ''" id="approach-selector-init">
+            <div class="form-group row" >
+                <div class="col-sm-6">
+                    <div class="card approach-type-selector">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="#{assignment-config.approach.content}"></h5>
+                            <p class="card-text" th:text="#{assignment-config.approach.content.tooltip}"></p>
+                            <button onclick="selectApproach('CONTENT', 1)" class="btn btn-info" th:text="#{assignment-config.approach.content.btn}" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card approach-type-selector">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="#{assignment-config.approach.characters}"></h5>
+                            <p class="card-text" th:text="#{assignment-config.approach.characters.tooltip}"></p>
+                            <button onclick="selectApproach('CHARACTERS', 2)" class="btn btn-info" th:text="#{assignment-config.approach.characters.btn}" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row" th:classappend="${mainConfiguration.getApproachType() == null} ? 'd-none' : ''" id="approach-selector-normal">
+            <div class="col-sm-5">
+                <label class="col-form-label" th:text="#{assignment-config.approach}"></label>
+                <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.approach.tooltip}"></i>
+            </div>
+            <div class="col-sm-7">
+
+                <div class="btn-group btn-group-toggle" data-toggle="buttons" id="approachSelector">
+                    <label class="btn btn-info btn-rounded"
+                           data-toggle="tooltip"
+                           th:classappend="${mainConfiguration.getApproachType() == type} ? 'active' : ''"
+                           th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"
+                           th:title="#{${type.getKey() + '.tooltip'}}">
+                        <input autocomplete="off" th:field="*{approachType}"
+                               th:text='#{${type.getKey() + ".short"}}'
+                               th:value="${type}"
+                               type="radio">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div layout:fragment="config-content" th:classappend="${mainConfiguration.getApproachType() == null} ? 'd-none' : ''" id="fragment-div">
 
         </div>
 
@@ -76,7 +137,7 @@
             <span class="text-danger" th:errors="*{global}"> </span>
         </div>
 
-        <div class="font-italic mt-4">
+        <div class="font-italic mt-4 d-none" id="config-examples">
             <span th:text="#{assignment-config.examples.start}"></span>
             <a href="https://github.com/rolling-cz/moirai/tree/master/src/test/resources/examples" target="_blank">
                 <span th:text="#{assignment-config.examples.link}"></span>
@@ -84,7 +145,7 @@
             </a>
         </div>
 
-        <button class="btn btn-primary mt-4"
+        <button class="btn btn-primary mt-4 d-none" id="config-next-btn"
                 th:formaction="@{/configuration/next}"
                 th:text="#{common.next-btn}"
                 type="submit"></button>

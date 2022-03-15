@@ -72,28 +72,6 @@
 </script>
 
 <div layout:fragment="config-content">
-    <div class="form-group row">
-        <div class="col-sm-5">
-            <label class="col-form-label" th:text="#{assignment-config.approach}"></label>
-            <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.approach.tooltip}"></i>
-        </div>
-        <div class="col-sm-7">
-
-            <div class="btn-group btn-group-toggle" data-toggle="buttons" id="approachSelector">
-                <label class="btn btn-info btn-rounded"
-                       data-toggle="tooltip"
-                       th:classappend="${mainConfiguration.getApproachType() == type} ? 'active' : ''"
-                       th:each="type : ${T(cz.rolling.moirai.model.common.ApproachType).values()}"
-                       th:title="#{${type.getKey() + '.tooltip'}}">
-                    <input autocomplete="off" th:field="*{approachType}"
-                           th:text="#{${type.getKey()}}"
-                           th:value="${type}"
-                           type="radio">
-                </label>
-            </div>
-        </div>
-    </div>
-
     <input class="form-control" id="ratingForGender"
            th:field="*{ratingForGender}"
            th:value="${mainConfiguration.getRatingForGender()}"

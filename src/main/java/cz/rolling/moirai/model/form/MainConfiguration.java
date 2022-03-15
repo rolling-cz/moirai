@@ -22,7 +22,7 @@ import java.util.List;
 @PreferenceFieldConstraint(numberField = "numberOfHatedCharacters", preferencesField = "ratingForHatedCharacters")
 public class MainConfiguration {
     @NotNull
-    private ApproachType approachType = ApproachType.CHARACTERS;
+    private ApproachType approachType = null;
 
     @NotNull
     @Max(0)
