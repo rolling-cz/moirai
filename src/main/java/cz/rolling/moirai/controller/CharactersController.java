@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @Controller
 @RequestMapping({ "/characters" })
@@ -30,14 +31,18 @@ public class CharactersController {
     }
 
     @GetMapping
-    public ModelAndView characters() {
-        return getPageModelAndView();
+    public ModelAndView characters(Locale locale) {
+        return getPageModelAndView(locale);
     }
 
     @PostMapping("/import")
-    public String importFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public String importFile(@RequestParam("file") MultipartFile file, Locale locale) throws IOException {
         CharactersConfiguration config = wizardState.getCharactersConfiguration();
-        config.setCharacterList(importCsvParser.parseCharacterList(file.getInputStream(), wizardState.getMainConfiguration()));
+        config.setCharacterList(importCsvParser.parseCharacterList(
+                file.getInputStream(),
+                wizardState.getMainConfiguration(),
+                locale)
+        );
         return "redirect:/characters";
     }
 
@@ -52,17 +57,19 @@ public class CharactersController {
     }
 
     @ExceptionHandler(MoiraiException.class)
-    public ModelAndView handleException(MoiraiException exception) {
-        ModelAndView mav = getPageModelAndView();
+    public ModelAndView handleException(MoiraiException exception, Locale locale) {
+        ModelAndView mav = getPageModelAndView(locale);
         mav.addObject("errorMessage", exception.getMessage());
         mav.addObject("errorParams", exception.getParams());
         return mav;
     }
 
-    private ModelAndView getPageModelAndView() {
+    private ModelAndView getPageModelAndView(Locale locale) {
         ModelAndView mav = new ModelAndView("characters");
         mav.addObject("characterConfiguration", wizardState.getCharactersConfiguration());
-        mav.addObject("charactersFileFormat", importCsvParser.getCharactersFileFormat(wizardState.getMainConfiguration()));
+        mav.addObject("charactersFileFormat",
+                importCsvParser.getCharactersFileFormat(wizardState.getMainConfiguration(), locale)
+        );
         mav.addObject("errorMessage", "");
         mav.addObject("errorParams", null);
         return mav;

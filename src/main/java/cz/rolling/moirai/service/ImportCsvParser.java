@@ -18,6 +18,7 @@ import cz.rolling.moirai.model.form.MainConfiguration;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -34,13 +36,16 @@ import java.util.stream.IntStream;
 @Service
 public class ImportCsvParser {
 
-    public static String WANTED_PREFIX = "WantedAs";
-    public static String HATED_PREFIX = "NotWantedAs";
+    private final CsvHeaderHolder csvHeader;
 
-    public List<Character> parseCharacterList(InputStream is, MainConfiguration mainConfiguration) {
+    public ImportCsvParser(MessageSource messageSource) {
+        csvHeader = new CsvHeaderHolder(messageSource);
+    }
+
+    public List<Character> parseCharacterList(InputStream is, MainConfiguration mainConfiguration, Locale locale) {
         List<Character> characterList = new ArrayList<>();
 
-        String[] header = getCharacterColumnList(mainConfiguration).toArray(new String[0]);
+        String[] header = getCharacterColumnList(mainConfiguration, locale).toArray(new String[0]);
         CSVFormat csvFormat = CSVFormat.RFC4180.withHeader(header);
         CSVParser csvParser = createParser(is, csvFormat);
         int index = 0;
@@ -51,10 +56,10 @@ public class ImportCsvParser {
 
             Character newCharacter = new Character();
             newCharacter.setId(index);
-            newCharacter.setName(record.get(CharacterProperty.NAME.getKey()));
-            newCharacter.setGender(translateGender(record.get(CharacterProperty.GENDER.getKey()), index + 1));
+            newCharacter.setName(record.get(csvHeader.get(locale, CharacterProperty.NAME)));
+            newCharacter.setGender(translateGender(record.get(csvHeader.get(locale, CharacterProperty.GENDER)), index + 1));
             if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
-                newCharacter.setAttributeMap(loadAttributes(record, mainConfiguration, index + 1));
+                newCharacter.setAttributeMap(loadAttributes(record, mainConfiguration, locale, index + 1));
             }
             characterList.add(newCharacter);
             index++;
@@ -63,12 +68,12 @@ public class ImportCsvParser {
         return characterList;
     }
 
-    private Map<String, Integer> loadAttributes(CSVRecord record, MainConfiguration mainConfiguration, int line) {
+    private Map<String, Integer> loadAttributes(CSVRecord record, MainConfiguration mainConfiguration, Locale locale, int line) {
         Map<String, Integer> attributeMap = new HashMap<>();
 
 
         for (CharacterAttribute attr : mainConfiguration.getAttributeList()) {
-            String valueString = record.get(attr.getName());
+            String valueString = record.get(csvHeader.get(locale, attr));
             int value;
             try {
                 value = Integer.parseInt(valueString);
@@ -102,10 +107,15 @@ public class ImportCsvParser {
         }
     }
 
-    public List<User> parseUserList(InputStream is, MainConfiguration mainConfiguration, List<Character> characterList) {
+    public List<User> parseUserList(
+            InputStream is,
+            MainConfiguration mainConfiguration,
+            List<Character> characterList,
+            Locale locale
+    ) {
         List<User> userList = new ArrayList<>();
 
-        String[] header = getUserColumnList(mainConfiguration).toArray(new String[0]);
+        String[] header = getUserColumnList(mainConfiguration, locale).toArray(new String[0]);
         CSVFormat csvFormat = CSVFormat.RFC4180.withHeader(header);
         CSVParser csvParser = createParser(is, csvFormat);
         int userId = 0;
@@ -116,23 +126,22 @@ public class ImportCsvParser {
 
             User newUser = new User();
             newUser.setId(userId);
-            newUser.setName(record.get(UserProperty.NAME.getKey()));
-            newUser.setName(record.get(UserProperty.NAME.getKey()));
-            newUser.setSurname(record.get(UserProperty.SURNAME.getKey()));
-            newUser.setWantsPlayGender(translateGender(record.get(UserProperty.GENDER.getKey()), userId + 1));
+            newUser.setName(record.get(csvHeader.get(locale, UserProperty.NAME)));
+            newUser.setSurname(record.get(csvHeader.get(locale, UserProperty.SURNAME)));
+            newUser.setWantsPlayGender(translateGender(record.get(csvHeader.get(locale, UserProperty.GENDER)), userId + 1));
 
             if (mainConfiguration.getApproachType() == ApproachType.CHARACTERS) {
                 for (int i = 1; i <= mainConfiguration.getNumberOfPreferredCharacters(); i++) {
-                    String definedCharacterName = record.get(WANTED_PREFIX + i);
+                    String definedCharacterName = record.get(csvHeader.getWanted(locale, i));
                     newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
                 }
                 for (int i = 1; i <= mainConfiguration.getNumberOfHatedCharacters(); i++) {
-                    String definedCharacterName = record.get(HATED_PREFIX + i);
+                    String definedCharacterName = record.get(csvHeader.getHated(locale, i));
                     newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
                 }
             }
             if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
-                newUser.setAttributeMap(loadAttributes(record, mainConfiguration, userId + 1));
+                newUser.setAttributeMap(loadAttributes(record, mainConfiguration, locale,userId + 1));
             }
 
             userList.add(newUser);
@@ -141,42 +150,44 @@ public class ImportCsvParser {
         return userList;
     }
 
-    public List<String> getCharacterColumnList(MainConfiguration mainConfiguration) {
+    public List<String> getCharacterColumnList(MainConfiguration mainConfiguration, Locale locale) {
         List<String> columnList = new ArrayList<>();
         for (CharacterProperty value : CharacterProperty.values()) {
-            columnList.add(value.getKey());
+            columnList.add(csvHeader.get(locale, value));
         }
         if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
-            mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
+            mainConfiguration.getAttributeList().forEach(attr ->
+                    columnList.add(csvHeader.get(locale, attr))
+            );
         }
         return columnList;
     }
 
-    public String getCharactersFileFormat(MainConfiguration mainConfiguration) {
-        return String.join(", ", getCharacterColumnList(mainConfiguration));
+    public String getCharactersFileFormat(MainConfiguration mainConfiguration, Locale locale) {
+        return String.join(", ", getCharacterColumnList(mainConfiguration, locale));
     }
 
-    public List<String> getUserColumnList(MainConfiguration mainConfiguration) {
+    public List<String> getUserColumnList(MainConfiguration mainConfiguration, Locale locale) {
         List<String> columnList = new ArrayList<>();
         for (UserProperty value : UserProperty.values()) {
-            columnList.add(value.getKey());
+            columnList.add(csvHeader.get(locale, value));
         }
         if (mainConfiguration.getApproachType() == ApproachType.CHARACTERS) {
             IntStream.range(0, mainConfiguration.getNumberOfPreferredCharacters()).forEach(
-                    i -> columnList.add(WANTED_PREFIX + (i + 1))
+                    i -> columnList.add(csvHeader.getWanted(locale, i + 1))
             );
             IntStream.range(0, mainConfiguration.getNumberOfHatedCharacters()).forEach(
-                    i -> columnList.add(HATED_PREFIX + (i + 1))
+                    i -> columnList.add(csvHeader.getHated(locale, i + 1))
             );
         }
         if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
-            mainConfiguration.getAttributeList().forEach(attr -> columnList.add(attr.getName()));
+            mainConfiguration.getAttributeList().forEach(attr -> columnList.add(csvHeader.get(locale, attr)));
         }
         return columnList;
     }
 
-    public String getUsersFileFormat(MainConfiguration mainConfiguration) {
-        return String.join(", ", getUserColumnList(mainConfiguration));
+    public String getUsersFileFormat(MainConfiguration mainConfiguration, Locale locale) {
+        return String.join(", ", getUserColumnList(mainConfiguration, locale));
     }
 
     private AssignmentWithRank createPref(String definedCharacterName, int userId, int nth, List<Character> characterList) {
@@ -189,4 +200,38 @@ public class ImportCsvParser {
         Assignment assignment = new Assignment(userId, character.get().getId());
         return new AssignmentWithRank(assignment, nth);
     }
+
+    private static class CsvHeaderHolder {
+        private static final String MESSAGE_CODE_WANTED = "common.required-file-format.header.wanted";
+        private static final String MESSAGE_CODE_HATED = "common.required-file-format.header.not-wanted";
+        private static final String MESSAGE_CODE_ATTRIBUTE = "common.required-file-format.header.attribute";
+
+        private final MessageSource messageSource;
+
+        public CsvHeaderHolder(MessageSource messageSource) {
+            this.messageSource = messageSource;
+        }
+
+        public String get(Locale locale, CharacterProperty property) {
+            return messageSource.getMessage(property.getKey(), null, locale);
+        }
+
+        public String get(Locale locale, CharacterAttribute attribute) {
+            return messageSource.getMessage(MESSAGE_CODE_ATTRIBUTE, null, locale) + " " + attribute.getName();
+        }
+
+        public String get(Locale locale, UserProperty value) {
+            return messageSource.getMessage(value.getKey(), null, locale);
+        }
+
+        public String getWanted(Locale locale, int i) {
+            return messageSource.getMessage(MESSAGE_CODE_WANTED, null, locale) + " " + i;
+        }
+
+        public String getHated(Locale locale, int i) {
+            return messageSource.getMessage(MESSAGE_CODE_HATED, null, locale) + " " + i;
+        }
+    }
 }
+
+

@@ -33,8 +33,21 @@
     background: #2672EC;
 }
 
+.approach-type-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.approach-type-selector {
+    width: 100%;
+}
+
 .approach-section {
     display: none;
+}
+
+#loadFileModal .modal-dialog {
+    max-width: 900px;
 }
 
 .help-tooltip {
