@@ -15,7 +15,7 @@
 <div layout:fragment="content">
     <h3 th:text="#{algorithm-config.title}"></h3>
     <p th:text="#{algorithm-config.desc}"></p>
-    <form enctype="multipart/form-data" method="post" th:object="${algorithmConfiguration}">
+    <form method="post" th:object="${algorithmConfiguration}">
 
         <div class="row">
             <div class="col-sm-4" th:text="#{algorithm-config.loaded-users}"></div>

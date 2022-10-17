@@ -9,7 +9,7 @@
 <div layout:fragment="content">
     <h3 th:text="#{characters-config.title}"></h3>
     <p th:text="#{characters-config.desc}"></p>
-    <form enctype="multipart/form-data" method="post" th:object="${characterConfiguration}">
+    <form method="post" th:object="${characterConfiguration}">
 
         <div class="row">
             <div class="col-sm-4" th:text="#{characters-config.loaded-chars}"></div>
