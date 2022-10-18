@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * Variant with skipping forbidden.
+ */
 public class StableMatchingProcessorVar1 implements StableMatchingProcessor {
     private final Logger logger = LoggerFactory.getLogger(StableMatchingProcessorVar1.class);
 
