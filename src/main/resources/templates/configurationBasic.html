@@ -16,7 +16,10 @@
             "                        <select id='attributeList" + last + ".rating' name='attributeList[" + last + "].rating' class='custom-select'></select>" +
             "                    </div>" +
             "                    <div class='col-sm-3'>" +
-            "                        <select id='attributeList" + last + ".function' name='attributeList[" + last + "].function' class='custom-select'></select>" +
+            "                        <select id='attributeList" + last + ".ratingFunction' name='attributeList[" + last + "].ratingFunction' class='custom-select'></select>" +
+            "                    </div>" +
+            "                    <div class='col-sm-3'>" +
+            "                        <select id='attributeList" + last + ".deltaFunction' name='attributeList[" + last + "].deltaFunction' class='custom-select'></select>" +
             "                    </div>" +
             "                    <div class='col-sm-1'>" +
             "                        <button class='btn btn-danger btn-sm' onclick='deleteAttr(this)'>" +
@@ -31,9 +34,13 @@
         ratingSelect.append($("#ratingTemplate").children().clone());
         ratingSelect.val(-10);
 
-        const functionSelect = $("#attributeList" + last + "\\.function");
-        functionSelect.append($("#functionTemplate").children().clone());
-        functionSelect.val("LINEAR")
+        const ratingFunctionSelect = $("#attributeList" + last + "\\.ratingFunction");
+        ratingFunctionSelect.append($("#ratingFunctionTemplate").children().clone());
+        ratingFunctionSelect.val("LINEAR")
+
+        const deltaFunctionSelect = $("#attributeList" + last + "\\.deltaFunction");
+        deltaFunctionSelect.append($("#deltaFunctionTemplate").children().clone());
+        deltaFunctionSelect.val("STANDARD")
         last++;
     }
 
@@ -178,8 +185,12 @@
                 <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.rating.basic.tooltip}"></i>
             </div>
             <div class="col-sm-3 font-weight-bold text-center">
-                <span th:text="#{assignment-config.attr.function.basic}"></span>
-                <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.function.basic.tooltip}"></i>
+                <span th:text="#{assignment-config.attr.rating-function.basic}"></span>
+                <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.rating-function.basic.tooltip}"></i>
+            </div>
+            <div class="col-sm-3 font-weight-bold text-center">
+                <span th:text="#{assignment-config.attr.delta-function.basic}"></span>
+                <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.delta-function.basic.tooltip}"></i>
             </div>
             <div class="col-sm-1"></div>
         </div>
@@ -204,9 +215,16 @@
                 </div>
                 <div class="col-sm-3">
                     <select class="custom-select"
-                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].function')} ? 'is-invalid' : ''"
-                            th:field="*{attributeList[__${status.index}__].function}"
-                            th:insert="fragments/form :: attributeFunctionSelect">
+                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].ratingFunction')} ? 'is-invalid' : ''"
+                            th:field="*{attributeList[__${status.index}__].ratingFunction}"
+                            th:insert="fragments/form :: attributeRatingFunctionSelect">
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="custom-select"
+                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].deltaFunction')} ? 'is-invalid' : ''"
+                            th:field="*{attributeList[__${status.index}__].deltaFunction}"
+                            th:insert="fragments/form :: attributeDeltaFunctionSelect">
                     </select>
                 </div>
                 <div class="col-sm-1">
@@ -234,7 +252,9 @@
     <div class="d-none">
         <select class="custom-select" id="ratingTemplate" th:insert="fragments/form :: attributeRatingSelect">
         </select>
-        <select class="custom-select" id="functionTemplate" th:insert="fragments/form :: attributeFunctionSelect">
+        <select class="custom-select" id="ratingFunctionTemplate" th:insert="fragments/form :: attributeRatingFunctionSelect">
+        </select>
+        <select class="custom-select" id="deltaFunctionTemplate" th:insert="fragments/form :: attributeDeltaFunctionSelect">
         </select>
     </div>
 </div>

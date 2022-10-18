@@ -6,6 +6,7 @@ import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.CharacterAttribute;
 import cz.rolling.moirai.model.common.CharacterType;
+import cz.rolling.moirai.model.common.DeltaFunction;
 import cz.rolling.moirai.model.common.Gender;
 import cz.rolling.moirai.model.common.RatingFunction;
 import cz.rolling.moirai.model.common.User;
@@ -97,7 +98,7 @@ public class StableMatchingAlgorithmTest {
     private ContentPreferenceResolver createPreferenceResolver() {
         WizardState wizardState = new WizardState();
         wizardState.getMainConfiguration().setAttributeList(new ArrayList<>(Collections.singletonList(
-                new CharacterAttribute("a1", 1, 5, -5, RatingFunction.LINEAR)
+                new CharacterAttribute("a1", 1, 5, -5, RatingFunction.LINEAR, DeltaFunction.STANDARD)
         )));
         wizardState.getCharactersConfiguration().setCharacterList(new ArrayList<>(Arrays.asList(
                 new Character(0, "char0", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 1)),
@@ -121,7 +122,7 @@ public class StableMatchingAlgorithmTest {
     private ContentPreferenceResolver createPreferenceResolver2() {
         WizardState wizardState = new WizardState();
         wizardState.getMainConfiguration().setAttributeList(new ArrayList<>(Collections.singletonList(
-                new CharacterAttribute("a1", 1, 5, -5, RatingFunction.LINEAR)
+                new CharacterAttribute("a1", 1, 5, -5, RatingFunction.LINEAR, DeltaFunction.STANDARD)
         )));
         wizardState.getCharactersConfiguration().setCharacterList(new ArrayList<>(Arrays.asList(
                 new Character(0, "char0", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 4)),

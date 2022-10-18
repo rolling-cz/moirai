@@ -32,5 +32,8 @@ public class CharacterAttribute {
     private Integer rating;
 
     @NotNull
-    private RatingFunction function;
+    private RatingFunction ratingFunction;
+
+    @NotNull
+    private DeltaFunction deltaFunction;
 }

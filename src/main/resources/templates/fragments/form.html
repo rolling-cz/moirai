@@ -9,10 +9,15 @@
     <option th:label="#{'assignment-config.attribute-important-option.4'}" value="-25"></option>
     <option th:label="#{'assignment-config.attribute-important-option.5'}" value="-100"></option>
 </span>
-<span th:fragment="attributeFunctionSelect">
-    <option th:label="#{'assignment-config.attribute-function-option.1'}" value="CONSTANT"></option>
-    <option th:label="#{'assignment-config.attribute-function-option.2'}" value="LINEAR"></option>
-    <option th:label="#{'assignment-config.attribute-function-option.3'}" value="CUBIC"></option>
+<span th:fragment="attributeRatingFunctionSelect">
+    <option th:label="#{'assignment-config.attribute-rating-function-option.1'}" value="CONSTANT"></option>
+    <option th:label="#{'assignment-config.attribute-rating-function-option.2'}" value="LINEAR"></option>
+    <option th:label="#{'assignment-config.attribute-rating-function-option.3'}" value="CUBIC"></option>
+</span>
+<span th:fragment="attributeDeltaFunctionSelect">
+    <option th:label="#{'assignment-config.attribute-delta-function-option.1'}" value="STANDARD"></option>
+    <option th:label="#{'assignment-config.attribute-delta-function-option.2'}" value="MIDDLE_NEUTRAL"></option>
+    <option th:label="#{'assignment-config.attribute-delta-function-option.3'}" value="ONLY_BIGGER"></option>
 </span>
 <span th:fragment="negativeImpactSelect">
     <option th:label="#{'assignment-config.rating-impact-option.1'}" value="-10"></option>
