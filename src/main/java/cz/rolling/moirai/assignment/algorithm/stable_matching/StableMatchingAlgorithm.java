@@ -26,21 +26,25 @@ import java.util.stream.IntStream;
 public class StableMatchingAlgorithm implements Algorithm {
 
     private static final IdWithRatingComparator RATING_COMPARATOR = new IdWithRatingComparator();
+    private static final int NOT_PREFERRED_ASSIGNMENT_RATING = -1000;
     private final ContentPreferenceResolver preferenceResolver;
     private final StableMatchingProcessor processor;
     private final int numberOfCharacters;
     private final int multiSelect;
+    private final boolean strictVariant;
 
     public StableMatchingAlgorithm(
             ContentPreferenceResolver preferenceResolver,
             StableMatchingProcessor processor,
             int numberOfCharacters,
-            int multiSelect
+            int multiSelect,
+            boolean strictVariant
     ) {
         this.preferenceResolver = preferenceResolver;
         this.processor = processor;
         this.numberOfCharacters = numberOfCharacters;
         this.multiSelect = multiSelect;
+        this.strictVariant = strictVariant;
     }
 
     @Override
@@ -68,10 +72,20 @@ public class StableMatchingAlgorithm implements Algorithm {
         return solutionHolder;
     }
 
-    private DirectSolution calculateDirectSolution(Set<Assignment> forbiddenAssignments) {
+    private DirectSolution calculateDirectSolution(Set<Assignment> forbiddenAssignmentsParam) {
+        Set<Assignment> notPreferredAssignments;
+        Set<Assignment> forbiddenAssignments;
+        if (strictVariant) {
+            notPreferredAssignments = Collections.emptySet();
+            forbiddenAssignments = forbiddenAssignmentsParam;
+        } else {
+            notPreferredAssignments = forbiddenAssignmentsParam;
+            forbiddenAssignments = Collections.emptySet();
+        }
+
         processor.init(
-                transformPreferences(Assignment::getUserId, Assignment::getCharId),
-                transformPreferences(Assignment::getCharId, Assignment::getUserId),
+                transformPreferences(Assignment::getUserId, Assignment::getCharId, notPreferredAssignments),
+                transformPreferences(Assignment::getCharId, Assignment::getUserId, notPreferredAssignments),
                 transformForbiddenAssignments(forbiddenAssignments)
         );
 
@@ -95,13 +109,18 @@ public class StableMatchingAlgorithm implements Algorithm {
     }
 
     protected int[][] transformPreferences(Function<Assignment, Integer> getKeyFn,
-                                           Function<Assignment, Integer> getValueFn) {
+                                           Function<Assignment, Integer> getValueFn,
+                                           Set<Assignment> notPreferredAssignments) {
         List<List<IdWithRating>> preference2dList = init2dList(numberOfCharacters);
-        preferenceResolver.getPreferenceMap().forEach(((assignment, rating) ->
-                preference2dList.get(getKeyFn.apply(assignment)).add(
-                        new IdWithRating(getValueFn.apply(assignment), rating)
-                )
-        ));
+        preferenceResolver.getPreferenceMap().forEach(((assignment, rating) -> {
+            IdWithRating idWithRating;
+            if (notPreferredAssignments.contains(assignment)) {
+                idWithRating = new IdWithRating(getValueFn.apply(assignment), NOT_PREFERRED_ASSIGNMENT_RATING);
+            } else {
+                idWithRating = new IdWithRating(getValueFn.apply(assignment), rating);
+            }
+            preference2dList.get(getKeyFn.apply(assignment)).add(idWithRating);
+        }));
         preference2dList.forEach(list -> list.sort(RATING_COMPARATOR));
 
         int[][] preferences = new int[numberOfCharacters][numberOfCharacters];

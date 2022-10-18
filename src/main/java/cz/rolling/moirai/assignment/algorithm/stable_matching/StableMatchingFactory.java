@@ -49,7 +49,8 @@ public class StableMatchingFactory implements AlgorithmFactory {
                 preferenceResolver,
                 new StableMatchingProcessorVar1(),
                 wizardState.getCharactersConfiguration().getNumberOfCharacters(),
-                wizardState.getMainConfiguration().getMultiSelect()
+                wizardState.getMainConfiguration().getMultiSelect(),
+                false
         );
     }
 }
