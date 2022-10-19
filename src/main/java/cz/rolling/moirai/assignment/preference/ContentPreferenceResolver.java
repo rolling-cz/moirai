@@ -39,8 +39,8 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
             throw new IllegalArgumentException("Char " + character.getName() + " doesn't have attribute " + attr.getName());
         }
 
-        int deltaAttr = Math.abs(userAttrValue - charAttrValue);
-        return attr.getFunction().getRating(attr.getRating(), deltaAttr);
+        int deltaAttr = attr.getDeltaFunction().getDelta(charAttrValue, userAttrValue, attr.getMin(), attr.getMax());
+        return attr.getRatingFunction().getRating(attr.getRating(), deltaAttr);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
     private int calculateMaximumRating() {
         int rating = ratingForGender;
         for (CharacterAttribute attr : attributeList) {
-            int maxDelta = attr.getMax() - attr.getMin();
-            rating += attr.getFunction().getRating(attr.getRating(), maxDelta);
+            int maxDelta = attr.getDeltaFunction().getMaxDelta(attr.getMin(), attr.getMax());
+            rating += attr.getRatingFunction().getRating(attr.getRating(), maxDelta);
         }
         return -1 * rating;
     }

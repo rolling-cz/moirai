@@ -9,20 +9,24 @@
 <script layout:fragment="config-script">
     function addAttr() {
         $("#attrList").append("<div class='row'>" +
-            "                    <div class='col-sm-2'>" +
+            "                    <div class='col-sm-3'>" +
             "                        <input type='text' class='form-control' id='attributeList" + last + ".name' name='attributeList[" + last + "].name' >" +
             "                    </div>" +
-            "                    <div class='col-sm-2'>" +
+            "                    <div class='col-sm-1'>" +
             "                        <input type='text' class='form-control' id='attributeList" + last + ".min' name='attributeList[" + last + "].min' >" +
             "                    </div>" +
-            "                    <div class='col-sm-2'>" +
+            "                    <div class='col-sm-1'>" +
             "                        <input type='text' class='form-control' id='attributeList" + last + ".max' name='attributeList[" + last + "].max' >" +
             "                    </div>" +
             "                    <div class='col-sm-2'>" +
             "                        <input type='text' class='form-control' id='attributeList" + last + ".rating' name='attributeList[" + last + "].rating' >" +
             "                    </div>" +
             "                    <div class='col-sm-2'>" +
-            "                       <select id='attributeList" + last + ".function' name='attributeList[" + last + "].function' class='custom-select'>" +
+            "                       <select id='attributeList" + last + ".ratingFunction' name='attributeList[" + last + "].ratingFunction' class='custom-select'>" +
+            "                        </select>" +
+            "                    </div>" +
+            "                    <div class='col-sm-2'>" +
+            "                       <select id='attributeList" + last + ".deltaFunction' name='attributeList[" + last + "].deltaFunction' class='custom-select'>" +
             "                        </select>" +
             "                    </div>" +
             "                    <div class='col-sm-1'>" +
@@ -32,7 +36,13 @@
             "                    </div>" +
             "                </div>"
         );
-        $("#attributeList" + last + "\\.function").append($("#functionTemplate").children().clone());
+        const ratingFunctionSelect = $("#attributeList" + last + "\\.ratingFunction");
+        ratingFunctionSelect.append($("#ratingFunctionTemplate").children().clone());
+        ratingFunctionSelect.val("LINEAR")
+
+        const deltaFunctionSelect = $("#attributeList" + last + "\\.deltaFunction");
+        deltaFunctionSelect.append($("#deltaFunctionTemplate").children().clone());
+        deltaFunctionSelect.val("STANDARD")
         last++;
     }
 </script>
@@ -146,15 +156,15 @@
             </h5>
         </div>
         <div class="row">
-            <div class="col-sm-2 font-weight-bold text-center">
+            <div class="col-sm-3 font-weight-bold text-center">
                 <span th:text="#{assignment-config.attr.name}"></span>
                 <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.name.tooltip}"></i>
             </div>
-            <div class="col-sm-2 font-weight-bold text-center">
+            <div class="col-sm-1 font-weight-bold text-center">
                 <span th:text="#{assignment-config.attr.min}"></span>
                 <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.min.tooltip}"></i>
             </div>
-            <div class="col-sm-2 font-weight-bold text-center">
+            <div class="col-sm-1 font-weight-bold text-center">
                 <span th:text="#{assignment-config.attr.max}"></span>
                 <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.max.tooltip}"></i>
             </div>
@@ -163,29 +173,33 @@
                 <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.rating.tooltip}"></i>
             </div>
             <div class="col-sm-2 font-weight-bold text-center">
-                <span th:text="#{assignment-config.attr.function}"></span>
-                <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.function.tooltip}"></i>
+                <span th:text="#{assignment-config.attr.rating-function}"></span>
+                <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.rating-function.tooltip}"></i>
+            </div>
+            <div class="col-sm-2 font-weight-bold text-center">
+                <span th:text="#{assignment-config.attr.delta-function}"></span>
+                <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{assignment-config.attr.delta-function.tooltip}"></i>
             </div>
             <div class="col-sm-1"></div>
         </div>
 
         <div id="attrList">
             <div class="row" th:each="attr, status: *{attributeList}">
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <input class="form-control"
                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].name')} ? 'is-invalid' : ''"
                            th:field="*{attributeList[__${status.index}__].name}" type="text">
                     <span class="text-danger"
                           th:errors="*{attributeList[__${status.index}__].name}"></span>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <input class="form-control"
                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].min')} ? 'is-invalid' : ''"
                            th:field="*{attributeList[__${status.index}__].min}" type="text">
                     <span class="text-danger"
                           th:errors="*{attributeList[__${status.index}__].min}"></span>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <input class="form-control"
                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].max')} ? 'is-invalid' : ''"
                            th:field="*{attributeList[__${status.index}__].max}" type="text">
@@ -201,9 +215,18 @@
                 </div>
                 <div class="col-sm-2">
                     <select class="custom-select"
-                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].function')} ? 'is-invalid' : ''"
-                            th:field="*{attributeList[__${status.index}__].function}">
+                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].ratingFunction')} ? 'is-invalid' : ''"
+                            th:field="*{attributeList[__${status.index}__].ratingFunction}">
                         <option th:each="fn : ${T(cz.rolling.moirai.model.common.RatingFunction).values()}"
+                                th:text="#{${fn.getKey()}}"
+                                th:value="${fn}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="custom-select"
+                            th:classappend="${#fields.hasErrors('attributeList[__${status.index}__].deltaFunction')} ? 'is-invalid' : ''"
+                            th:field="*{attributeList[__${status.index}__].deltaFunction}">
+                        <option th:each="fn : ${T(cz.rolling.moirai.model.common.DeltaFunction).values()}"
                                 th:text="#{${fn.getKey()}}"
                                 th:value="${fn}"></option>
                     </select>
@@ -225,8 +248,13 @@
     </div>
 
     <div class="d-none">
-        <select class="custom-select" id="functionTemplate">
+        <select class="custom-select" id="ratingFunctionTemplate">
             <option th:each="fn : ${T(cz.rolling.moirai.model.common.RatingFunction).values()}"
+                    th:text="#{${fn.getKey()}}"
+                    th:value="${fn}"></option>
+        </select>
+        <select class="custom-select" id="deltaFunctionTemplate">
+            <option th:each="fn : ${T(cz.rolling.moirai.model.common.DeltaFunction).values()}"
                     th:text="#{${fn.getKey()}}"
                     th:value="${fn}"></option>
         </select>
