@@ -6,6 +6,7 @@ import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.assignment.preference.ContentPreferenceResolver;
 import cz.rolling.moirai.exception.NoSolutionException;
 import cz.rolling.moirai.model.common.Assignment;
+import cz.rolling.moirai.model.common.User;
 import cz.rolling.moirai.model.common.result.DirectSolution;
 import cz.rolling.moirai.model.common.result.MetaSolution;
 import cz.rolling.moirai.model.common.result.NoSolution;
@@ -27,6 +28,7 @@ public class StableMatchingAlgorithm implements Algorithm {
 
     private static final IdWithRatingComparator RATING_COMPARATOR = new IdWithRatingComparator();
     private static final int NOT_PREFERRED_ASSIGNMENT_RATING = -1000;
+    private static final int DUMMY_USER_ASSIGNMENT_RATING = -500;
     private final ContentPreferenceResolver preferenceResolver;
     private final StableMatchingProcessor processor;
     private final int numberOfCharacters;
@@ -114,7 +116,10 @@ public class StableMatchingAlgorithm implements Algorithm {
         List<List<IdWithRating>> preference2dList = init2dList(numberOfCharacters);
         preferenceResolver.getPreferenceMap().forEach(((assignment, rating) -> {
             IdWithRating idWithRating;
-            if (notPreferredAssignments.contains(assignment)) {
+            User user = preferenceResolver.getUserList().get(assignment.getUserId());
+            if (user.isDummy()) {
+                idWithRating = new IdWithRating(getValueFn.apply(assignment), DUMMY_USER_ASSIGNMENT_RATING);
+            } else if (notPreferredAssignments.contains(assignment)) {
                 idWithRating = new IdWithRating(getValueFn.apply(assignment), NOT_PREFERRED_ASSIGNMENT_RATING);
             } else {
                 idWithRating = new IdWithRating(getValueFn.apply(assignment), rating);

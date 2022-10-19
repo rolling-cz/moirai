@@ -1,6 +1,7 @@
 package cz.rolling.moirai.model.common;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     private final boolean wantsToPlaySingleRole = true;
     private final boolean wantsToPlayDoubleRole = false;
@@ -22,6 +24,7 @@ public class User {
     private String surname;
     private Gender wantsPlayGender;
     private Map<String, Integer> attributeMap;
+    private boolean isDummy;
 
     public void savePreference(AssignmentWithRank assignmentWithRank) {
         preferences.add(assignmentWithRank);

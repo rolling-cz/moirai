@@ -91,6 +91,7 @@ public class AssignmentController {
         );
         mav.addObject("algorithmConfiguration", wizardState.getAlgorithmConfiguration());
         mav.addObject("algorithmFactorySet", filterFactories());
+        mav.addObject("numberOfCharacters", wizardState.getCharactersConfiguration().getNumberOfCharacters());
         mav.addObject("errorMessage", "");
         mav.addObject("errorParams", null);
         return mav;
