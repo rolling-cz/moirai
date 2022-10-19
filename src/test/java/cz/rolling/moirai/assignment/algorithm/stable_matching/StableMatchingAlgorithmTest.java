@@ -109,11 +109,11 @@ public class StableMatchingAlgorithmTest {
         )));
 
         wizardState.getAlgorithmConfiguration().setUserList(new ArrayList<>(Arrays.asList(
-                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5)),
-                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4)),
-                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3)),
-                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2)),
-                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1))
+                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5), false),
+                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4), false),
+                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3), false),
+                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2), false),
+                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1), false)
         )));
 
         return new ContentPreferenceResolver(wizardState);
@@ -133,11 +133,11 @@ public class StableMatchingAlgorithmTest {
         )));
 
         wizardState.getAlgorithmConfiguration().setUserList(new ArrayList<>(Arrays.asList(
-                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5)),
-                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4)),
-                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3)),
-                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2)),
-                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1))
+                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5), false),
+                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4), false),
+                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3), false),
+                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2), false),
+                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1), false)
         )));
 
         return new ContentPreferenceResolver(wizardState);

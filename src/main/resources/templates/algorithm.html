@@ -45,10 +45,16 @@
         </div>
 
         <div class="mt-2 mb-2">
-            <span class="text-danger"
-                  th:if="${errorMessage != ''}"
-                  th:text="${#messages.msgWithParams(errorMessage, errorParams)}">
-            </span>
+            <div class="alert alert-danger" role="alert"
+                 th:if="${errorMessage != ''}"
+                 th:text="${#messages.msgWithParams(errorMessage, errorParams)}"
+            >
+            </div>
+            <div class="alert alert-warning" role="alert"
+                 th:if="${numberOfCharacters > algorithmConfiguration.numberOfUsers}"
+                 th:text="#{'algorithm-config.warning.not-enough-players'}"
+            >
+            </div>
         </div>
 
         <button class="btn btn-secondary"

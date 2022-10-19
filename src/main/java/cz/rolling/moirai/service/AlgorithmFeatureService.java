@@ -28,6 +28,10 @@ public class AlgorithmFeatureService {
             featureSet.add(AlgorithmFeature.MULTI_SELECT);
         }
 
+        if (wizardState.getCharactersConfiguration().getNumberOfCharacters() > wizardState.getAlgorithmConfiguration().getNumberOfUsers()) {
+            featureSet.add(AlgorithmFeature.NOT_ENOUGH_PLAYERS);
+        }
+
         return featureSet;
     }
 }
