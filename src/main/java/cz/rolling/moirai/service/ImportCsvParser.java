@@ -18,6 +18,7 @@ import cz.rolling.moirai.model.form.MainConfiguration;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -133,11 +134,18 @@ public class ImportCsvParser {
             if (mainConfiguration.getApproachType() == ApproachType.CHARACTERS) {
                 for (int i = 1; i <= mainConfiguration.getNumberOfPreferredCharacters(); i++) {
                     String definedCharacterName = record.get(csvHeader.getWanted(locale, i));
-                    newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
+
+                    AssignmentWithRank assignment = createPref(definedCharacterName, userId, i, characterList);
+                    if (assignment != null) {
+                        newUser.savePreference(assignment);
+                    }
                 }
                 for (int i = 1; i <= mainConfiguration.getNumberOfHatedCharacters(); i++) {
                     String definedCharacterName = record.get(csvHeader.getHated(locale, i));
-                    newUser.savePreference(createPref(definedCharacterName, userId, i, characterList));
+                    AssignmentWithRank assignment = createPref(definedCharacterName, userId, i, characterList);
+                    if (assignment != null) {
+                        newUser.savePreference(assignment);
+                    }
                 }
             }
             if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
@@ -191,6 +199,10 @@ public class ImportCsvParser {
     }
 
     private AssignmentWithRank createPref(String definedCharacterName, int userId, int nth, List<Character> characterList) {
+        if (StringUtils.isBlank(definedCharacterName)) {
+            return null;
+        }
+
         Optional<Character> character = characterList.stream()
                 .filter(ch -> ch.getName().equals(definedCharacterName))
                 .findFirst();

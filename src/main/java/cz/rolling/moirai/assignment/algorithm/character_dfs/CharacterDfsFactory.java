@@ -24,7 +24,8 @@ public class CharacterDfsFactory implements AlgorithmFactory {
 
     private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Arrays.asList(
             AlgorithmFeature.CHARACTER_APPROACH,
-            AlgorithmFeature.HALF_GAME_CHARACTERS
+            AlgorithmFeature.HALF_GAME_CHARACTERS,
+            AlgorithmFeature.NOT_ENOUGH_PLAYERS
     ));
 
     private static final Set<AlgorithmSpecificParameter<?>> PARAMETER_SET = new HashSet<>(Arrays.asList(

@@ -19,7 +19,7 @@ public class ContentConfiguration {
     private int unwantedCharGender = -150;
 
     private int searchWide = 2;
-    private int maximumTriedSolution = 5000000;
+    private int maximumTriedSolution = 500000;
     private int numberOfBestSolutions = 10;
 
     private boolean isMoreCharRoleTypes = false;
