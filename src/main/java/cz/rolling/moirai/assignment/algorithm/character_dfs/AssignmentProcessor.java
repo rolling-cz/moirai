@@ -3,7 +3,8 @@ package cz.rolling.moirai.assignment.algorithm.character_dfs;
 import cz.rolling.moirai.assignment.helper.SolutionHolder;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
-import cz.rolling.moirai.model.common.CharacterType;
+import cz.rolling.moirai.model.common.Character;
+import cz.rolling.moirai.model.common.Gender;
 import cz.rolling.moirai.model.common.result.DirectSolution;
 import cz.rolling.moirai.model.content.ContentConfiguration;
 import org.slf4j.Logger;
@@ -11,8 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class AssignmentProcessor {
 
@@ -34,12 +37,14 @@ public class AssignmentProcessor {
     }
 
     public List<AssignmentTask> process(AssignmentTask task) {
+        // end processing when task contains assignment for everybody
         if (task.isComplete()) {
             DirectSolution solution = new DirectSolution(preferencesHolder.calculateRating(task.getAssignmentList()), task.getAssignmentList());
             solutionHolder.saveSolution(solution);
             return Collections.emptyList();
         }
 
+        // alpha-beta pruning
         if (preferencesHolder.getBestPossibleOutcome(task) < solutionHolder.getWorstSolution().getRating()) {
             int depth = task.getAssignedCharIdSet().size();
             if (depth < 100) {
@@ -49,61 +54,57 @@ public class AssignmentProcessor {
             return Collections.emptyList();
         }
 
+        // next char to process
         Integer charId = task.getNextLeastWantedChar();
-        List<Integer> userIdList;
-        BiFunction<Integer, Integer, Boolean> canBeChosen;
+        List<AssignmentTask> newTasks = Collections.emptyList();
         if (charId != null) {
-            userIdList = preferencesHolder.getUsersWantingChar(charId);
-            canBeChosen = task::isUserEligibleForChar;
-        } else if (task.hasUnWantedCharacters()) {
-            charId = task.getNextUnwantedChar();
-            userIdList = allUserIdList;
-            canBeChosen = (uId, chId) -> task.isUserEligibleForChar(uId, chId) && preferencesHolder.isCorrectGender(uId, chId);
-        } else {
-            logger.warn("Unfinished task without any other char to process - " + task);
-            return Collections.emptyList();
+            newTasks = createTasksForChar(task, charId, preferencesHolder.getUsersWantingChar(charId), task::isUserEligibleForChar);
+            Collections.reverse(newTasks);
         }
 
-        List<AssignmentTask> newTasks = createTasks(task, charId, userIdList, canBeChosen);
-
+        // no available preferred assignment -> switch to players to resolve unwanted characters
         if (newTasks.isEmpty()) {
-            CharacterType typeOfCharacter = preferencesHolder.getTypeOfCharacter(charId);
-            if (typeOfCharacter != CharacterType.FULL) {
-                userIdList = task.getUsersBlockedForHalfGame();
-                userIdList.sort((a, b) -> {
-                    boolean aWantsSingle = preferencesHolder.getUser(a).isWantsToPlaySingleRole();
-                    boolean bWantsSingle = preferencesHolder.getUser(b).isWantsToPlaySingleRole();
-                    if (aWantsSingle == bWantsSingle) {
-                        return 0;
-                    } else {
-                        return aWantsSingle ? -1 : 1;
-                    }
-                });
+            Integer userId = task.getNextUnresolvedPlayer();
+            if (userId == null) {
+                logger.warn("Unfinished task without any user to process - " + task);
+                return Collections.emptyList();
             }
-            canBeChosen = (uId, chId) -> task.isUserNotBlockedForChar(uId, chId) && preferencesHolder.isCorrectGender(uId, chId);
-            newTasks = createTasks(task, charId, userIdList, canBeChosen);
+            Gender wantedGender = preferencesHolder.getUser(userId).getWantsPlayGender();
+            List<Character> chars = task.getUnwantedChars().stream()
+                    .map(id -> preferencesHolder.getCharacterList().get(id))
+                    .sorted(new WantedGenderComparator(wantedGender))
+                    .collect(Collectors.toList());
 
-            if (typeOfCharacter != CharacterType.FULL && newTasks.isEmpty()) {
-                newTasks = createTasks(task, charId, allUserIdList, canBeChosen);
-            }
-
-            if (newTasks.isEmpty()) {
-                newTasks = createTasks(task, charId, allUserIdList, task::isUserNotBlockedForChar);
-            }
+            newTasks = createTasksForUser(task, userId, chars);
+            // TODO fix back different type chars
         }
 
         if (newTasks.isEmpty()) {
             solutionHolder.saveFailedSolution();
         }
 
-        Collections.reverse(newTasks);
         return newTasks;
     }
 
-    private List<AssignmentTask> createTasks(AssignmentTask task,
-                                             Integer charId,
-                                             List<Integer> userIdList,
-                                             BiFunction<Integer, Integer, Boolean> canBeChosen) {
+    private List<AssignmentTask> createTasksForUser(AssignmentTask task,
+                                                    Integer userId,
+                                                    List<Character> charIdList) {
+        List<AssignmentTask> newTasks = new ArrayList<>();
+        int startedTasks = 0;
+        for (Character chr : charIdList) {
+            if (++startedTasks > wideOfSearch) {
+                break;
+            }
+
+            newTasks.add(new AssignmentTask(task, new Assignment(userId, chr.getId())));
+        }
+        return newTasks;
+    }
+
+    private List<AssignmentTask> createTasksForChar(AssignmentTask task,
+                                                    Integer charId,
+                                                    List<Integer> userIdList,
+                                                    BiFunction<Integer, Integer, Boolean> canBeChosen) {
         List<AssignmentTask> newTasks = new ArrayList<>();
         int startedTasks = 0;
         for (Integer userId : userIdList) {
@@ -118,5 +119,44 @@ public class AssignmentProcessor {
             newTasks.add(new AssignmentTask(task, new Assignment(userId, charId)));
         }
         return newTasks;
+    }
+
+    private static class WantedGenderComparator implements Comparator<Character> {
+        private final Gender wantedGender;
+        private final Gender notWantedGender;
+
+        private WantedGenderComparator(Gender wantedGender) {
+            this.wantedGender = wantedGender;
+            switch (wantedGender) {
+                case MALE:
+                    notWantedGender = Gender.FEMALE;
+                    break;
+                case FEMALE:
+                    notWantedGender = Gender.MALE;
+                    break;
+                default:
+                    notWantedGender = null;
+                    break;
+            }
+        }
+
+        @Override
+        public int compare(Character ch1, Character ch2) {
+            if (wantedGender == Gender.AMBIGUOUS) {
+                return 0;
+            }
+
+            Gender leftGender = ch1.getGender();
+            Gender rightGender = ch2.getGender();
+            if (leftGender == rightGender) {
+                return 0;
+            } else if (leftGender == wantedGender) {
+                return -1;
+            } else if (leftGender == notWantedGender || rightGender == wantedGender) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

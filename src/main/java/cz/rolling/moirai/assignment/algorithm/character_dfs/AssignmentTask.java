@@ -3,13 +3,13 @@ package cz.rolling.moirai.assignment.algorithm.character_dfs;
 import cz.rolling.moirai.assignment.preference.CharacterPreferenceResolver;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.CharacterType;
+import cz.rolling.moirai.model.common.User;
 import cz.rolling.moirai.model.content.ContentConfiguration;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +20,7 @@ public class AssignmentTask {
     private final CharacterPreferenceResolver preferencesHolder;
     private final List<Assignment> assignmentList;
     private final Set<Integer> assignedCharIdSet;
+    private final Set<Integer> assignedUserIdSet;
     private final Set<Integer> unwantedCharIdSet;
     private final Map<CharacterType, Set<Integer>> blockedUsers = new HashMap<>();
     private final int currentRank;
@@ -29,6 +30,7 @@ public class AssignmentTask {
         preferencesHolder = previousTask.preferencesHolder;
         assignmentList = new ArrayList<>(previousTask.getAssignmentList());
         assignedCharIdSet = new HashSet<>(previousTask.assignedCharIdSet);
+        assignedUserIdSet = new HashSet<>(previousTask.assignedUserIdSet);
         unwantedCharIdSet = new HashSet<>(previousTask.unwantedCharIdSet);
         for (CharacterType type : CharacterType.values()) {
             blockedUsers.put(type, new HashSet<>(previousTask.blockedUsers.get(type)));
@@ -43,6 +45,7 @@ public class AssignmentTask {
         this.preferencesHolder = preferencesHolder;
         this.assignmentList = new ArrayList<>();
         this.assignedCharIdSet = new HashSet<>();
+        this.assignedUserIdSet = new HashSet<>();
         this.unwantedCharIdSet = new HashSet<>();
         for (CharacterType type : CharacterType.values()) {
             blockedUsers.put(type, new HashSet<>());
@@ -51,7 +54,7 @@ public class AssignmentTask {
     }
 
     public Integer getNextLeastWantedChar() {
-        Integer leastWantedSum = Integer.MAX_VALUE;
+        int leastWantedSum = Integer.MAX_VALUE;
         Integer leastWantedCharId = null;
 
         for (int charId = 0; charId < configuration.getCharacterCount(); charId++) {
@@ -78,20 +81,12 @@ public class AssignmentTask {
         return leastWantedCharId;
     }
 
-    public Integer getNextUnwantedChar() {
-        Iterator<Integer> iterator = unwantedCharIdSet.iterator();
-        Integer charId = iterator.next();
-        iterator.remove();
-        return charId;
-
+    public List<Integer> getUnwantedChars() {
+        return new ArrayList<>(unwantedCharIdSet);
     }
 
     public boolean isComplete() {
-        return assignedCharIdSet.size() == configuration.getCharacterCount();
-    }
-
-    public boolean hasUnWantedCharacters() {
-        return !unwantedCharIdSet.isEmpty();
+        return assignedCharIdSet.size() == configuration.getUserCount();
     }
 
     public List<Assignment> getAssignmentList() {
@@ -105,6 +100,8 @@ public class AssignmentTask {
     private void addAssignment(Assignment newAssignment) {
         assignmentList.add(newAssignment);
         assignedCharIdSet.add(newAssignment.getCharId());
+        assignedUserIdSet.add(newAssignment.getUserId());
+        unwantedCharIdSet.remove(newAssignment.getCharId());
 
         CharacterType characterType = preferencesHolder.getTypeOfCharacter(newAssignment.getCharId());
         blockedUsers.get(characterType).add(newAssignment.getUserId());
@@ -158,5 +155,13 @@ public class AssignmentTask {
 
     public int getCurrentRank() {
         return currentRank;
+    }
+
+    public Integer getNextUnresolvedPlayer() {
+        return preferencesHolder.getUserList().stream()
+                .map(User::getId)
+                .filter(id -> !assignedUserIdSet.contains(id))
+                .findFirst()
+                .orElse(null);
     }
 }
