@@ -55,11 +55,14 @@ public class AssignmentProcessor {
         }
 
         // next char to process
-        Integer charId = task.getNextLeastWantedChar();
-        List<AssignmentTask> newTasks = Collections.emptyList();
-        if (charId != null) {
-            newTasks = createTasksForChar(task, charId, preferencesHolder.getUsersWantingChar(charId), task::isUserEligibleForChar);
-            Collections.reverse(newTasks);
+        List<Integer> charIds = task.getNextLeastWantedChar();
+        List<AssignmentTask> newTasks = new ArrayList<>();
+        if (!charIds.isEmpty()) {
+            for (Integer charId: charIds) {
+                List<AssignmentTask> tasks = createTasksForChar(task, charId, preferencesHolder.getUsersWantingChar(charId), task::isUserEligibleForChar);
+                Collections.reverse(tasks);
+                newTasks.addAll(tasks);
+            };
         }
 
         // no available preferred assignment -> switch to players to resolve unwanted characters
