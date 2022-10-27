@@ -53,9 +53,10 @@ public class AssignmentTask {
         currentRank = 0;
     }
 
-    public Integer getNextLeastWantedChar() {
+    public List<Integer> getNextLeastWantedChar() {
         int leastWantedSum = Integer.MAX_VALUE;
-        Integer leastWantedCharId = null;
+        int leastWantedBestRank = Integer.MAX_VALUE;
+        List<Integer> leastWantedCharId = new ArrayList<>();
 
         for (int charId = 0; charId < configuration.getCharacterCount(); charId++) {
             if (assignedCharIdSet.contains(charId) || unwantedCharIdSet.contains(charId)) {
@@ -70,15 +71,27 @@ public class AssignmentTask {
                 }
             }
 
+            int bestRank = findBestRank(charId);
             if (unAssignedUserSum == 0) {
                 unwantedCharIdSet.add(charId);
-            } else if (unAssignedUserSum < leastWantedSum) {
+            } else if (unAssignedUserSum < leastWantedSum || bestRank < leastWantedBestRank) {
                 leastWantedSum = unAssignedUserSum;
-                leastWantedCharId = charId;
+                leastWantedBestRank = bestRank;
+                leastWantedCharId = new ArrayList<>();
+                leastWantedCharId.add(charId);
+            } else if (unAssignedUserSum == leastWantedSum && bestRank == leastWantedBestRank) {
+                leastWantedCharId.add(charId);
             }
         }
 
         return leastWantedCharId;
+    }
+
+    private int findBestRank(int charId) {
+        return preferencesHolder.getUsersWantingChar(charId).stream()
+                .map(userId -> preferencesHolder.getRating(new Assignment(userId, charId)))
+                .mapToInt(a -> a)
+                .min().orElse(Integer.MAX_VALUE);
     }
 
     public List<Integer> getUnwantedChars() {
