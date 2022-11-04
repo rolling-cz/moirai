@@ -101,19 +101,19 @@ public class StableMatchingAlgorithmTest {
                 new CharacterAttribute("a1", 1, 5, -5, RatingFunction.LINEAR, DeltaFunction.STANDARD)
         )));
         wizardState.getCharactersConfiguration().setCharacterList(new ArrayList<>(Arrays.asList(
-                new Character(0, "char0", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 1)),
-                new Character(1, "char1", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 2)),
-                new Character(2, "char2", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 3)),
-                new Character(3, "char3", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 4)),
-                new Character(4, "char4", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 5))
+                new Character(0, "char0", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 1), Collections.emptySet()),
+                new Character(1, "char1", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 2), Collections.emptySet()),
+                new Character(2, "char2", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 3), Collections.emptySet()),
+                new Character(3, "char3", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 4), Collections.emptySet()),
+                new Character(4, "char4", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 5), Collections.emptySet())
         )));
 
         wizardState.getAlgorithmConfiguration().setUserList(new ArrayList<>(Arrays.asList(
-                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5), false),
-                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4), false),
-                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3), false),
-                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2), false),
-                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1), false)
+                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5), Collections.emptySet(), false),
+                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4), Collections.emptySet(), false),
+                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3), Collections.emptySet(), false),
+                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2), Collections.emptySet(), false),
+                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1), Collections.emptySet(), false)
         )));
 
         return new ContentPreferenceResolver(wizardState);
@@ -125,19 +125,19 @@ public class StableMatchingAlgorithmTest {
                 new CharacterAttribute("a1", 1, 5, -5, RatingFunction.LINEAR, DeltaFunction.STANDARD)
         )));
         wizardState.getCharactersConfiguration().setCharacterList(new ArrayList<>(Arrays.asList(
-                new Character(0, "char0", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 4)),
-                new Character(1, "char1", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 2)),
-                new Character(2, "char2", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 3)),
-                new Character(3, "char3", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 1)),
-                new Character(4, "char4", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 5))
+                new Character(0, "char0", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 4), Collections.emptySet()),
+                new Character(1, "char1", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 2), Collections.emptySet()),
+                new Character(2, "char2", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 3), Collections.emptySet()),
+                new Character(3, "char3", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 1), Collections.emptySet()),
+                new Character(4, "char4", Gender.AMBIGUOUS, CharacterType.FULL, Collections.singletonMap("a1", 5), Collections.emptySet())
         )));
 
         wizardState.getAlgorithmConfiguration().setUserList(new ArrayList<>(Arrays.asList(
-                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5), false),
-                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4), false),
-                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3), false),
-                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2), false),
-                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1), false)
+                new User(0, "user0", "user0", Gender.AMBIGUOUS, Collections.singletonMap("a1", 5), Collections.emptySet(), false),
+                new User(1, "user1", "user1", Gender.AMBIGUOUS, Collections.singletonMap("a1", 4), Collections.emptySet(), false),
+                new User(2, "user2", "user2", Gender.AMBIGUOUS, Collections.singletonMap("a1", 3), Collections.emptySet(), false),
+                new User(3, "user3", "user3", Gender.AMBIGUOUS, Collections.singletonMap("a1", 2), Collections.emptySet(), false),
+                new User(4, "user4", "user4", Gender.AMBIGUOUS, Collections.singletonMap("a1", 1), Collections.emptySet(), false)
         )));
 
         return new ContentPreferenceResolver(wizardState);

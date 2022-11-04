@@ -2,6 +2,7 @@ package cz.rolling.moirai.model.form;
 
 import cz.rolling.moirai.model.common.ApproachType;
 import cz.rolling.moirai.model.common.CharacterAttribute;
+import cz.rolling.moirai.model.common.CharacterLabel;
 import cz.rolling.moirai.validator.PreferenceFieldConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,10 @@ public class MainConfiguration {
     private Integer ratingForGender = -1000;
 
     @NotNull
+    @Max(0)
+    private Integer ratingForLabel = -900;
+
+    @NotNull
     @Min(1)
     @Max(15)
     private Integer numberOfPreferredCharacters = 3;
@@ -55,4 +60,8 @@ public class MainConfiguration {
     @Valid
     @NotNull
     List<CharacterAttribute> attributeList = new ArrayList<>();
+
+    @Valid
+    @NotNull
+    List<CharacterLabel> labelList = new ArrayList<>();
 }

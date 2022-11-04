@@ -4,12 +4,14 @@ import cz.rolling.moirai.exception.GeneralFormatImportException;
 import cz.rolling.moirai.exception.UnknownCharacterImportException;
 import cz.rolling.moirai.exception.UnknownGenderImportException;
 import cz.rolling.moirai.exception.WrongAttributeValueImportException;
+import cz.rolling.moirai.exception.WrongLabelImportException;
 import cz.rolling.moirai.exception.WrongLineImportException;
 import cz.rolling.moirai.model.common.ApproachType;
 import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AssignmentWithRank;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.CharacterAttribute;
+import cz.rolling.moirai.model.common.CharacterLabel;
 import cz.rolling.moirai.model.common.CharacterProperty;
 import cz.rolling.moirai.model.common.Gender;
 import cz.rolling.moirai.model.common.User;
@@ -27,17 +29,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 @Service
 public class ImportCsvParser {
 
     private final CsvHeaderHolder csvHeader;
+    private static final String LABELS_SEPARATOR = " ";
 
     public ImportCsvParser(MessageSource messageSource) {
         csvHeader = new CsvHeaderHolder(messageSource);
@@ -61,12 +67,32 @@ public class ImportCsvParser {
             newCharacter.setGender(translateGender(record.get(csvHeader.get(locale, CharacterProperty.GENDER)), index + 1));
             if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
                 newCharacter.setAttributeMap(loadAttributes(record, mainConfiguration, locale, index + 1));
+                if (!mainConfiguration.getLabelList().isEmpty()) {
+                    newCharacter.setLabels(loadLabels(record, mainConfiguration, locale, index + 1));
+                }
             }
             characterList.add(newCharacter);
             index++;
         }
 
         return characterList;
+    }
+
+    private Set<CharacterLabel> loadLabels(CSVRecord record, MainConfiguration mainConfiguration, Locale locale, int line) {
+        String allLabelsAsString = record.get(csvHeader.getCharLabels(locale));
+        String[] labelStringList = StringUtils.split(allLabelsAsString, LABELS_SEPARATOR);
+
+        Set<CharacterLabel> parsedLabels = new HashSet<>();
+        Arrays.stream(labelStringList).forEach(labelString -> {
+            CharacterLabel newLabel = new CharacterLabel(labelString);
+            if (mainConfiguration.getLabelList().contains(newLabel)) {
+                parsedLabels.add(newLabel);
+            } else {
+                throw new WrongLabelImportException(line, labelString);
+            }
+        });
+
+        return parsedLabels;
     }
 
     private Map<String, Integer> loadAttributes(CSVRecord record, MainConfiguration mainConfiguration, Locale locale, int line) {
@@ -150,6 +176,9 @@ public class ImportCsvParser {
             }
             if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
                 newUser.setAttributeMap(loadAttributes(record, mainConfiguration, locale,userId + 1));
+                if (!mainConfiguration.getLabelList().isEmpty()) {
+                    newUser.setLabels(loadLabels(record, mainConfiguration, locale, userId + 1));
+                }
             }
 
             userList.add(newUser);
@@ -167,6 +196,9 @@ public class ImportCsvParser {
             mainConfiguration.getAttributeList().forEach(attr ->
                     columnList.add(csvHeader.get(locale, attr))
             );
+            if (!mainConfiguration.getLabelList().isEmpty()) {
+                columnList.add(csvHeader.getCharLabels(locale));
+            }
         }
         return columnList;
     }
@@ -190,6 +222,9 @@ public class ImportCsvParser {
         }
         if (mainConfiguration.getApproachType() == ApproachType.CONTENT) {
             mainConfiguration.getAttributeList().forEach(attr -> columnList.add(csvHeader.get(locale, attr)));
+            if (!mainConfiguration.getLabelList().isEmpty()) {
+                columnList.add(csvHeader.getCharLabels(locale));
+            }
         }
         return columnList;
     }
@@ -217,6 +252,7 @@ public class ImportCsvParser {
         private static final String MESSAGE_CODE_WANTED = "common.required-file-format.header.wanted";
         private static final String MESSAGE_CODE_HATED = "common.required-file-format.header.not-wanted";
         private static final String MESSAGE_CODE_ATTRIBUTE = "common.required-file-format.header.attribute";
+        private static final String MESSAGE_CODE_LABEL = "common.required-file-format.header.label";
 
         private final MessageSource messageSource;
 
@@ -242,6 +278,10 @@ public class ImportCsvParser {
 
         public String getHated(Locale locale, int i) {
             return messageSource.getMessage(MESSAGE_CODE_HATED, null, locale) + " " + i;
+        }
+
+        public String getCharLabels(Locale locale) {
+            return messageSource.getMessage(MESSAGE_CODE_LABEL, null, locale);
         }
     }
 }

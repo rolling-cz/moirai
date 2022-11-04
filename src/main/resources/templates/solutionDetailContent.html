@@ -25,6 +25,7 @@
                 <th scope="col" th:text="#{solution-detail.character}"></th>
                 <th scope="col" th:text="#{solution-detail.rating}"></th>
                 <th scope="col" th:text="#{solution-detail.gender}"></th>
+                <th scope="col" th:text="#{solution-detail.labels}" th:if="${existLabels}"></th>
                 <th scope="col" th:each="attr: ${attributes}" th:text="${attr.name}"></th>
             </tr>
         </thead>
@@ -37,6 +38,12 @@
                 <td>
                     <div th:text="${assignment.gender.assigned}"></div>
                     <div th:text="${assignment.gender.rating}"></div>
+                </td>
+                <td  th:if="${existLabels}">
+                    <span th:each="label: ${assignment.characterLabels.triggeredLabels}" >
+                        <span th:text="${label.name}">, </span>
+                    </span>
+                    <div th:text="${assignment.characterLabels.rating}"></div>
                 </td>
                 <td th:each="attr: ${assignment.attributeList}">
                     <div>

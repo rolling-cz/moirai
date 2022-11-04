@@ -133,5 +133,6 @@
     "rating" : -100,
     "ratingFunction" : "CUBIC",
     "deltaFunction": "ONLY_BIGGER"
-  } ]
+  } ],
+  "labelList": []
 }

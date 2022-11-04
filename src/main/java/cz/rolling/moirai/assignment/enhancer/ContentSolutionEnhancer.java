@@ -62,7 +62,8 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
                         assignment,
                         preferenceResolver.getRating(assignment),
                         preferenceResolver.evaluateGenderAssignment(assignment),
-                        preferenceResolver.evaluateAssignmentAttributes(assignment)
+                        preferenceResolver.evaluateAssignmentAttributes(assignment),
+                        preferenceResolver.evaluateLabelsAssignment(assignment)
                 )).collect(Collectors.toList());
 
         assignmentDetailList.forEach(a -> {

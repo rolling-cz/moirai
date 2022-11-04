@@ -50,6 +50,10 @@
     max-width: 900px;
 }
 
+#characterLabelsModal .modal-dialog {
+    max-width: 900px;
+}
+
 .help-tooltip {
     cursor: pointer;
     color: #2672EC;

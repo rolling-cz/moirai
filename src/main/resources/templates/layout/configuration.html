@@ -47,8 +47,11 @@
         let optionList = "";
 
         let last = [[${mainConfiguration.attributeList.size()}]];
+        let charLabelLast = [[${mainConfiguration.labelList.size()}]];
     </script>
     <script layout:fragment="config-script">
+    </script>
+    <script th:replace="fragments/characterLabels :: script">
     </script>
 </div>
 

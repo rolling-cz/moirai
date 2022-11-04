@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><title></title></head>
+<body>
+<script th:fragment="script">
+    function addCharLabel() {
+        const input = $("#charLabelInput");
+        const value = input.val().replace(' ', '-');
+        if (!value) {
+            return;
+        }
+        $("#charLabelListElement").append("<li class='list-group-item' id='charLabelItem" + charLabelLast + "'>" +
+                "<input class='form-control' type='hidden' name='labelList[" + charLabelLast + "].name' value='" + value + "'>" +
+                "<span>" + value + "</span>" +
+                "<button class='close' type='button' onclick='deleteCharLabel(" + charLabelLast +")'>" +
+                    "<span aria-hidden='true'>&times;</span>" +
+                "</button>" +
+            "</li>"
+        );
+        input.val("");
+        charLabelLast++;
+    }
+
+    function deleteCharLabel(id) {
+        $("#charLabelItem" + id).remove();
+    }
+</script>
+
+<span th:fragment="dialog (charLabelList)">
+    <div aria-hidden="true" aria-labelledby="characterLabelsModalLabel" class="modal fade" id="characterLabelsModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="characterLabelsModalLabel" th:text="#{assignment-config.character-labels.modal.label}"></h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2" th:text="#{assignment-config.character-labels.modal.desc}"></div>
+                    <div class="mb-2 row">
+                        <div class="col-3">
+                            <label class="col-form-label" for="charLabelInput" th:text="#{assignment-config.character-labels.modal.add.label}"></label>
+                        </div>
+                        <div class="col-6">
+                            <input class="form-control" type="text" id="charLabelInput">
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-info" onclick="addCharLabel()" th:text="#{assignment-config.character-labels.modal.add.btn}" type="button"></button>
+                        </div>
+                    </div>
+                    <h6 th:text="#{assignment-config.character-labels.modal.list}"></h6>
+                    <div class="mb-2">
+                        <ul class="list-group" id="charLabelListElement">
+                            <li class="list-group-item" th:each="label, stats: ${charLabelList}" th:id="|charLabelItem${stats.index}|">
+                                <input class="form-control" type="hidden" th:name="|labelList[${stats.index}].name|" th:value="${label.name}">
+                                <span th:text="${label.name}"></span>
+                                <button class="close" type="button" th:onclick="|deleteCharLabel(${stats.index})|">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}" type="button"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+</body>
+</html>
