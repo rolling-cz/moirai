@@ -95,6 +95,7 @@ public class ExecutionController {
         ModelAndView mav = new ModelAndView(viewName);
         mav.addObject("assignments", assignments);
         mav.addObject("attributes", wizardState.getMainConfiguration().getAttributeList());
+        mav.addObject("existLabels", !wizardState.getMainConfiguration().getLabelList().isEmpty());
         return mav;
     }
 

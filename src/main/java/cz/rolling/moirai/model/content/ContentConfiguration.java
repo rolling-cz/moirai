@@ -17,6 +17,7 @@ public class ContentConfiguration {
     private int unwantedCharPreference = -10;
     private int unwantedCharType = -100;
     private int unwantedCharGender = -150;
+    private int unwantedCharLabel = -120;
 
     private int searchWide = 2;
     private int maximumTriedSolution = 5000000;

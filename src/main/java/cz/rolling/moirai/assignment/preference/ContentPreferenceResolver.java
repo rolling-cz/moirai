@@ -4,6 +4,8 @@ import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.AttributeAssignment;
 import cz.rolling.moirai.model.common.Character;
 import cz.rolling.moirai.model.common.CharacterAttribute;
+import cz.rolling.moirai.model.common.CharacterLabel;
+import cz.rolling.moirai.model.common.LabelsAssignment;
 import cz.rolling.moirai.model.common.User;
 import cz.rolling.moirai.model.form.WizardState;
 
@@ -11,12 +13,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ContentPreferenceResolver extends AbstractPreferenceResolver {
 
     private final Map<Assignment, Integer> preferenceMap;
     private final int ratingForGender;
+    private final int ratingForLabel;
     private final int maximumRating;
     private final List<CharacterAttribute> attributeList;
 
@@ -24,6 +28,8 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
         super(wizardState.getCharactersConfiguration().getCharacterList(), wizardState.getAlgorithmConfiguration().getUserList());
         ratingForGender = wizardState.getMainConfiguration().getRatingForGender();
         attributeList = wizardState.getMainConfiguration().getAttributeList();
+        ratingForLabel = !wizardState.getMainConfiguration().getLabelList().isEmpty() ?
+            wizardState.getMainConfiguration().getRatingForLabel() : 0;
 
         maximumRating = calculateMaximumRating();
         preferenceMap = collectPreferences(maximumRating);
@@ -50,6 +56,7 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
 
     private int calculateMaximumRating() {
         int rating = ratingForGender;
+        rating += ratingForLabel;
         for (CharacterAttribute attr : attributeList) {
             int maxDelta = attr.getDeltaFunction().getMaxDelta(attr.getMin(), attr.getMax());
             rating += attr.getRatingFunction().getRating(attr.getRating(), maxDelta);
@@ -79,6 +86,13 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
 
         if (!PreferenceUtils.isCorrectGender(user, character)) {
             rating += ratingForGender;
+        }
+
+        Optional<CharacterLabel> existBrokenLabel = user.getLabels().stream()
+                .filter(label -> character.getLabels().contains(label))
+                .findFirst();
+        if (existBrokenLabel.isPresent()) {
+            rating += ratingForLabel;
         }
 
         return rating;
@@ -116,5 +130,17 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
                 character.getAttributeMap().get(attribute.getName()),
                 Math.round(getDeltaRating(user, character, attribute))
         )).collect(Collectors.toList());
+    }
+
+    public LabelsAssignment evaluateLabelsAssignment(Assignment assignment) {
+        User user = getUserList().get(assignment.getUserId());
+        Character character = getCharacterList().get(assignment.getCharId());
+
+        List<CharacterLabel> triggeredLabels = user.getLabels().stream()
+                .filter(label -> character.getLabels().contains(label))
+                .collect(Collectors.toList());
+
+        int rating = triggeredLabels.isEmpty() ? 0 : ratingForLabel;
+        return new LabelsAssignment(triggeredLabels, rating);
     }
 }

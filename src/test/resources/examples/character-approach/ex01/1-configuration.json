@@ -7,5 +7,6 @@
   "numberOfHatedCharacters" : 0,
   "ratingForHatedCharacters" : "-10",
   "multiSelect" : 0,
-  "attributeList" : [ ]
+  "attributeList" : [ ],
+  "labelList": []
 }

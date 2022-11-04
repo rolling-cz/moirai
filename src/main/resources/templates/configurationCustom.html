@@ -147,6 +147,38 @@
                 </select>
             </div>
         </div>
+        <div class="form-group row">
+            <div class="col-sm-5">
+                <label class="col-form-label" for="ratingForLabel"
+                       th:text="#{assignment-config.rating-label}">
+                </label>
+                <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.rating-label.tooltip}"></i>
+            </div>
+            <div class="col-sm-2">
+                <input class="form-control" id="ratingForLabel"
+                       th:classappend="${#fields.hasErrors('ratingForLabel')} ? 'is-invalid' : ''"
+                       th:field="*{ratingForLabel}"
+                       th:value="${mainConfiguration.getRatingForLabel()}"
+                       type="text">
+            </div>
+            <div class="col-sm-4">
+                    <span class="text-danger"
+                          th:errors="*{ratingForLabel}"
+                          th:if="${#fields.hasErrors('ratingForLabel')}"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-5">
+                <label class="col-form-label"
+                       th:text="#{assignment-config.character-labels.label}"></label>
+                <i class="fa fa-info-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{assignment-config.character-labels.tooltip}"></i>
+            </div>
+            <div class="col-sm-5">
+                <button class="btn btn-info" data-target="#characterLabelsModal"
+                        data-toggle="modal"
+                        th:text="#{assignment-config.character-labels.btn}" type="button"></button>
+            </div>
+        </div>
         <div>
             <h5>
                 <span th:text="#{assignment-config.attr.title}"></span>
@@ -246,6 +278,8 @@
                   th:if="${#fields.hasErrors('attributeList')}"></span>
         </div>
     </div>
+
+    <div th:insert="fragments/characterLabels :: dialog(*{labelList})"></div>
 
     <div class="d-none">
         <select class="custom-select" id="ratingFunctionTemplate">

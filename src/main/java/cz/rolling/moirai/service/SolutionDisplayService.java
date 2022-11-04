@@ -60,6 +60,7 @@ public class SolutionDisplayService {
                             assignment.getGenderAssignment(),
                             assignment.getRating(),
                             assignment.getAssignmentType(),
+                            null,
                             null
                     );
                 }).collect(Collectors.toList());
@@ -82,7 +83,8 @@ public class SolutionDisplayService {
                             assignment.getGenderAssignment(),
                             assignment.getRating(),
                             null,
-                            assignment.getAttributeAssignments()
+                            assignment.getAttributeAssignments(),
+                            assignment.getLabelsAssignment()
                     );
                 }).collect(Collectors.toList());
     }

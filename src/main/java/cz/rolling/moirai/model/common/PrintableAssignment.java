@@ -15,4 +15,5 @@ public class PrintableAssignment {
     private final int rating;
     private final CharacterAssignmentType assignmentType;
     private final List<AttributeAssignment> attributeList;
+    private final LabelsAssignment characterLabels;
 }
