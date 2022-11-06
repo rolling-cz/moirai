@@ -3,14 +3,18 @@ package cz.rolling.moirai.model.common;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Assignment {
 
-    private final int userId;
-    private final int charId;
+    private int userId;
+    private int charId;
 
     @Override
     public String toString() {

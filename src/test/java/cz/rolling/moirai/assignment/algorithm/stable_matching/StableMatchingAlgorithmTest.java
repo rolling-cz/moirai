@@ -28,7 +28,7 @@ public class StableMatchingAlgorithmTest {
     @Test
     public void testInit2dList() {
         int numberOfElements = 5;
-        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 0, 0, true);
+        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 0, 0, Collections.emptyList(), true);
         List<List<StableMatchingAlgorithm.IdWithRating>> list = algorithm.init2dList(numberOfElements);
         Assert.assertEquals(numberOfElements, list.size());
         for (int i = 0; i < numberOfElements; i++) {
@@ -38,7 +38,7 @@ public class StableMatchingAlgorithmTest {
 
     @Test
     public void testTransformPreferences() {
-        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 5, 0, true);
+        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 5, 0, Collections.emptyList(), true);
         int[][] users = algorithm.transformPreferences(Assignment::getUserId, Assignment::getCharId, Collections.emptySet());
         Assert.assertArrayEquals(new int[]{4, 3, 2, 1, 0}, users[0]);
         Assert.assertArrayEquals(new int[]{3, 2, 4, 1, 0}, users[1]);
@@ -49,7 +49,7 @@ public class StableMatchingAlgorithmTest {
 
     @Test
     public void testTransformCouplesToAssignments() {
-        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 5, 0, true);
+        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 5, 0, Collections.emptyList(), true);
         Map<Integer, Integer> couples = new HashMap<>();
         couples.put(0, 1);
         couples.put(2, 3);
@@ -61,7 +61,7 @@ public class StableMatchingAlgorithmTest {
 
     @Test
     public void testFindBestAssignment() {
-        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 5, 0, true);
+        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver(), new StableMatchingProcessorVar1(), 5, 0, Collections.emptyList(), true);
         SolutionHolder solutionHolder = algorithm.findBestAssignment();
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 
@@ -71,7 +71,7 @@ public class StableMatchingAlgorithmTest {
 
     @Test
     public void testFindBestAssignmentMultiSelectStrict() {
-        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver2(), new StableMatchingProcessorVar1(), 5, 2, true);
+        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver2(), new StableMatchingProcessorVar1(), 5, 2, Collections.emptyList(), true);
         SolutionHolder solutionHolder = algorithm.findBestAssignment();
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 
@@ -84,7 +84,7 @@ public class StableMatchingAlgorithmTest {
 
     @Test
     public void testFindBestAssignmentMultiSelectNonStrict() {
-        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver2(), new StableMatchingProcessorVar1(), 5, 2, false);
+        StableMatchingAlgorithm algorithm = new StableMatchingAlgorithm(createPreferenceResolver2(), new StableMatchingProcessorVar1(), 5, 2, Collections.emptyList(), false);
         SolutionHolder solutionHolder = algorithm.findBestAssignment();
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 

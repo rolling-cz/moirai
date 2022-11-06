@@ -32,6 +32,10 @@ public class AlgorithmFeatureService {
             featureSet.add(AlgorithmFeature.NOT_ENOUGH_PLAYERS);
         }
 
+        if (!wizardState.getAlgorithmConfiguration().getBlockedAssignmentList().isEmpty()) {
+            featureSet.add(AlgorithmFeature.BLOCKED_ASSIGNMENTS);
+        }
+
         return featureSet;
     }
 }

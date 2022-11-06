@@ -6,11 +6,18 @@
 </head>
 <body>
 
-<script layout:fragment="script">
-    $(document).ready(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    })
-</script>
+<div layout:fragment="script">
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+
+        let lastBlockedAssignment = [[${algorithmConfiguration.blockedAssignmentList.size()}]];
+    </script>
+
+    <script th:replace="fragments/blockedAssignments :: script">
+    </script>
+</div>
 
 <div layout:fragment="content">
     <h3 th:text="#{algorithm-config.title}"></h3>
@@ -44,6 +51,20 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <div class="col-sm-5">
+                <div>
+                    <label for="algorithmSelect" th:text="#{algorithm-config.blocked-assignments.label}"></label>
+                    <i class="fa fa-info-circle help-tooltip" data-toggle="tooltip" th:title="#{algorithm-config.blocked-assignments.tooltip}"></i>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <button class="btn btn-info" data-target="#blockedAssignmentsModal"
+                        data-toggle="modal"
+                        th:text="#{algorithm-config.blocked-assignments.btn}" type="button"></button>
+            </div>
+        </div>
+
         <div class="mt-2 mb-2">
             <div class="alert alert-danger" role="alert"
                  th:if="${errorMessage != ''}"
@@ -56,6 +77,8 @@
             >
             </div>
         </div>
+
+        <div th:insert="fragments/blockedAssignments :: dialog(${algorithmConfiguration}, ${characterList})"></div>
 
         <button class="btn btn-secondary"
                 th:formaction="@{/assignment/previous}"

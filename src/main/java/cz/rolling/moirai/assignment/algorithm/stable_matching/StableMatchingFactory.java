@@ -26,7 +26,8 @@ public class StableMatchingFactory implements AlgorithmFactory {
     private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Arrays.asList(
             AlgorithmFeature.CONTENT_APPROACH,
             AlgorithmFeature.MULTI_SELECT,
-            AlgorithmFeature.NOT_ENOUGH_PLAYERS
+            AlgorithmFeature.NOT_ENOUGH_PLAYERS,
+            AlgorithmFeature.BLOCKED_ASSIGNMENTS
     ));
 
     private static final Set<AlgorithmSpecificParameter<?>> PARAMETER_SET = new HashSet<>();
@@ -71,6 +72,7 @@ public class StableMatchingFactory implements AlgorithmFactory {
                 new StableMatchingProcessorVar1(),
                 wizardState.getCharactersConfiguration().getNumberOfCharacters(),
                 wizardState.getMainConfiguration().getMultiSelect(),
+                wizardState.getAlgorithmConfiguration().getBlockedAssignmentList(),
                 false
         );
     }
