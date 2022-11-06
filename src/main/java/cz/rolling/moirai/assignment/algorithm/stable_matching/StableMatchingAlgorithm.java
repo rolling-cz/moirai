@@ -33,6 +33,7 @@ public class StableMatchingAlgorithm implements Algorithm {
     private final StableMatchingProcessor processor;
     private final int numberOfCharacters;
     private final int multiSelect;
+    private final List<Assignment> blockedAssignmentList;
     private final boolean strictVariant;
 
     public StableMatchingAlgorithm(
@@ -40,12 +41,14 @@ public class StableMatchingAlgorithm implements Algorithm {
             StableMatchingProcessor processor,
             int numberOfCharacters,
             int multiSelect,
+            List<Assignment> blockedAssignmentList,
             boolean strictVariant
     ) {
         this.preferenceResolver = preferenceResolver;
         this.processor = processor;
         this.numberOfCharacters = numberOfCharacters;
         this.multiSelect = multiSelect;
+        this.blockedAssignmentList = blockedAssignmentList;
         this.strictVariant = strictVariant;
     }
 
@@ -57,14 +60,14 @@ public class StableMatchingAlgorithm implements Algorithm {
         try {
             if (multiSelect > 1) {
                 completeSolution = new MetaSolution();
-                Set<Assignment> forbiddenAssignments = new HashSet<>();
+                Set<Assignment> forbiddenAssignments = new HashSet<>(blockedAssignmentList);
                 for (int i = 0; i < multiSelect; i++) {
                     DirectSolution solution = calculateDirectSolution(forbiddenAssignments);
                     ((MetaSolution) completeSolution).addSolution(solution);
                     forbiddenAssignments.addAll(solution.getAssignmentList());
                 }
             } else {
-                completeSolution = calculateDirectSolution(Collections.emptySet());
+                completeSolution = calculateDirectSolution(new HashSet<>(blockedAssignmentList));
             }
         } catch (NoSolutionException e) {
             completeSolution = new NoSolution(e.getMessage());

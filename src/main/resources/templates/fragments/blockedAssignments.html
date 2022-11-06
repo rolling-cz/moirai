@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><title></title></head>
+<body>
+<script th:fragment="script">
+    function addBlockedAssignment() {
+        $("#blockedAssignmentListElement").append("<div class='row' id='blockedAssignmentItem" + lastBlockedAssignment + "'>" +
+            "                    <div class='col-sm-5'>" +
+            "                       <select id='blockedAssignmentList" + lastBlockedAssignment + ".userId' name='blockedAssignmentList[" + lastBlockedAssignment + "].userId' class='custom-select'>" +
+            "                        </select>" +
+            "                    </div>" +
+            "                    <div class='col-sm-5'>" +
+            "                       <select id='blockedAssignmentList" + lastBlockedAssignment + ".charId' name='blockedAssignmentList[" + lastBlockedAssignment + "].charId' class='custom-select'>" +
+            "                        </select>" +
+            "                    </div>" +
+            "                    <div class='col-sm-1'>" +
+            "                        <button class='btn btn-danger btn-sm' type='button' onclick='deleteBlockedAssignment(" + lastBlockedAssignment + ")'>" +
+            "                            <i class='fa fa-minus fa-sm' ></i>" +
+            "                        </button>" +
+            "                    </div>" +
+            "                </div>"
+        );
+        const playerListSelect = $("#blockedAssignmentList" + lastBlockedAssignment + "\\.userId");
+        playerListSelect.append($("#playerTemplate").children().clone());
+
+        const characterListSelect = $("#blockedAssignmentList" + lastBlockedAssignment + "\\.charId");
+        characterListSelect.append($("#characterTemplate").children().clone());
+        lastBlockedAssignment++;
+    }
+
+    function deleteBlockedAssignment(id) {
+        $("#blockedAssignmentItem" + id).remove();
+    }
+</script>
+
+<span th:fragment="dialog (algorithmConfiguration, characterList)">
+    <div aria-hidden="true" aria-labelledby="blockedAssignmentsModalLabel" class="modal fade" id="blockedAssignmentsModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="blockedAssignmentsModalLabel" th:text="#{algorithm-config.blocked-assignments.modal.label}"></h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2" th:text="#{algorithm-config.blocked-assignments.modal.desc}"></div>
+                    <h6>
+                        <span th:text="#{algorithm-config.blocked-assignments.modal.list}"></span>
+                        <button class="btn btn-info btn-sm"
+                                data-placement="right"
+                                data-toggle="tooltip"
+                                onclick="addBlockedAssignment()"
+                                th:title="#{algorithm-config.blocked-assignments.modal.add.tooltip}" type="button">
+                            <i class="fa fa-plus fa-sm"></i>
+                        </button>
+                    </h6>
+                    <div class="row">
+                        <div class="col-sm-5 font-weight-bold">
+                            <span th:text="#{algorithm-config.blocked-assignments.modal.header.player}"></span>
+                        </div>
+                        <div class="col-sm-1 font-weight-bold">
+                            <span th:text="#{algorithm-config.blocked-assignments.modal.header.character}"></span>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="mb-2" id="blockedAssignmentListElement">
+                        <div class="row" th:each="assignment, stats: ${algorithmConfiguration.blockedAssignmentList}" th:id="|blockedAssignmentItem${stats.index}|">
+                            <div class="col-5">
+                                <select class="custom-select" th:field="${algorithmConfiguration.blockedAssignmentList[__${stats.index}__].userId}">
+                                    <option th:each="user : ${algorithmConfiguration.userList}"
+                                            th:text="${user.surname + ' ' + user.name}"
+                                            th:value="${user.id}"></option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <select class="custom-select" th:field="${algorithmConfiguration.blockedAssignmentList[__${stats.index}__].charId}">
+                                    <option th:each="character : ${characterList}"
+                                            th:text="${character.name}"
+                                            th:value="${character.id}"></option>
+                                </select>
+                            </div>
+                            <div class="col-1">
+                                <button class='btn btn-danger btn-sm' type="button" th:onclick="|deleteBlockedAssignment(${stats.index})|">
+                                    <i class="fa fa-minus fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" th:text="#{common.close-btn}" type="button"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="d-none">
+        <select class="custom-select" id="playerTemplate">
+            <option th:each="user : ${algorithmConfiguration.userList}"
+                    th:text="${user.surname + ' ' + user.name}"
+                    th:value="${user.id}"></option>
+        </select>
+        <select class="custom-select" id="characterTemplate">
+            <option th:each="character : ${characterList}"
+                    th:text="${character.name}"
+                    th:value="${character.id}"></option>
+        </select>
+    </div>
+</span>
+</body>
+</html>

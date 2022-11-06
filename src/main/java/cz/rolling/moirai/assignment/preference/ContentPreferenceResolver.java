@@ -23,6 +23,7 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
     private final int ratingForLabel;
     private final int maximumRating;
     private final List<CharacterAttribute> attributeList;
+    private final List<Assignment> blockedAssignmentList;
 
     public ContentPreferenceResolver(WizardState wizardState) {
         super(wizardState.getCharactersConfiguration().getCharacterList(), wizardState.getAlgorithmConfiguration().getUserList());
@@ -30,6 +31,7 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
         attributeList = wizardState.getMainConfiguration().getAttributeList();
         ratingForLabel = !wizardState.getMainConfiguration().getLabelList().isEmpty() ?
             wizardState.getMainConfiguration().getRatingForLabel() : 0;
+        this.blockedAssignmentList = wizardState.getAlgorithmConfiguration().getBlockedAssignmentList();
 
         maximumRating = calculateMaximumRating();
         preferenceMap = collectPreferences(maximumRating);
@@ -142,5 +144,9 @@ public class ContentPreferenceResolver extends AbstractPreferenceResolver {
 
         int rating = triggeredLabels.isEmpty() ? 0 : ratingForLabel;
         return new LabelsAssignment(triggeredLabels, rating);
+    }
+
+    public boolean isAssignmentBlocked(Assignment assignment) {
+        return blockedAssignmentList.contains(assignment);
     }
 }

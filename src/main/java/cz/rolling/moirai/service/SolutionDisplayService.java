@@ -61,7 +61,9 @@ public class SolutionDisplayService {
                             assignment.getRating(),
                             assignment.getAssignmentType(),
                             null,
-                            null
+                            null,
+                            false,
+                            false
                     );
                 }).collect(Collectors.toList());
     }
@@ -84,7 +86,9 @@ public class SolutionDisplayService {
                             assignment.getRating(),
                             null,
                             assignment.getAttributeAssignments(),
-                            assignment.getLabelsAssignment()
+                            assignment.getLabelsAssignment(),
+                            assignment.isDuplicate(),
+                            assignment.isBlockedAssignment()
                     );
                 }).collect(Collectors.toList());
     }

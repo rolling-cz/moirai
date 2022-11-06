@@ -1,6 +1,7 @@
 package cz.rolling.moirai.model.form;
 
 import cz.rolling.moirai.model.common.AlgorithmSpecificParameter;
+import cz.rolling.moirai.model.common.Assignment;
 import cz.rolling.moirai.model.common.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class AlgorithmConfiguration {
     private Set<AlgorithmSpecificParameter<?>> parameterSet = new HashSet<>();
 
     private List<User> userList = new ArrayList<>();
+
+    private List<Assignment> blockedAssignmentList = new ArrayList<>();
 
     public int getNumberOfUsers() {
         return userList.size();

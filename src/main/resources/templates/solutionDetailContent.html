@@ -6,6 +6,12 @@
 </head>
 <body>
 
+<script layout:fragment="script">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+
 <div layout:fragment="content" >
     <h3 th:text="#{solution-detail.title}"></h3>
 
@@ -33,7 +39,23 @@
             <tr th:each="assignment: ${assignments}">
                 <th scope="row" th:text="${assignment.surname}"></th>
                 <td th:text="${assignment.name}"></th>
-                <td th:text="${assignment.character}"></td>
+                <td>
+                    <div th:text="${assignment.character}"></div>
+                    <div th:if="${assignment.isDuplicate}"
+                         class="solution-detail-problem"
+                         data-placement="top"
+                         data-toggle="tooltip"
+                         th:title="#{solution-detail.problem.duplicate.tooltip}"
+                         th:text="#{solution-detail.problem.duplicate}"
+                    ></div>
+                    <div th:if="${assignment.isBlockedAssignment}"
+                         class="solution-detail-problem"
+                         data-placement="top"
+                         data-toggle="tooltip"
+                         th:title="#{solution-detail.problem.blocked.tooltip}"
+                         th:text="#{solution-detail.problem.blocked}"
+                    ></div>
+                </td>
                 <td th:text="${assignment.rating}"></td>
                 <td>
                     <div th:text="${assignment.gender.assigned}"></div>

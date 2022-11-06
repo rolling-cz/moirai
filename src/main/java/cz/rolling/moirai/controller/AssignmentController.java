@@ -92,6 +92,7 @@ public class AssignmentController {
         mav.addObject("algorithmConfiguration", wizardState.getAlgorithmConfiguration());
         mav.addObject("algorithmFactorySet", filterFactories());
         mav.addObject("numberOfCharacters", wizardState.getCharactersConfiguration().getNumberOfCharacters());
+        mav.addObject("characterList", wizardState.getCharactersConfiguration().getCharacterList());
         mav.addObject("errorMessage", "");
         mav.addObject("errorParams", null);
         return mav;
@@ -107,5 +108,6 @@ public class AssignmentController {
     private void saveConfig(AlgorithmConfiguration newConfig) {
         AlgorithmConfiguration currentConfig = wizardState.getAlgorithmConfiguration();
         currentConfig.setAlgorithmFactoryName(newConfig.getAlgorithmFactoryName());
+        currentConfig.setBlockedAssignmentList(newConfig.getBlockedAssignmentList());
     }
 }

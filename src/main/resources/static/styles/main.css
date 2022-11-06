@@ -54,6 +54,10 @@
     max-width: 900px;
 }
 
+#blockedAssignmentsModal .modal-dialog {
+    max-width: 900px;
+}
+
 .help-tooltip {
     cursor: pointer;
     color: #2672EC;
@@ -91,4 +95,9 @@
 
 .moirai-footer a {
     color: #706f6f;
+}
+
+.solution-detail-problem {
+    color: #a00000;
+    font-weight: bold;
 }

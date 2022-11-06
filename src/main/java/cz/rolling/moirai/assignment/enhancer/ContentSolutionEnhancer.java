@@ -57,13 +57,17 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
                 goodAssignments.put(i, new Counter())
         );
 
+        Map<Assignment, Counter> duplicates = duplicationCount(assignmentList);
+
         List<AssignmentDetail> assignmentDetailList = assignmentList.stream()
                 .map(assignment -> new AssignmentDetailContent(
                         assignment,
                         preferenceResolver.getRating(assignment),
                         preferenceResolver.evaluateGenderAssignment(assignment),
                         preferenceResolver.evaluateAssignmentAttributes(assignment),
-                        preferenceResolver.evaluateLabelsAssignment(assignment)
+                        preferenceResolver.evaluateLabelsAssignment(assignment),
+                        duplicates.get(assignment).getNumber() > 1,
+                        preferenceResolver.isAssignmentBlocked(assignment)
                 )).collect(Collectors.toList());
 
         assignmentDetailList.forEach(a -> {
@@ -74,6 +78,18 @@ public class ContentSolutionEnhancer implements SolutionEnhancer {
         return ResultSummary.createSummaryWithSolution(rating, assignmentDetailList, mapMapToNumbers(goodAssignments));
     }
 
+    private Map<Assignment, Counter> duplicationCount(List<Assignment> assignmentList) {
+        Map<Assignment, Counter> duplicates = new HashMap<>();
+        assignmentList.forEach(assignment -> {
+            Counter counter = duplicates.get(assignment);
+            if (counter == null) {
+                counter = new Counter();
+                duplicates.put(assignment, counter);
+            }
+            counter.add();
+        });
+        return duplicates;
+    }
 
     @Override
     public List<DistributionHeader> getHeaderList() {

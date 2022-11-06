@@ -16,4 +16,6 @@ public class PrintableAssignment {
     private final CharacterAssignmentType assignmentType;
     private final List<AttributeAssignment> attributeList;
     private final LabelsAssignment characterLabels;
+    private final boolean isDuplicate;
+    private final boolean isBlockedAssignment;
 }
