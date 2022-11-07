@@ -20,7 +20,7 @@ public class CharacterAttribute {
     private String name;
 
     @NotNull
-    @Min(1)
+    @Min(0)
     private Integer min;
 
     @NotNull

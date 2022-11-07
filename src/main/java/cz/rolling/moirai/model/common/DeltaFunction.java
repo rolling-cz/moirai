@@ -25,7 +25,7 @@ public enum DeltaFunction {
 
         @Override
         public int getMaxDelta(int min, int max) {
-            return (max - min) - 1;
+            return max - min;
         }
     },
     ONLY_BIGGER("assignment-config.delta-function.only-bigger") {
@@ -41,6 +41,21 @@ public enum DeltaFunction {
         @Override
         public int getMaxDelta(int min, int max) {
             return max - min;
+        }
+    },
+    ZERO_NEUTRAL("assignment-config.delta-function.zero-neutral") {
+        @Override
+        public int getDelta(int characterValue, int requiredValue, int min, int max) {
+            if (requiredValue == 0) {
+                return 0;
+            } else {
+                return Math.abs(characterValue - requiredValue);
+            }
+        }
+
+        @Override
+        public int getMaxDelta(int min, int max) {
+            return (max - min) - 1;
         }
     };
 
