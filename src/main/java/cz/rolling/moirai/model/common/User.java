@@ -24,7 +24,7 @@ public class User {
     private String surname;
     private Gender wantsPlayGender;
     private Map<String, Integer> attributeMap;
-    private Set<CharacterLabel> labels;
+    private Set<CharacterLabel> labels = new HashSet<>();
     private boolean isDummy;
 
     public void savePreference(AssignmentWithRank assignmentWithRank) {
