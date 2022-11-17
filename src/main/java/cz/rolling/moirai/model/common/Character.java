@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,5 +24,5 @@ public class Character {
 
     private Map<String, Integer> attributeMap;
 
-    private Set<CharacterLabel> labels;
+    private Set<CharacterLabel> labels = new HashSet<>();
 }
