@@ -91,6 +91,7 @@ public class StableMatchingFactory implements AlgorithmFactory {
                 .wantsPlayGender(Gender.AMBIGUOUS)
                 .attributeMap(attributes)
                 .isDummy(true)
+                .labels(new HashSet<>())
                 .build()).collect(Collectors.toList());
     }
 }
