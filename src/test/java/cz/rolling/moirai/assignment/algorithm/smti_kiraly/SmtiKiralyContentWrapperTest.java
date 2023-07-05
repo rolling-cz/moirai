@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SmtiKiralyAlgorithmTest {
+public class SmtiKiralyContentWrapperTest {
 
     @Test
     public void testInit2dList() {
         int numberOfElements = 5;
-        SmtiKiralyAlgorithm algorithm = new SmtiKiralyAlgorithm(createPreferenceResolver(), numberOfElements, numberOfElements, 0, Collections.emptyList());
-        List<List<SmtiKiralyAlgorithm.IdWithRating>> list = algorithm.init2dList(numberOfElements);
+        SmtiKiralyContentWrapper algorithm = new SmtiKiralyContentWrapper(createPreferenceResolver(), numberOfElements, numberOfElements, 0, Collections.emptyList());
+        List<List<SmtiKiralyContentWrapper.IdWithRating>> list = algorithm.init2dList(numberOfElements);
         Assert.assertEquals(numberOfElements, list.size());
         for (int i = 0; i < numberOfElements; i++) {
             Assert.assertNotNull(list.get(i));
@@ -38,7 +38,7 @@ public class SmtiKiralyAlgorithmTest {
 
     @Test
     public void testTransformPreferences() {
-        SmtiKiralyAlgorithm algorithm = new SmtiKiralyAlgorithm(createPreferenceResolver(), 5, 5, 0, Collections.emptyList());
+        SmtiKiralyContentWrapper algorithm = new SmtiKiralyContentWrapper(createPreferenceResolver(), 5, 5, 0, Collections.emptyList());
         List<List<Integer>> users = algorithm.transformPreferences(Assignment::getUserId, Assignment::getCharId, 5, Collections.emptySet());
         Assert.assertEquals(new ArrayList<>(Arrays.asList(4, 3, 2, 1, 0)), users.get(0));
         Assert.assertEquals(new ArrayList<>(Arrays.asList(3, 2, 4, 1, 0)), users.get(1));
@@ -49,19 +49,19 @@ public class SmtiKiralyAlgorithmTest {
 
     @Test
     public void testTransformCouplesToAssignments() {
-        SmtiKiralyAlgorithm algorithm = new SmtiKiralyAlgorithm(createPreferenceResolver(), 5, 5,0, Collections.emptyList());
+        SmtiKiralyContentWrapper algorithm = new SmtiKiralyContentWrapper(createPreferenceResolver(), 5, 5,0, Collections.emptyList());
         Map<Integer, Integer> couples = new HashMap<>();
         couples.put(1 ,0);
         couples.put(3, 2);
         List<Assignment> assignmentList = algorithm.transformCouplesToAssignments(couples);
         Assert.assertEquals(2, assignmentList.size());
-        Assert.assertTrue(assignmentList.contains(new Assignment(1, 0)));
-        Assert.assertTrue(assignmentList.contains(new Assignment(3, 2)));
+        Assert.assertTrue(assignmentList.contains(new Assignment(0, 1)));
+        Assert.assertTrue(assignmentList.contains(new Assignment(2, 3)));
     }
 
     @Test
     public void testFindBestAssignment() {
-        SmtiKiralyAlgorithm algorithm = new SmtiKiralyAlgorithm(createPreferenceResolver(), 5,5, 0, Collections.emptyList());
+        SmtiKiralyContentWrapper algorithm = new SmtiKiralyContentWrapper(createPreferenceResolver(), 5,5, 0, Collections.emptyList());
         SolutionHolder solutionHolder = algorithm.findBestAssignment();
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 
@@ -71,13 +71,12 @@ public class SmtiKiralyAlgorithmTest {
 
     @Test
     public void testFindBestAssignmentMultiSelect() {
-        SmtiKiralyAlgorithm algorithm = new SmtiKiralyAlgorithm(createPreferenceResolver2(),5,5, 2, Collections.emptyList());
+        SmtiKiralyContentWrapper algorithm = new SmtiKiralyContentWrapper(createPreferenceResolver2(),5,5, 2, Collections.emptyList());
         SolutionHolder solutionHolder = algorithm.findBestAssignment();
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 
         Solution solution = solutionHolder.getBestSolution();
         Assert.assertEquals(10160, solution.getRating().intValue());
-        System.out.println("rating " + solution.getRating());
 
         Assert.assertTrue(solution instanceof MetaSolution);
         Assert.assertEquals(2, ((MetaSolution) solution).getSolutionList().size());
@@ -85,13 +84,12 @@ public class SmtiKiralyAlgorithmTest {
 
     @Test
     public void testFindBestAssignmentMultiSelectFewerPlayers() {
-        SmtiKiralyAlgorithm algorithm = new SmtiKiralyAlgorithm(createPreferenceResolver3(),3,5, 2, Collections.emptyList());
+        SmtiKiralyContentWrapper algorithm = new SmtiKiralyContentWrapper(createPreferenceResolver3(),3,5, 2, Collections.emptyList());
         SolutionHolder solutionHolder = algorithm.findBestAssignment();
         Assert.assertEquals(1, solutionHolder.getSolutions().size());
 
         Solution solution = solutionHolder.getBestSolution();
-        Assert.assertEquals(6105, solution.getRating().intValue());
-        System.out.println("rating " + solution.getRating());
+        Assert.assertEquals(6095, solution.getRating().intValue());
 
         Assert.assertTrue(solution instanceof MetaSolution);
         Assert.assertEquals(2, ((MetaSolution) solution).getSolutionList().size());

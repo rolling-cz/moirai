@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class SmtiKiralyFactory implements AlgorithmFactory {
+public class SmtiKiralyContentFactory implements AlgorithmFactory {
 
     private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Arrays.asList(
             AlgorithmFeature.CONTENT_APPROACH,
@@ -46,11 +46,8 @@ public class SmtiKiralyFactory implements AlgorithmFactory {
 
     @Override
     public Algorithm createAlgorithmManager(WizardState wizardState) {
-        int missingPlayers = wizardState.getCharactersConfiguration().getNumberOfCharacters() -
-                wizardState.getAlgorithmConfiguration().getNumberOfUsers();
-
         ContentPreferenceResolver preferenceResolver = new ContentPreferenceResolver(wizardState);
-        return new SmtiKiralyAlgorithm(
+        return new SmtiKiralyContentWrapper(
                 preferenceResolver,
                 wizardState.getAlgorithmConfiguration().getNumberOfUsers(),
                 wizardState.getCharactersConfiguration().getNumberOfCharacters(),

@@ -1,4 +1,4 @@
-package cz.rolling.moirai.assignment.algorithm.character_dfs;
+package cz.rolling.moirai.assignment.algorithm.smti_kiraly;
 
 import cz.rolling.moirai.assignment.algorithm.Algorithm;
 import cz.rolling.moirai.assignment.algorithm.AlgorithmFactory;
@@ -15,22 +15,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class CharacterDfsFactory implements AlgorithmFactory {
+public class SmtiKiralyCharacterFactory implements AlgorithmFactory {
 
     private static final HashSet<AlgorithmFeature> ALGORITHM_FEATURES = new HashSet<>(Arrays.asList(
             AlgorithmFeature.CHARACTER_APPROACH,
-            AlgorithmFeature.HALF_GAME_CHARACTERS,
             AlgorithmFeature.NOT_ENOUGH_PLAYERS
     ));
 
-    private static final Set<AlgorithmSpecificParameter<?>> PARAMETER_SET = new HashSet<>(Arrays.asList(
-            new AlgorithmSpecificParameter<>("maximumTriedSolution", Integer.class, 100000),
-            new AlgorithmSpecificParameter<>("searchWide", Integer.class, 2)
-    ));
+    private static final Set<AlgorithmSpecificParameter<?>> PARAMETER_SET = new HashSet<>();
 
     @Override
     public String getName() {
-        return "best-find-dfs";
+        return "smti-kiraly";
+    }
+
+    @Override
+    public Class<?> getFactoryClass() {
+        return this.getClass();
     }
 
     @Override
@@ -44,14 +45,9 @@ public class CharacterDfsFactory implements AlgorithmFactory {
     }
 
     @Override
-    public Class<?> getFactoryClass() {
-        return this.getClass();
-    }
-
-    @Override
     public Algorithm createAlgorithmManager(WizardState wizardState) {
         ContentConfiguration configuration = PreferenceUtils.createConfiguration(wizardState);
         CharacterPreferenceResolver preferenceHolder = PreferenceUtils.createPreferenceHolder(wizardState, configuration);
-        return new CharacterDfsAlgorithm(preferenceHolder, configuration);
+        return new SmtiKiralyCharacterWrapper(preferenceHolder, configuration);
     }
 }
