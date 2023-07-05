@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 /**
  * Modified SMTI Kirali algorithm to try to find matching with maximum size.
  */
-public class SmtiKiralyAlgorithm implements Algorithm {
+public class SmtiKiralyContentWrapper implements Algorithm {
 
     private static final IdWithRatingComparator RATING_COMPARATOR = new IdWithRatingComparator();
     private final ContentPreferenceResolver preferenceResolver;
@@ -40,7 +40,7 @@ public class SmtiKiralyAlgorithm implements Algorithm {
 
     private final boolean isWrongGenderForbidden = true;
 
-    public SmtiKiralyAlgorithm(
+    public SmtiKiralyContentWrapper(
             ContentPreferenceResolver preferenceResolver,
             int numberOfUsers,
             int numberOfCharacters,
@@ -80,10 +80,9 @@ public class SmtiKiralyAlgorithm implements Algorithm {
     }
 
     private DirectSolution calculateDirectSolution(Set<Assignment> forbiddenAssignmentsParam) {
-        // init SMI characters as men and players as women -> to allow fewer players than characters
         SmtiKiralyProcessor processor = new SmtiKiralyProcessor(
-                transformPreferences(Assignment::getCharId, Assignment::getUserId, numberOfCharacters, forbiddenAssignmentsParam),
-                transformPreferences(Assignment::getUserId, Assignment::getCharId, numberOfUsers, forbiddenAssignmentsParam)
+                transformPreferences(Assignment::getUserId, Assignment::getCharId, numberOfUsers, forbiddenAssignmentsParam),
+                transformPreferences(Assignment::getCharId, Assignment::getUserId, numberOfCharacters, forbiddenAssignmentsParam)
         );
 
         List<Assignment> assignments = transformCouplesToAssignments(processor.process());
@@ -128,7 +127,11 @@ public class SmtiKiralyAlgorithm implements Algorithm {
 
     protected List<Assignment> transformCouplesToAssignments(Map<Integer, Integer> couples) {
         List<Assignment> assignmentList = new ArrayList<>();
-        couples.forEach((userId, charId) -> assignmentList.add(new Assignment(userId != null ? userId : -1, charId)));
+        couples.forEach((charId, userId) -> {
+            if (userId != null) {
+                assignmentList.add(new Assignment(userId, charId));
+            }
+        });
         return assignmentList;
     }
 

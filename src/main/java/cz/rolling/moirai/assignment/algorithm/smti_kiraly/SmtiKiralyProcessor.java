@@ -12,7 +12,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Modified SMTI Kirali algorithm to try to find matching with maximum size.
@@ -82,7 +85,11 @@ public class SmtiKiralyProcessor {
     }
 
     private boolean isMatchingComplete(Map<Integer, Integer> couples) {
-        return !couples.containsValue(null);
+        Set<Integer> assignedMen = couples.values().stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Set<Integer> allMen = IntStream.range(0, men.size()).boxed().collect(Collectors.toSet());
+        return allMen.equals(assignedMen);
     }
 
 
